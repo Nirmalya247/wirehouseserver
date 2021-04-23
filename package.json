@@ -1,0 +1,11 @@
+{
+  "name": "wirehouseserver",
+  "version": "1.0.0",
+  "description": "it is wirehouse server",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "Treela",
+  "license": "ISC"
+}
