@@ -1,5 +1,5 @@
 const mdb = require('../db/init');
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
 function makeid(length) {
     var result = [];
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
