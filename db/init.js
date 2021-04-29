@@ -55,11 +55,24 @@ var Item = sequelize.define('items', {
 }, {
     freezeTableName: true
 });
+// customer table
+var Customer = sequelize.define('customer', {
+    id: {
+        type: Sequelize.STRING(8),
+        primaryKey: true
+    },
+    name: { type: Sequelize.STRING },
+    phone: { type: Sequelize.STRING(12) },
+    email: { type: Sequelize.STRING(128) },
+    credit: { type: Sequelize.DECIMAL(10, 2) }
+}, {
+    freezeTableName: true
+});
 
 
 
 
 
-module.exports = { sequelize, User, Session, Item };
+module.exports = { sequelize, User, Session, Item, Customer };
 
 console.log('*******db*******');

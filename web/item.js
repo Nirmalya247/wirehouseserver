@@ -26,21 +26,42 @@ function addItem(req, res) {
 function getItems(req, res) {
     user.check(req, function (authData) {
         if (authData) {
-            var wh = { limit: parseInt(req.body.itemLimit), order: [[req.body.itemOrderBy, req.body.itemOrder]] };
+            var wh = { offset: (parseInt(req.body.itemPage) - 1) * parseInt(req.body.itemLimit), limit: parseInt(req.body.itemLimit), order: [[req.body.itemOrderBy, req.body.itemOrder]] };
             if (req.body.itemSearch && req.body.itemSearch != '') {
                 wh['where'] = { [Op.or]: [{itemcode: { [Op.like]: `%${req.body.itemSearch}%` } }, {itemname: { [Op.like]: `%${req.body.itemSearch}%` } } ] }
             }
-            console.log(wh);
             mdb.Item.findAll(wh).then(function(data) {
                 if (data) {
-                    res.send({ msg: 'got data', err: false, data: data });
-                } else res.send({ msg: 'some error', err: true });
-            })/*.catch((err) => {
+                    res.send(data);
+                } else res.send([]);
+            }).catch((err) => {
                 console.log(err);
-                res.send({ msg: 'same item code or some error', err: true });
-            });*/
-        } else res.send({ msg: 'you have no permit', err: true });
-    }, 2)
+                res.send([]);
+            });
+        } else res.send([]);
+    }, 1)
 }
 
-module.exports = { addItem, getItems }
+// get items count for inventory
+function getItemsCount(req, res) {
+    user.check(req, function (authData) {
+        if (authData) {
+            var wh = { };
+            if (req.body.itemSearch && req.body.itemSearch != '') {
+                wh['where'] = { [Op.or]: [{itemcode: { [Op.like]: `%${req.body.itemSearch}%` } }, {itemname: { [Op.like]: `%${req.body.itemSearch}%` } } ] };
+            }
+            mdb.Item.count(wh).then(function(data) {
+                console.log('ok1');
+                if (data) {
+                    console.log(data);
+                    res.send(data.toString());
+                } else res.send('0');
+            }).catch((err) => {
+                console.log(err);
+                res.send('0');
+            });
+        } else res.send('0');
+    }, 1)
+}
+
+module.exports = { addItem, getItems, getItemsCount }

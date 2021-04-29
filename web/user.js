@@ -10,6 +10,16 @@ function makeid(length) {
     }
     return result.join('');
 }
+function makeidSmall(length) {
+    var result = [];
+    var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result.push(characters.charAt(Math.floor(Math.random() *
+            charactersLength)));
+    }
+    return result.join('');
+}
 
 function check(req, callback, isadmin) {
     if (req.body.SESSION_ID && req.body.SESSION_USERID) {
@@ -71,4 +81,4 @@ function logout(req, res) {
     })
 }
 
-module.exports = { check, login, checklogin }
+module.exports = { makeid, makeidSmall, check, login, checklogin }
