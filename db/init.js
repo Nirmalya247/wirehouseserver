@@ -1,4 +1,5 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
+const uuid = require('uuid/v4');
 
 
 var sequelize = new Sequelize('wirehouse', 'root', 'Nirmalya18147', {
@@ -52,6 +53,43 @@ var Item = sequelize.define('items', {
     price: { type: Sequelize.DECIMAL(10, 2) },
     totalsold: { type: Sequelize.BIGINT },
     totalearned: { type: Sequelize.DECIMAL(10, 2) }
+}, {
+    freezeTableName: true
+});
+// transaction table
+var Transaction = sequelize.define('transaction', {
+    id: {
+        type: Sequelize.STRING(14),
+        primaryKey: true
+    },
+    vat: { type: Sequelize.DECIMAL(10, 2) },
+    discount: { type: Sequelize.DECIMAL(10, 2) },
+    discountValue: { type: Sequelize.DECIMAL(10, 2) },
+    totalAmount: { type: Sequelize.DECIMAL(10, 2) },
+    totalTendered: { type: Sequelize.DECIMAL(10, 2) },
+    changeDue: { type: Sequelize.DECIMAL(10, 2) },
+    creditAmount: { type: Sequelize.DECIMAL(10, 2) },
+    paymentMode: { type: Sequelize.STRING(14) },
+    addCredit: { type: Sequelize.INTEGER },
+    customerID: { type: Sequelize.STRING(8) },
+    customerName: { type: Sequelize.STRING(255) },
+    customerphone: { type: Sequelize.STRING(12) },
+    customerEmail: { type: Sequelize.STRING(128) }
+}, {
+    freezeTableName: true
+});
+// transactionItem table
+var TransactionItem = sequelize.define('transactionitem', {
+    id: {
+        type: Sequelize.UUID,
+        primaryKey: true
+    },
+    transactionId: { type: Sequelize.STRING(14) },
+    itemcode: { type: Sequelize.STRING(512) },
+    itemname: { type: Sequelize.STRING(255) },
+    price: { type: Sequelize.DECIMAL(10, 2) },
+    qty: { type: Sequelize.INTEGER },
+    totalPrice: { type: Sequelize.DECIMAL(10, 2) }
 }, {
     freezeTableName: true
 });

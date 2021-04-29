@@ -19,7 +19,7 @@ function addItem(req, res) {
                 res.send({ msg: 'same item code or some error', err: true });
             });
         } else res.send({ msg: 'you have no permit', err: true });
-    }, 2)
+    }, 2);
 }
 
 // get items for inventory
@@ -39,7 +39,7 @@ function getItems(req, res) {
                 res.send([]);
             });
         } else res.send([]);
-    }, 1)
+    }, 1);
 }
 
 // get items count for inventory
@@ -61,7 +61,7 @@ function getItemsCount(req, res) {
                 res.send('0');
             });
         } else res.send('0');
-    }, 1)
+    }, 1);
 }
 
 module.exports = { addItem, getItems, getItemsCount }
