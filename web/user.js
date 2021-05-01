@@ -75,10 +75,26 @@ function checklogin(req, res) {
 function logout(req, res) {
     check(req, function (data3) {
         if (data3) {
-            mdb.User.update
+            //mdb.User.update
             res.send({ SESSION_ID: req.body.SESSION_ID, SESSION_USERID: req.body.SESSION_USERID, msg: 'logged in', loggedin: true, err: false });
         } else res.send({ SESSION_ID: '##', SESSION_USERID: 0, msg: 'not logged in', loggedin: false, err: true });
     })
 }
 
-module.exports = { makeid, makeidSmall, check, login, checklogin }
+function get(req, res) {
+    check(req, function (data3) {
+        if (data3) {
+            mdb.User.findOne({ where: { id: req.body.SESSION_USERID }, attributes: { exclude: ['password'] } }).then((data) => {
+                if (data != null) {
+                    data['msg'] = 'ok!';
+                    data['err'] = false;
+                    res.send(data);
+                } else {
+                    res.send({ msg: 'some error', err: true });
+                }
+            })
+        } else res.send({ msg: 'some error', err: true });
+    })
+}
+
+module.exports = { makeid, makeidSmall, check, login, checklogin, get }

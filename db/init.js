@@ -1,5 +1,5 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
-const uuid = require('uuid/v4');
+const uuid = require('uuidv4');
 
 
 var sequelize = new Sequelize('wirehouse', 'root', 'Nirmalya18147', {
@@ -62,6 +62,7 @@ var Transaction = sequelize.define('transaction', {
         type: Sequelize.STRING(14),
         primaryKey: true
     },
+    totalItem: { type: Sequelize.INTEGER },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
     discountValue: { type: Sequelize.DECIMAL(10, 2) },
@@ -73,15 +74,18 @@ var Transaction = sequelize.define('transaction', {
     addCredit: { type: Sequelize.INTEGER },
     customerID: { type: Sequelize.STRING(8) },
     customerName: { type: Sequelize.STRING(255) },
-    customerphone: { type: Sequelize.STRING(12) },
-    customerEmail: { type: Sequelize.STRING(128) }
+    customerPhone: { type: Sequelize.STRING(12) },
+    customerEmail: { type: Sequelize.STRING(128) },
+    userID: { type: Sequelize.BIGINT },
+    userName: { type: Sequelize.STRING }
 }, {
     freezeTableName: true
 });
 // transactionItem table
 var TransactionItem = sequelize.define('transactionitem', {
     id: {
-        type: Sequelize.UUID,
+        allowNull: false,
+        type: Sequelize.STRING(32),
         primaryKey: true
     },
     transactionId: { type: Sequelize.STRING(14) },
@@ -111,6 +115,6 @@ var Customer = sequelize.define('customer', {
 
 
 
-module.exports = { sequelize, User, Session, Item, Customer };
+module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer };
 
 console.log('*******db*******');

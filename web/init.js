@@ -13,12 +13,15 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // user
-app.post('/users/login', user.login);
+app.all('/users/login', user.login);
 app.all('/users/checklogin', user.checklogin);
+app.all('/users/get', user.get);
 app.all('/item/additem', item.addItem);
 app.all('/item/getitems', item.getItems);
 app.all('/item/getitemscount', item.getItemsCount);
 app.all('/transaction/add', transaction.add);
+app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
+app.all('/transaction/gettransactions', transaction.getTransactions);
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
 app.all('/customer/update', customer.update);
