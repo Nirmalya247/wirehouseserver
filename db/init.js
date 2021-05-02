@@ -21,9 +21,14 @@ var User = sequelize.define('users', {
         primaryKey: true
     },
     phoneno: { type: Sequelize.BIGINT },
+    otherphoneno: { type: Sequelize.BIGINT },
     email: { type: Sequelize.STRING },
     isadmin: { type: Sequelize.INTEGER },
+    active: { type: Sequelize.INTEGER },
+    deleted: { type: Sequelize.INTEGER },
     name: { type: Sequelize.STRING },
+    pincode: { type: Sequelize.STRING(10) },
+    address: { type: Sequelize.STRING(1024) },
     password: { type: Sequelize.STRING.BINARY }
 }, {
     freezeTableName: true
