@@ -1,4 +1,5 @@
 const mdb = require('../db/init');
+const saleData = require('../db/saleData');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 
@@ -110,10 +111,20 @@ function update(req, res) {
                         dataItemUpdate['dealerphone'] = dataItem.dealerphone;
                     }
                     mdb.ItemUpdate.create(dataItemUpdate).then(data2 => {
-                        if (data2 != null) {
-                            res.send({ msg: 'item updated', err: false });
+                        if (dataItem.type == 'add') {
+                            saleData.update(null, dataItem.qty, null, dataItem.price, dayData => {
+                                if (dayData != null) {
+                                    res.send({ msg: 'item updated', err: false });
+                                } else {
+                                    res.send({ msg: 'some error', err: true });
+                                }
+                            })
                         } else {
-                            res.send({ msg: 'some error', err: true });
+                            if (data2 != null) {
+                                res.send({ msg: 'item updated', err: false });
+                            } else {
+                                res.send({ msg: 'some error', err: true });
+                            }
                         }
                     })
                 } else {

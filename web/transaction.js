@@ -1,4 +1,5 @@
 const mdb = require('../db/init');
+const saleData = require('../db/saleData');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 
@@ -55,20 +56,22 @@ function add(req, res) {
                                             insertItems();
                                         }
                                         else {
-                                            if (data.creditAmount > 0 || data.addCredit == 1) {
-                                                var cred = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
-                                                //console.log
-                                                mdb.Customer.update({ credit: cred }, { where: { id: data.customerID } }).then(function(uData) {
-                                                    if (uData) {
-                                                        res.send({ msg: 'done!', err: false, id: id });
-                                                    } else removeTransaction();
-                                                    console.log(data);
-                                                }).catch((err) => {
-                                                    removeTransaction();
-                                                });
-                                            } else {
-                                                res.send({ msg: 'done!', err: false, id: id });
-                                            }
+                                            saleData.update(data.totalQTY, null, data.totalAmount, null, dayData => {
+                                                if (data.creditAmount > 0 || data.addCredit == 1) {
+                                                    var cred = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
+                                                    //console.log
+                                                    mdb.Customer.update({ credit: cred }, { where: { id: data.customerID } }).then(function(uData) {
+                                                        if (uData) {
+                                                            res.send({ msg: 'done!', err: false, id: id });
+                                                        } else removeTransaction();
+                                                        console.log(data);
+                                                    }).catch((err) => {
+                                                        removeTransaction();
+                                                    });
+                                                } else {
+                                                    res.send({ msg: 'done!', err: false, id: id });
+                                                }
+                                            });
                                         }
                                     }
                                     if (items[i].itemname != 'credit amount') {

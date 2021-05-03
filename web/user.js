@@ -67,10 +67,14 @@ function login(req, res) {
     });
 }
 function checklogin(req, res) {
+    var isadmin = 1;
+    if (!isNaN(Number(req.body.isadmin))) isadmin = Number(req.body.isadmin);
+    console.log(isadmin);
     check(req, function (data3) {
+        console.log(data3);
         if (data3) res.send({ SESSION_ID: req.body.SESSION_ID, SESSION_USERID: req.body.SESSION_USERID, msg: 'logged in', loggedin: true, err: false });
         else res.send({ SESSION_ID: '##', SESSION_USERID: 0, msg: 'not logged in', loggedin: false, err: true });
-    })
+    }, isadmin)
 }
 function logout(req, res) {
     check(req, function (dataAuth) {

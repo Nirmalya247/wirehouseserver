@@ -6,11 +6,16 @@ const user = require('./user');
 const item = require('./item');
 const transaction = require('./transaction');
 const customer = require('./customer');
+const saleData = require('./saleData');
+const saleData2 = require('../db/saleData');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+
+
+app.all('/sale', saleData2.updateWeb);
 
 // user
 app.all('/users/login', user.login);
@@ -39,6 +44,9 @@ app.all('/transaction/gettransactions', transaction.getTransactions);
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
 app.all('/customer/update', customer.update);
+
+app.all('/saledata/gettoday', saleData.getToday);
+app.all('/saledata/getgraphdata', saleData.getGraphData);
 http.createServer(app).listen(4210);
 
 console.log('*******web*******');

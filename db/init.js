@@ -68,6 +68,7 @@ var Transaction = sequelize.define('transaction', {
         primaryKey: true
     },
     totalItem: { type: Sequelize.INTEGER },
+    totalQTY: { type: Sequelize.INTEGER },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
     discountValue: { type: Sequelize.DECIMAL(10, 2) },
@@ -132,11 +133,24 @@ var ItemUpdate = sequelize.define('itemupdate', {
 }, {
     freezeTableName: true
 });
+// Sale Data
+var SaleData = sequelize.define('saledata', {
+    days: {
+        type: Sequelize.DATEONLY,
+        primaryKey: true
+    },
+    itemsold: { type: Sequelize.BIGINT },
+    itembought: { type: Sequelize.BIGINT },
+    earning: { type: Sequelize.DECIMAL(10, 2) },
+    spending: { type: Sequelize.DECIMAL(10, 2) }
+}, {
+    freezeTableName: true
+});
 
 
 
 
 
-module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate };
+module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData };
 
 console.log('*******db*******');
