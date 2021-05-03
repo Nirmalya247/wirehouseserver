@@ -115,11 +115,28 @@ var Customer = sequelize.define('customer', {
 }, {
     freezeTableName: true
 });
+// item update
+var ItemUpdate = sequelize.define('itemupdate', {
+    id: {
+        type: Sequelize.BIGINT,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    itemcode: { type: Sequelize.STRING(512) },
+    itemname: { type: Sequelize.STRING(255) },
+    qty: { type: Sequelize.BIGINT },
+    price: { type: Sequelize.DECIMAL(10, 2) },
+    dealername: { type: Sequelize.STRING(255) },
+    dealerphone: { type: Sequelize.STRING(12) },
+    description: { type: Sequelize.STRING(1024) }
+}, {
+    freezeTableName: true
+});
 
 
 
 
 
-module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer };
+module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate };
 
 console.log('*******db*******');

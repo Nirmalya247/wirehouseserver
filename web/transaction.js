@@ -73,7 +73,7 @@ function add(req, res) {
                                     }
                                     if (items[i].itemname != 'credit amount') {
                                         //console.log('###########' + items[i].qty);
-                                        mdb.Item.update({ qty: Sequelize.literal('qty - ' + items[i].qty) }, { where: { itemcode: items[i].itemcode }}).then( itemUp => {
+                                        mdb.Item.update({ qty: Sequelize.literal('qty - ' + items[i].qty), totalsold: Sequelize.literal('totalsold + ' + items[i].qty), totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice) }, { where: { itemcode: items[i].itemcode }}).then( itemUp => {
                                             afterItemUpdate();
                                         });
                                     } else afterItemUpdate();

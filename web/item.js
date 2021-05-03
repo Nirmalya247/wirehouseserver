@@ -1,6 +1,6 @@
 const mdb = require('../db/init');
 const user = require('./user');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 
 function addItem(req, res) {
@@ -64,4 +64,85 @@ function getItemsCount(req, res) {
     }, 1);
 }
 
-module.exports = { addItem, getItems, getItemsCount }
+// edit item
+function edit(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var dataItem = req.body;
+            var itemcode = dataItem.oldcode;
+            delete dataItem['SESSION_ID'];
+            delete dataItem['SESSION_USERID'];
+            delete dataItem['oldcode'];
+            mdb.Item.update(dataItem, { where: { itemcode: itemcode } }).then((data) => {
+                if (data != null) {
+                    res.send({ msg: 'item edited', err: false });
+                } else {
+                    res.send({ msg: 'could not edit', err: true });
+                }
+            }).catch(err => {
+                res.send({ msg: 'some error (may be duplicate code)', err: true });
+            });
+        }
+        else {
+            res.send({ msg: 'not permitted', err: true });
+        }
+    }, 2);
+}
+
+// update item
+function update(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var dataItem = req.body;
+            mdb.Item.update({ qty: Sequelize.literal('qty' + (dataItem.type == 'add' ? ' + ' : ' - ') + dataItem.qty) }, { where: { itemcode: dataItem.itemcode } }).then((data) => {
+                if (data != null) {
+                    var dataItemUpdate = {
+                        itemcode: dataItem.itemcode,
+                        itemname: dataItem.itemname,
+                        qty: dataItem.qty,
+                        price: dataItem.price,
+                        dealername: dataItem.dealername,
+                        dealerphone: dataItem.dealerphone,
+                        description: dataItem.description
+                    }
+                    if (dataItem.type == 'add') {
+                        dataItemUpdate['dealername'] = dataItem.dealername;
+                        dataItemUpdate['dealerphone'] = dataItem.dealerphone;
+                    }
+                    mdb.ItemUpdate.create(dataItemUpdate).then(data2 => {
+                        if (data2 != null) {
+                            res.send({ msg: 'item updated', err: false });
+                        } else {
+                            res.send({ msg: 'some error', err: true });
+                        }
+                    })
+                } else {
+                    res.send({ msg: 'some error', err: true });
+                }
+            });
+        }
+        else {
+            res.send({ msg: 'not permitted', err: true });
+        }
+    }, 2);
+}
+
+// delete item
+function deleteItem(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var dataItem = req.body;
+            var itemcode = dataItem.itemcode;
+            mdb.Item.destroy({ where: { itemcode: itemcode } }).then((data) => {
+                res.send({ msg: 'item deleted', err: false });
+            }).catch(err => {
+                res.send({ msg: 'some error', err: true });
+            });
+        }
+        else {
+            res.send({ msg: 'not permitted', err: true });
+        }
+    }, 2);
+}
+
+module.exports = { addItem, getItems, getItemsCount, edit, update, deleteItem }

@@ -28,6 +28,9 @@ app.all('/users/deleteuser', user.deleteUser);
 app.all('/item/additem', item.addItem);
 app.all('/item/getitems', item.getItems);
 app.all('/item/getitemscount', item.getItemsCount);
+app.all('/item/edit', item.edit);
+app.all('/item/update', item.update);
+app.all('/item/delete', item.deleteItem);
 
 app.all('/transaction/add', transaction.add);
 app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
