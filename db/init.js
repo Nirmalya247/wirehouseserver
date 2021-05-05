@@ -52,6 +52,8 @@ var Item = sequelize.define('items', {
         primaryKey: true
     },
     itemname: { type: Sequelize.STRING },
+    itemtypeid: { type: Sequelize.BIGINT },
+    itemtypename: { type: Sequelize.STRING(128) },
     manufacturer: { type: Sequelize.STRING },
     description: { type: Sequelize.STRING(1024) },
     qty: { type: Sequelize.BIGINT },
@@ -126,7 +128,9 @@ var ItemUpdate = sequelize.define('itemupdate', {
     itemcode: { type: Sequelize.STRING(512) },
     itemname: { type: Sequelize.STRING(255) },
     qty: { type: Sequelize.BIGINT },
+    qtystock: { type: Sequelize.BIGINT },
     price: { type: Sequelize.DECIMAL(10, 2) },
+    expiry: { type: Sequelize.DATEONLY },
     dealername: { type: Sequelize.STRING(255) },
     dealerphone: { type: Sequelize.STRING(12) },
     description: { type: Sequelize.STRING(1024) }
@@ -146,11 +150,22 @@ var SaleData = sequelize.define('saledata', {
 }, {
     freezeTableName: true
 });
+// Item Type
+var ItemType = sequelize.define('itemtype', {
+    id: {
+        type: Sequelize.BIGINT,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    itemtypename: { type: Sequelize.STRING(128) }
+}, {
+    freezeTableName: true
+});
 
 
 
 
 
-module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData };
+module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType };
 
 console.log('*******db*******');

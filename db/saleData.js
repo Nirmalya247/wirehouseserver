@@ -76,13 +76,67 @@ function updateWeb(req, res) {
         group: group,
         where: condition
     }).then(data => {
-        if (res) {
-            for (var i = 1; i <= lim; i++) {
-
+        if (data) {
+            var datas = {
+                labels: [],
+                earning: [],
+                spending: []
+            };
+            if (findby == 'year') {
+                for (var i = 0; i < data.length; i++) {
+                    datas.labels.push(data[i].dataValues.tim);
+                    datas.earning.push(data[i].earning);
+                    datas.spending.push(data[i].spending);
+                    datas.profit.push(data[i].earning - data[i].spending);
+                }
+                datas = {
+                    findby: 'year',
+                    data: data,
+                    datas: datas
+                };
+                res.send(datas);
             }
-            res.send(data);
+            if (findby == 'month') {
+                datas.labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JULY', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                datas.earning = Array(12).fill(0);
+                datas.spending = Array(12).fill(0);
+                datas.profit = Array(12).fill(0);
+                for (var i = 0; i < data.length; i++) {
+                    var tim = data[i].dataValues.tim - 1;
+                    datas.earning[tim] = data[i].earning;
+                    datas.spending[tim] = data[i].spending;
+                    datas.profit[tim] = datas.earning[tim] - datas.spending[tim];
+                }
+                datas = {
+                    findby: 'month',
+                    data: data,
+                    datas: datas
+                };
+                res.send(datas);
+            }
+            if (findby == 'day') {
+                var days = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+                datas.labels = Array.from({length: days}, (_, i) => i + 1);
+                datas.earning = Array(days).fill(0);
+                datas.spending = Array(days).fill(0);
+                datas.profit = Array(days).fill(0);
+                for (var i = 0; i < data.length; i++) {
+                    var tim = data[i].dataValues.tim - 1;
+                    datas.earning[tim] = data[i].earning;
+                    datas.spending[tim] = data[i].spending;
+                    datas.profit[tim] = datas.earning[tim] - datas.spending[tim];
+                }
+                datas = {
+                    findby: 'day',
+                    data: data,
+                    datas: datas
+                };
+                res.send(datas);
+            }
+        } else {
+            res.send([ ]);
         }
-    })
+    });
 }
 
 module.exports = { update, updateWeb }

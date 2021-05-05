@@ -10,15 +10,26 @@ function addItem(req, res) {
             var it = req.body;
             delete it['SESSION_ID'];
             delete it['SESSION_USERID'];
+            it['qty'] = 0;
             it['totalsold'] = 0;
             it['totalearned'] = 0;
-            mdb.Item.create(it).then(function(data) {
-                if (data) {
-                    res.send({ msg: 'item added', err: false });
-                } else res.send({ msg: 'some error', err: true });
-            }).catch((err) => {
-                res.send({ msg: 'same item code or some error', err: true });
-            });
+            if (Number(it['itemtypeid']) == 0) {
+                mdb.ItemType.create({ itemtypename: it['itemtypename'] }).then(itemtype => {
+                    it['itemtypeid'] = itemtype.id;
+                    createItem(it);
+                })
+            } else {
+                createItem(it);
+            }
+            function createItem(item) {
+                mdb.Item.create(item).then(function(data) {
+                    if (data) {
+                        res.send({ msg: 'item added', err: false });
+                    } else res.send({ msg: 'some error', err: true });
+                }).catch((err) => {
+                    res.send({ msg: 'same item code or some error', err: true });
+                });
+            }
         } else res.send({ msg: 'you have no permit', err: true });
     }, 2);
 }
@@ -101,7 +112,9 @@ function update(req, res) {
                         itemcode: dataItem.itemcode,
                         itemname: dataItem.itemname,
                         qty: dataItem.qty,
+                        qtystock: (dataItem.type == 'add' ? dataItem.qty : 0),
                         price: dataItem.price,
+                        expiry: dataItem.expiry,
                         dealername: dataItem.dealername,
                         dealerphone: dataItem.dealerphone,
                         description: dataItem.description
@@ -156,4 +169,26 @@ function deleteItem(req, res) {
     }, 2);
 }
 
-module.exports = { addItem, getItems, getItemsCount, edit, update, deleteItem }
+// get item types
+function getItemTypes(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var search = req.body.itemTypeSearch;
+            mdb.ItemType.findAll({ 
+                where: { itemtypename: { [Op.like]: `%${search}%` } },
+                limit: 20,
+                order: [['itemtypename', 'asc']]
+            }).then((data) => {
+                if (data) res.send(data);
+                else res.send([ ]);
+            }).catch(err => {
+                res.send([ ]);
+            });
+        }
+        else {
+            res.send([ ]);
+        }
+    });
+}
+
+module.exports = { addItem, getItems, getItemsCount, edit, update, deleteItem, getItemTypes }

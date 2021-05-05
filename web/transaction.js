@@ -110,7 +110,11 @@ function add(req, res) {
 function getTransactions(req, res) {
     user.check(req, function (authData) {
         if (authData) {
-            var wh = { offset: (parseInt(req.body.transactionPage) - 1) * parseInt(req.body.transactionLimit), limit: parseInt(req.body.transactionLimit), order: [[req.body.transactionOrderBy, req.body.transactionOrder]] };
+            var wh = {
+                offset: (parseInt(req.body.transactionPage) - 1) * parseInt(req.body.transactionLimit),
+                limit: parseInt(req.body.transactionLimit),
+                order: [[req.body.transactionOrderBy, req.body.transactionOrder]]
+            };
             if (req.body.transactionSearchText && req.body.transactionSearchText != '') {
                 wh['where'] = { [Op.or]: [
                     {id: { [Op.like]: `%${req.body.transactionSearchText}%` } },

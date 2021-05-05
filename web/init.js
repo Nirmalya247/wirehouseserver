@@ -36,6 +36,7 @@ app.all('/item/getitemscount', item.getItemsCount);
 app.all('/item/edit', item.edit);
 app.all('/item/update', item.update);
 app.all('/item/delete', item.deleteItem);
+app.all('/item/getitemtypes', item.getItemTypes);
 
 app.all('/transaction/add', transaction.add);
 app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
@@ -47,6 +48,10 @@ app.all('/customer/update', customer.update);
 
 app.all('/saledata/gettoday', saleData.getToday);
 app.all('/saledata/getgraphdata', saleData.getGraphData);
+app.all('/saledata/getstock', saleData.getStock);
+app.all('/saledata/getstockcount', saleData.getStockCount);
+app.all('/saledata/getdemand', saleData.getDemand);
+app.all('/saledata/getdemandcount', saleData.getDemandCount);
 http.createServer(app).listen(4210);
 
 console.log('*******web*******');
