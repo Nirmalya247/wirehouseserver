@@ -1,0 +1,568 @@
+<style>
+    .titleBody {
+        border: solid 1px #bbb;
+        border-width: 1px 0 1px 0;
+        text-align: left;
+        padding: 2mm 0;
+    }
+
+    .titleLabel {
+        display: inline-block;
+        width: 30mm;
+        font-weight: bold;
+        padding: 1mm 0 0 0;
+    }
+
+    .titleData {
+        display: inline-block;
+        padding: 1mm 0 0 0;
+    }
+
+    .titleDateLabel {
+        float: right;
+        width: 20mm;
+    }
+
+    .titleDateData {
+        float: right;
+    }
+
+    .tableDiv {
+        padding: 4mm 0;
+    }
+
+    .tdItem {
+        padding: 2mm 0;
+    }
+
+    .trTotal {
+        border: solid 1px #bbb;
+        border-width: 1px 0 1px 0;
+    }
+
+    .tdTotal {
+        padding: 2mm 0;
+    }
+
+    .amountBody {
+        height: 22mm;
+        border: solid 1px #bbb;
+        border-width: 0 0 1px 0;
+    }
+
+    .amountLabel {
+        display: inline-block;
+        font-weight: bold;
+        float: right;
+    }
+
+    .amountData {
+        text-align: right;
+        width: 28mm;
+        float: right;
+        display: inline-block;
+    }
+    
+    .footerBody {
+        border: solid 1px #bbb;
+        border-width: 0;
+        text-align: left;
+        padding: 1mm 0 2mm 0;
+    }
+
+    .footerLabel {
+        display: inline-block;
+        width: 30mm;
+        font-weight: bold;
+        padding: 1mm 0 0 0;
+    }
+
+    .footerData {
+        display: inline-block;
+        padding: 1mm 0 0 0;
+    }
+</style>
+
+<div style="width: 100%; background-color: white; text-align: center; font-family: monospace; display: inline-block;">
+    <div style="font-size: 6mm; text-transform: uppercase; margin: 10px 0 5px 0;">shop name</div>
+    <div style="font-size: 11pt; margin: 0 0 4px 0;">shop details shop details</div>
+    <div style="font-size: 10pt; margin: 0 0 2px 0;">shop address, kolkata 700144</div>
+    <div style="font-size: 10pt; margin: 0 0 2px 0;">1234567890, 2345678901</div>
+
+    <div class="titleBody">
+        <div class="titleData titleDateData">: 12-04-2021 10:40am</div>
+        <div class="titleLabel titleDateLabel">Bill Date</div>
+        <div class="titleLabel">Bill No</div>
+        <div class="titleData">: 12105072jPFEG</div><br>
+        <div class="titleLabel">Custome Name</div>
+        <div class="titleData">: Ramesh Majumder</div><br>
+        <div class="titleLabel">Reg ID</div>
+        <div class="titleData">: 3b75q88p</div>
+    </div>
+    <div class="tableDiv">
+        <table width="100%" style="text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="font-size: 10pt; margin: 6px 0 10px 0; border: solid 1px #bbb; border-width: 0 0 1px 0;">
+                    <th style="padding: 0 0 5px 0; width: 3%;">#</th>
+                    <th style="padding: 0 0 5px 0; width: 27%;">Item Name</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Expiry Date</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">QTY</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Price/Unit</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Amount</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Disc Amount</th>
+                    <th style="padding: 0 0 5px 0; width: 5%;">Taxable</th>
+                    <th style="padding: 0 0 5px 0; width: 5%;">VAT</th>
+                    <th
+                        style="padding: 0 0 5px 0; width: 10%; text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">
+                        Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="trItem">
+                    <td class="tdItem">1</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">2</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">3</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">4</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">5</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">6</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">7</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">8</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">9</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">10</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">11</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">12</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">13</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trTotal">
+                    <td class="tdTotal"></td>
+                    <td>Total</td>
+                    <td></td>
+                    <td class="tdTotal">QTY</td>
+                    <td class="tdTotal">Price/Unit</td>
+                    <td class="tdTotal">Amount</td>
+                    <td class="tdTotal">Disc Amount</td>
+                    <td class="tdTotal">Taxable</td>
+                    <td class="tdTotal">VAT</td>
+                    <td class="tdTotal" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">
+                        Total</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="amountBody">
+        <div class="amountData">1267.00</div>
+        <div class="amountLabel">Total Amount :</div><br><br>
+        <div class="amountData">1300.00</div>
+        <div class="amountLabel">Payment :</div><br>
+        <div class="amountData">33.00</div>
+        <div class="amountLabel">Due :</div><br>
+        <div class="amountData">0.00</div>
+        <div class="amountLabel">Credit :</div>
+    </div>
+
+    <div class="footerBody">
+        <div class="footerLabel">License No</div>
+        <div class="footerData">: 12105072jPFEGxyz</div><br>
+        <div class="footerLabel">Prepared By</div>
+        <div class="footerData">: Ramesh Majumder</div><br>
+    </div>
+</div>
+
+
+
+
+
+<div style="width: 100%; background-color: white; text-align: center; font-family: monospace; display: inline-block;">
+    <div style="font-size: 6mm; text-transform: uppercase; margin: 10px 0 5px 0;">shop name</div>
+    <div style="font-size: 11pt; margin: 0 0 4px 0;">shop details shop details</div>
+    <div style="font-size: 10pt; margin: 0 0 2px 0;">shop address, kolkata 700144</div>
+    <div style="font-size: 10pt; margin: 0 0 2px 0;">1234567890, 2345678901</div>
+
+    <div class="titleBody">
+        <div class="titleData titleDateData">: 12-04-2021 10:40am</div>
+        <div class="titleLabel titleDateLabel">Bill Date</div>
+        <div class="titleLabel">Bill No</div>
+        <div class="titleData">: 12105072jPFEG</div><br>
+        <div class="titleLabel">Custome Name</div>
+        <div class="titleData">: Ramesh Majumder</div><br>
+        <div class="titleLabel">Reg ID</div>
+        <div class="titleData">: 3b75q88p</div>
+    </div>
+    <div class="tableDiv">
+        <table width="100%" style="text-align: left; border-collapse: collapse;">
+            <thead>
+                <tr style="font-size: 10pt; margin: 6px 0 10px 0; border: solid 1px #bbb; border-width: 0 0 1px 0;">
+                    <th style="padding: 0 0 5px 0; width: 3%;">#</th>
+                    <th style="padding: 0 0 5px 0; width: 27%;">Item Name</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Expiry Date</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">QTY</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Price/Unit</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Amount</th>
+                    <th style="padding: 0 0 5px 0; width: 10%;">Disc Amount</th>
+                    <th style="padding: 0 0 5px 0; width: 5%;">Taxable</th>
+                    <th style="padding: 0 0 5px 0; width: 5%;">VAT</th>
+                    <th
+                        style="padding: 0 0 5px 0; width: 10%; text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">
+                        Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="trItem">
+                    <td class="tdItem">1</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">2</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">3</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">4</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">5</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">6</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">7</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">8</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">9</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">10</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">11</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">12</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trItem">
+                    <td class="tdItem">13</td>
+                    <td class="tdItem">Item Name</td>
+                    <td class="tdItem">Expiry Date</td>
+                    <td class="tdItem">QTY</td>
+                    <td class="tdItem">Price/Unit</td>
+                    <td class="tdItem">Amount</td>
+                    <td class="tdItem">Disc Amount</td>
+                    <td class="tdItem">Taxable</td>
+                    <td class="tdItem">VAT</td>
+                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total
+                    </td>
+                </tr>
+                <tr class="trTotal">
+                    <td class="tdTotal"></td>
+                    <td>Total</td>
+                    <td></td>
+                    <td class="tdTotal">QTY</td>
+                    <td class="tdTotal">Price/Unit</td>
+                    <td class="tdTotal">Amount</td>
+                    <td class="tdTotal">Disc Amount</td>
+                    <td class="tdTotal">Taxable</td>
+                    <td class="tdTotal">VAT</td>
+                    <td class="tdTotal" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">
+                        Total</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="amountBody">
+        <div class="amountData">1267.00</div>
+        <div class="amountLabel">Total Amount :</div><br><br>
+        <div class="amountData">1300.00</div>
+        <div class="amountLabel">Payment :</div><br>
+        <div class="amountData">33.00</div>
+        <div class="amountLabel">Due :</div><br>
+        <div class="amountData">0.00</div>
+        <div class="amountLabel">Credit :</div>
+    </div>
+
+    <div class="footerBody">
+        <div class="footerLabel">License No</div>
+        <div class="footerData">: 12105072jPFEGxyz</div><br>
+        <div class="footerLabel">Prepared By</div>
+        <div class="footerData">: Ramesh Majumder</div><br>
+    </div>
+</div>

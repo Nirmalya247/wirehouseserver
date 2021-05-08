@@ -1,6 +1,8 @@
 const mdb = require('./init');
 const user = require('../web/user');
 const { Op, Sequelize } = require('sequelize');
+var pdf = require('html-pdf');
+var fs = require('fs');
 
 // update sale data
 function update(itemsold, itembought, earning, spending, callback) {
@@ -32,110 +34,23 @@ function update(itemsold, itembought, earning, spending, callback) {
 }
 
 function updateWeb(req, res) {
-    var findby = req.query.findby;
-    var group = [];
-    var attributes = [
-        [Sequelize.fn(findby, Sequelize.col('days')), 'tim'],
-        [Sequelize.fn('sum', Sequelize.col('itemsold')), 'itemsold'],
-        [Sequelize.fn('sum', Sequelize.col('itembought')), 'itembought'],
-        [Sequelize.fn('sum', Sequelize.col('earning')), 'earning'],
-        [Sequelize.fn('sum', Sequelize.col('spending')), 'spending']
-    ];
-    var condition = { }
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1;
-    var yyyy = today.getFullYear();
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    var lim = 0;
-    if (findby == 'year') {
-        group = [Sequelize.literal('year(days)')];
-    } else if (findby == 'month') {
-        group = [Sequelize.literal('year(days)'), Sequelize.literal('month(days)')];
-        condition['days'] = {
-            [Op.gte]: yyyy + '-01-01'
-        };
-        lim = 12;
-    } else {
-        attributes = [
-            [Sequelize.fn(findby, Sequelize.col('days')), 'tim'],
-            'itemsold',
-            'itembought',
-            'earning',
-            'spending'
-        ]
-        condition['days'] = {
-            [Op.gte]: yyyy + '-' + mm + '-01'
-        };
-        lim = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    }
-    mdb.SaleData.findAll({
-        attributes: attributes,
-        group: group,
-        where: condition
-    }).then(data => {
-        if (data) {
-            var datas = {
-                labels: [],
-                earning: [],
-                spending: []
-            };
-            if (findby == 'year') {
-                for (var i = 0; i < data.length; i++) {
-                    datas.labels.push(data[i].dataValues.tim);
-                    datas.earning.push(data[i].earning);
-                    datas.spending.push(data[i].spending);
-                    datas.profit.push(data[i].earning - data[i].spending);
-                }
-                datas = {
-                    findby: 'year',
-                    data: data,
-                    datas: datas
-                };
-                res.send(datas);
-            }
-            if (findby == 'month') {
-                datas.labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JULY', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-                datas.earning = Array(12).fill(0);
-                datas.spending = Array(12).fill(0);
-                datas.profit = Array(12).fill(0);
-                for (var i = 0; i < data.length; i++) {
-                    var tim = data[i].dataValues.tim - 1;
-                    datas.earning[tim] = data[i].earning;
-                    datas.spending[tim] = data[i].spending;
-                    datas.profit[tim] = datas.earning[tim] - datas.spending[tim];
-                }
-                datas = {
-                    findby: 'month',
-                    data: data,
-                    datas: datas
-                };
-                res.send(datas);
-            }
-            if (findby == 'day') {
-                var days = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-                datas.labels = Array.from({length: days}, (_, i) => i + 1);
-                datas.earning = Array(days).fill(0);
-                datas.spending = Array(days).fill(0);
-                datas.profit = Array(days).fill(0);
-                for (var i = 0; i < data.length; i++) {
-                    var tim = data[i].dataValues.tim - 1;
-                    datas.earning[tim] = data[i].earning;
-                    datas.spending[tim] = data[i].spending;
-                    datas.profit[tim] = datas.earning[tim] - datas.spending[tim];
-                }
-                datas = {
-                    findby: 'day',
-                    data: data,
-                    datas: datas
-                };
-                res.send(datas);
-            }
-        } else {
-            res.send([ ]);
-        }
+    var transactionId = req.query.transactionId;
+    // mdb.
+    var html = `
+        <h1>hello</h1>
+        <h3>this is test</h3>
+    `;
+    var html = fs.readFileSync('./bill_test.html', 'utf8');
+    var options = {
+        format: 'a4',
+        orientation: "landscape"
+    };
+    // pdf.create(html, options).toFile('./businesscard.pdf', function (err, res) {
+    //     if (err) return console.log(err);
+    //     console.log(res); // { filename: '/app/businesscard.pdf' }
+    // });
+    pdf.create(html, options).toStream(function (err, stream) {
+        stream.pipe(res);
     });
 }
 

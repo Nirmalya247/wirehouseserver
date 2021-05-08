@@ -7,6 +7,7 @@ const item = require('./item');
 const transaction = require('./transaction');
 const customer = require('./customer');
 const saleData = require('./saleData');
+const shop = require('./shop');
 const saleData2 = require('../db/saleData');
 
 var app = express();
@@ -16,6 +17,7 @@ app.use(cors());
 
 
 app.all('/sale', saleData2.updateWeb);
+// saleData2.updateWeb();
 
 // user
 app.all('/users/login', user.login);
@@ -41,6 +43,7 @@ app.all('/item/getitemtypes', item.getItemTypes);
 app.all('/transaction/add', transaction.add);
 app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
 app.all('/transaction/gettransactions', transaction.getTransactions);
+app.all('/transaction/gettransactionitem', transaction.getTransactions);
 
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
@@ -52,6 +55,11 @@ app.all('/saledata/getstock', saleData.getStock);
 app.all('/saledata/getstockcount', saleData.getStockCount);
 app.all('/saledata/getdemand', saleData.getDemand);
 app.all('/saledata/getdemandcount', saleData.getDemandCount);
+app.all('/saledata/getexpiry', saleData.getExpiry);
+app.all('/saledata/getexpirycount', saleData.getExpiryCount);
+
+app.all('/shop/get', shop.getShop);
+app.all('/shop/save', shop.saveShop);
 http.createServer(app).listen(4210);
 
 console.log('*******web*******');

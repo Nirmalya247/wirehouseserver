@@ -20,8 +20,8 @@ var User = sequelize.define('users', {
         autoIncrement: true,
         primaryKey: true
     },
-    phoneno: { type: Sequelize.BIGINT },
-    otherphoneno: { type: Sequelize.BIGINT },
+    phoneno: { type: Sequelize.STRING(20) },
+    otherphoneno: { type: Sequelize.STRING(20) },
     email: { type: Sequelize.STRING },
     isadmin: { type: Sequelize.INTEGER },
     active: { type: Sequelize.INTEGER },
@@ -82,7 +82,7 @@ var Transaction = sequelize.define('transaction', {
     addCredit: { type: Sequelize.INTEGER },
     customerID: { type: Sequelize.STRING(8) },
     customerName: { type: Sequelize.STRING(255) },
-    customerPhone: { type: Sequelize.STRING(12) },
+    customerPhone: { type: Sequelize.STRING(20) },
     customerEmail: { type: Sequelize.STRING(128) },
     userID: { type: Sequelize.BIGINT },
     userName: { type: Sequelize.STRING }
@@ -101,7 +101,8 @@ var TransactionItem = sequelize.define('transactionitem', {
     itemname: { type: Sequelize.STRING(255) },
     price: { type: Sequelize.DECIMAL(10, 2) },
     qty: { type: Sequelize.INTEGER },
-    totalPrice: { type: Sequelize.DECIMAL(10, 2) }
+    totalPrice: { type: Sequelize.DECIMAL(10, 2) },
+    expiry: { type: Sequelize.DATEONLY }
 }, {
     freezeTableName: true
 });
@@ -112,7 +113,7 @@ var Customer = sequelize.define('customer', {
         primaryKey: true
     },
     name: { type: Sequelize.STRING },
-    phone: { type: Sequelize.STRING(12) },
+    phone: { type: Sequelize.STRING(20) },
     email: { type: Sequelize.STRING(128) },
     credit: { type: Sequelize.DECIMAL(10, 2) }
 }, {
@@ -132,7 +133,7 @@ var ItemUpdate = sequelize.define('itemupdate', {
     price: { type: Sequelize.DECIMAL(10, 2) },
     expiry: { type: Sequelize.DATEONLY },
     dealername: { type: Sequelize.STRING(255) },
-    dealerphone: { type: Sequelize.STRING(12) },
+    dealerphone: { type: Sequelize.STRING(20) },
     description: { type: Sequelize.STRING(1024) }
 }, {
     freezeTableName: true
@@ -161,11 +162,29 @@ var ItemType = sequelize.define('itemtype', {
 }, {
     freezeTableName: true
 });
+// Shop
+var Shop = sequelize.define('shop', {
+    id: {
+        type: Sequelize.BIGINT,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    shopname: { type: Sequelize.STRING(512) },
+    shopdetails: { type: Sequelize.STRING(1024) },
+    shopaddress: { type: Sequelize.STRING(1024) },
+    shopphoneno: { type: Sequelize.STRING(20) },
+    shopotherphoneno: { type: Sequelize.STRING(20) },
+    vatno: { type: Sequelize.STRING(512) },
+    vat: { type: Sequelize.INTEGER },
+    discount: { type: Sequelize.INTEGER }
+}, {
+    freezeTableName: true
+});
 
 
 
 
 
-module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType };
+module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType, Shop };
 
 console.log('*******db*******');

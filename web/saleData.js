@@ -209,7 +209,7 @@ function getDemand(req, res) {
             mdb.TransactionItem.findAll(wh).then(data => {
                 if (data) res.send(data);
                 else res.send([ ]);
-            })
+            });
         } else res.send([ ]);
     });
 }
@@ -244,4 +244,67 @@ function getDemandCount(req, res) {
     });
 }
 
-module.exports = { getToday, getGraphData, getStock, getStockCount, getDemand, getDemandCount }
+// expiry
+
+// get expiry
+function getExpiry(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+            var order = req.body.order;
+        
+            var today = new Date();
+            today = new Date(today.setMonth(today.getMonth() + 12));
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1;
+            var yyyy = today.getFullYear();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            today = yyyy + '-' + mm + '-' + dd;
+        
+            mdb.ItemUpdate.findAll({
+                offset: (parseInt(page) - 1) * parseInt(limit),
+                limit: parseInt(limit),
+                order: [['expiry', order]],
+                where: {
+                    qtystock: { [Op.gt]: 0 },
+                    expiry: { [Op.lt]: today }
+                }
+            }).then(data => {
+                res.send(data);
+            });
+        } else res.send([ ]);
+    });
+}
+
+// get expiry count
+function getExpiryCount(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+            var order = req.body.order;
+        
+            var today = new Date();
+            today = new Date(today.setMonth(today.getMonth() + 12));
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1;
+            var yyyy = today.getFullYear();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            today = yyyy + '-' + mm + '-' + dd;
+        
+            mdb.ItemUpdate.count({
+                where: {
+                    qtystock: { [Op.gt]: 0 },
+                    expiry: { [Op.lt]: today }
+                }
+            }).then(data => {
+                res.send(data.toString());
+            });
+        } else res.send('0');
+    });
+}
+
+module.exports = { getToday, getGraphData, getStock, getStockCount, getDemand, getDemandCount, getExpiry, getExpiryCount }
