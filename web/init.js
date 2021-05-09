@@ -43,7 +43,7 @@ app.all('/item/getitemtypes', item.getItemTypes);
 app.all('/transaction/add', transaction.add);
 app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
 app.all('/transaction/gettransactions', transaction.getTransactions);
-app.all('/transaction/gettransactionitem', transaction.getTransactions);
+app.all('/transaction/gettransactionitem', transaction.getTransactionItem);
 
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);

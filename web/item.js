@@ -111,9 +111,11 @@ function update(req, res) {
                     var dataItemUpdate = {
                         itemcode: dataItem.itemcode,
                         itemname: dataItem.itemname,
+                        rack: dataItem.rack,
                         qty: dataItem.qty,
                         qtystock: (dataItem.type == 'add' ? dataItem.qty : 0),
                         price: dataItem.price,
+                        cost: dataItem.cost,
                         expiry: dataItem.expiry,
                         dealername: dataItem.dealername,
                         dealerphone: dataItem.dealerphone,
@@ -125,7 +127,7 @@ function update(req, res) {
                     }
                     mdb.ItemUpdate.create(dataItemUpdate).then(data2 => {
                         if (dataItem.type == 'add') {
-                            saleData.update(null, dataItem.qty, null, dataItem.price, dayData => {
+                            saleData.update(null, dataItem.qty, null, Number(dataItem.cost) * Number(dataItem.qty), dayData => {
                                 if (dayData != null) {
                                     res.send({ msg: 'item updated', err: false });
                                 } else {
