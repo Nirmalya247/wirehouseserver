@@ -1,7 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
-const uuid = require('uuid');
 const mdb = require('./db/init');
 const web = require('./web/init');
 

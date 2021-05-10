@@ -2,7 +2,6 @@ const mdb = require('../db/init');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 var pdf = require('html-pdf');
-var fs = require('fs');
 
 // shop ->
 //  shopname

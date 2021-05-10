@@ -1,5 +1,4 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
-const uuid = require('uuidv4');
 
 
 var sequelize = new Sequelize('wirehouse', 'root', 'Nirmalya18147', {

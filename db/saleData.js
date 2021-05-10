@@ -1,8 +1,6 @@
 const mdb = require('./init');
 const user = require('../web/user');
 const { Op, Sequelize } = require('sequelize');
-var pdf = require('html-pdf');
-var fs = require('fs');
 
 // update sale data
 function update(itemsold, itembought, earning, spending, callback) {
@@ -34,24 +32,7 @@ function update(itemsold, itembought, earning, spending, callback) {
 }
 
 function updateWeb(req, res) {
-    var transactionId = req.query.transactionId;
-    // mdb.
-    var html = `
-        <h1>hello</h1>
-        <h3>this is test</h3>
-    `;
-    var html = fs.readFileSync('./bill_test.html', 'utf8');
-    var options = {
-        format: 'a4',
-        orientation: "landscape"
-    };
-    // pdf.create(html, options).toFile('./businesscard.pdf', function (err, res) {
-    //     if (err) return console.log(err);
-    //     console.log(res); // { filename: '/app/businesscard.pdf' }
-    // });
-    pdf.create(html, options).toStream(function (err, stream) {
-        stream.pipe(res);
-    });
+    res.send('test');
 }
 
 module.exports = { update, updateWeb }
