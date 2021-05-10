@@ -1,10 +1,10 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 
-
-var sequelize = new Sequelize('wirehouse', 'root', 'Nirmalya18147', {
-    host: 'localhost',
+// dbname, username, password
+var sequelize = new Sequelize('sql6411612', 'sql6411612', 'yrvSUvA5d3', {
+    host: 'sql6.freemysqlhosting.net',
     dialect: 'mysql',
-    port: 3310,
+    port: 3306,
 
     pool: {
         max: 5,
