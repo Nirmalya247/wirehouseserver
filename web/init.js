@@ -17,7 +17,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 
-app.all('/sale', saleData2.updateWeb);
+app.all('/testweb', saleData2.testWeb);
+app.all('/testdb', saleData2.testDB);
 // saleData2.updateWeb();
 
 // user

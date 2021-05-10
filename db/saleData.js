@@ -31,8 +31,14 @@ function update(itemsold, itembought, earning, spending, callback) {
     });
 }
 
-function updateWeb(req, res) {
+function testWeb(req, res) {
     res.send('test');
 }
 
-module.exports = { update, updateWeb }
+function testDB(req, res) {
+    mdb.Shop.findOne({ where: { id: 1 } }).then(data => {
+        res.send(data);
+    })
+}
+
+module.exports = { update, testWeb, testDB }
