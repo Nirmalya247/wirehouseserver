@@ -153,14 +153,17 @@ function getUsers(req, res) {
         if (authData) {
             var wh = { offset: (parseInt(req.body.userPage) - 1) * parseInt(req.body.userLimit), limit: parseInt(req.body.userLimit), order: [[req.body.userOrderBy, req.body.userOrder]] };
             if (req.body.userSearchText && req.body.userSearchText != '') {
-                wh['where'] = { [Op.or]: [
-                    {id: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {name: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {email: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {phoneno: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {userName: { [Op.like]: `%${req.body.userSearchText}%` } }
-                ] }
-            }
+                wh['where'] = {
+                    deleted: 0,
+                    [Op.or]: [
+                        {id: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {name: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {email: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {phoneno: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {userName: { [Op.like]: `%${req.body.userSearchText}%` } }
+                    ]
+                }
+            } else wh['where'] = { deleted: 0 };
             mdb.User.findAll(wh).then(function(data) {
                 if (data) {
                     res.send(data);
@@ -178,14 +181,17 @@ function getUsersCount(req, res) {
         if (authData) {
             var wh = { };
             if (req.body.userSearchText && req.body.userSearchText != '') {
-                wh['where'] = { [Op.or]: [
-                    {id: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {name: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {email: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {phoneno: { [Op.like]: `%${req.body.userSearchText}%` } },
-                    {userName: { [Op.like]: `%${req.body.userSearchText}%` } }
-                ] }
-            }
+                wh['where'] = {
+                    deleted: 0,
+                    [Op.or]: [
+                        {id: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {name: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {email: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {phoneno: { [Op.like]: `%${req.body.userSearchText}%` } },
+                        {userName: { [Op.like]: `%${req.body.userSearchText}%` } }
+                    ]
+                }
+            } else wh['where'] = { deleted: 0 };
             mdb.User.count(wh).then(function(data) {
                 if (data) {
                     res.send(data.toString());

@@ -182,6 +182,7 @@ var Shop = sequelize.define('shop', {
     shopphoneno: { type: Sequelize.STRING(20) },
     shopotherphoneno: { type: Sequelize.STRING(20) },
     vatno: { type: Sequelize.STRING(512) },
+    licenseno: { type: Sequelize.STRING(100) },
     vat: { type: Sequelize.INTEGER },
     discount: { type: Sequelize.INTEGER }
 }, {
@@ -192,6 +193,8 @@ var Shop = sequelize.define('shop', {
 
 
 
-module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType, Shop };
+const ui = 'http://localhost:4200/';
+
+module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType, Shop, ui };
 
 console.log('*******db*******');

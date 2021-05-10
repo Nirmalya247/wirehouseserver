@@ -8,6 +8,7 @@ const transaction = require('./transaction');
 const customer = require('./customer');
 const saleData = require('./saleData');
 const shop = require('./shop');
+const transactionBill = require('./transactionBill');
 const saleData2 = require('../db/saleData');
 
 var app = express();
@@ -44,6 +45,7 @@ app.all('/transaction/add', transaction.add);
 app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
 app.all('/transaction/gettransactions', transaction.getTransactions);
 app.all('/transaction/gettransactionitem', transaction.getTransactionItem);
+app.all('/transaction/gettransactionitembystock', transaction.getTransactionItemByStock);
 
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
@@ -60,6 +62,8 @@ app.all('/saledata/getexpirycount', saleData.getExpiryCount);
 
 app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
+
+app.all('/transaction-bill', transactionBill.getTransactionBill);
 http.createServer(app).listen(4210);
 
 console.log('*******web*******');
