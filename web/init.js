@@ -65,6 +65,6 @@ app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
 
 app.all('/transaction-bill', transactionBill.getTransactionBill);
-http.createServer(app).listen(4210);
+http.createServer(app).listen(process.env.PORT || 4210);
 
 console.log('*******web*******');
