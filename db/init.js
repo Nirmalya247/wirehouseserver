@@ -192,7 +192,7 @@ var Shop = sequelize.define('shop', {
 
 
 
-const ui = 'http://localhost:4200/';
+const ui = 'https://med-ventory-ui.herokuapp.com/';
 
 module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType, Shop, ui };
 
