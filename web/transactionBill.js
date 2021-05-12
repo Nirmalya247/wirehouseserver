@@ -46,111 +46,116 @@ function getBillHtmlA4(shop, transaction, items) {
     `
     var noOfPage = Math.ceil(items.length / 17);
     var html = `
+    <html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0 , minimum-scale=1.0 , maximum-scale=1.0" />
         <style>
-        body {
-            padding: 0 4mm;
-        }
-        .mainBody {
-            width: 100%;
-            background-color: white;
-            text-align: left;
-            font-family: monospace;
-            display: inline-block;
-            padding: 2mm 0;
-        }
+            body {
+                padding: 0 4mm;
+            }
+            .mainBody {
+                width: 100%;
+                background-color: white;
+                text-align: left;
+                font-family: monospace;
+                display: inline-block;
+                padding: 2mm 0;
+            }
 
-        .titleShopBody {
-        }
+            .titleShopBody {
+            }
 
-        .titleBody {
-            text-align: left;
-        }
+            .titleBody {
+                text-align: left;
+            }
 
-        .titleLabel {
-            display: inline-block;
-            font-weight: bold;
-        }
+            .titleLabel {
+                display: inline-block;
+                font-weight: bold;
+            }
 
-        .titleData {
-            display: inline-block;
-        }
+            .titleData {
+                display: inline-block;
+            }
 
-        .titleDateLabel {
-            float: right;
-            width: 20mm;
-        }
+            .titleDateLabel {
+                float: right;
+                width: 20mm;
+            }
 
-        .titleDateData {
-            float: right;
-        }
+            .titleDateData {
+                float: right;
+            }
 
-        .tableDiv {
-            padding: 0;
-        }
+            .tableDiv {
+                padding: 0;
+            }
 
-        .thItem {
-            border: solid 1px #bbb;
-            border-width: 0 1px;
-        }
+            .thItem {
+                border: solid 1px #bbb;
+                border-width: 0 1px;
+            }
 
-        .trItem {
-            border: solid 1px #bbb;
-            border-width: 0 1px;
-        }
+            .trItem {
+                border: solid 1px #bbb;
+                border-width: 0 1px;
+            }
 
-        .tdItem {
-            padding: 2mm 0;
-            border: solid 1px #bbb;
-            border-width: 0 1px;
-            height: 29px;
-        }
+            .tdItem {
+                padding: 2mm 0;
+                border: solid 1px #bbb;
+                border-width: 0 1px;
+                height: 29px;
+            }
 
-        .trTotal {
-            border: solid 1px #bbb;
-        }
+            .trTotal {
+                border: solid 1px #bbb;
+            }
 
-        .tdTotal {
-            padding: 2mm 0;
-            border: solid 1px #bbb;
-            border-width: 0 1px;
-        }
+            .tdTotal {
+                padding: 2mm 0;
+                border: solid 1px #bbb;
+                border-width: 0 1px;
+            }
 
-        .amountBody {
-            height: 22mm;
-            border: solid 1px #bbb;
-            border-width: 1px;
-        }
+            .amountBody {
+                height: 22mm;
+                border: solid 1px #bbb;
+                border-width: 1px;
+            }
 
-        .amountLabel {
-            display: inline-block;
-            font-weight: bold;
-            float: right;
-        }
+            .amountLabel {
+                display: inline-block;
+                font-weight: bold;
+                float: right;
+            }
 
-        .amountData {
-            text-align: right;
-            width: 28mm;
-            float: right;
-            display: inline-block;
-        }
-        
-        .footerBody {
-            border: solid 1px #bbb;
-            text-align: left;
-            padding: 0;
-        }
+            .amountData {
+                text-align: right;
+                width: 28mm;
+                float: right;
+                display: inline-block;
+            }
+            
+            .footerBody {
+                border: solid 1px #bbb;
+                text-align: left;
+                padding: 0;
+            }
 
-        .footerLabel {
-            display: inline-block;
-            font-weight: bold;
-            padding: 1mm 0 0 0;
-        }
+            .footerLabel {
+                display: inline-block;
+                font-weight: bold;
+                padding: 1mm 0 0 0;
+            }
 
-        .footerData {
-            display: inline-block;
-            padding: 1mm 0 0 0;
-        }
-    </style>
+            .footerData {
+                display: inline-block;
+                padding: 1mm 0 0 0;
+            }
+        </style>
+    </head>
+    <body style="transform: scale(1);">
     `;
     var i = 0;
     var total = 0;
@@ -277,6 +282,8 @@ function getBillHtmlA4(shop, transaction, items) {
                 </tr>
             </table>
         </div>
+        </body>
+        </html>
         `;
     }
     return html;

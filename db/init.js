@@ -1,6 +1,7 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 
 // dbname, username, password
+
 var sequelize = new Sequelize('sql6411612', 'sql6411612', 'yrvSUvA5d3', {
     host: 'sql6.freemysqlhosting.net',
     dialect: 'mysql',
@@ -12,6 +13,18 @@ var sequelize = new Sequelize('sql6411612', 'sql6411612', 'yrvSUvA5d3', {
         idle: 10000
     }
 });
+
+// var sequelize = new Sequelize('wirehouse', 'root', 'Nirmalya18147', {
+//     host: 'localhost',
+//     dialect: 'mysql',
+//     port: 3310,
+
+//     pool: {
+//         max: 5,
+//         min: 0,
+//         idle: 10000
+//     }
+// });
 // users table (1: transaction, 2: inventory, 3: dashboard, 10: admin)
 var User = sequelize.define('users', {
     id: {
@@ -193,6 +206,7 @@ var Shop = sequelize.define('shop', {
 
 
 const ui = 'https://med-ventory-ui.herokuapp.com/';
+// const ui = 'http://localhost:4200/';
 
 module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType, Shop, ui };
 
