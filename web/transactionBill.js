@@ -8,7 +8,7 @@ var pdf = require('html-pdf');
 
 function getBillHtmlA4(shop, transaction, items) {
     var header = `
-    <div style="width: 297mm; height: 210mm;">
+    <div style="">
     <table width="100%" style="text-align: left; border-collapse: collapse;">
         <tr style="padding: 0; height: 6mm;">
             <td rowspan="2" width="16mm" style="border: solid 1px #bbb; border-width: 1px 0 1px 1px; vertical-align:top;">
