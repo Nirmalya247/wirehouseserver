@@ -1,6 +1,8 @@
+const { Op, Sequelize } = require('sequelize');
+var fs = require('fs');
+var pdf = require('html-pdf');
 const mdb = require('./init');
 const user = require('../web/user');
-const { Op, Sequelize } = require('sequelize');
 
 // update sale data
 function update(itemsold, itembought, earning, spending, callback) {
@@ -32,7 +34,14 @@ function update(itemsold, itembought, earning, spending, callback) {
 }
 
 function testWeb(req, res) {
-    res.send('test');
+    var html = fs.readFileSync('bill_test.html', 'utf8');
+    var options = {
+        format: 'a4',
+        orientation: "landscape"
+    };
+    pdf.create(html, options).toStream(function (err, stream) {
+        stream.pipe(res);
+    });
 }
 
 function testDB(req, res) {

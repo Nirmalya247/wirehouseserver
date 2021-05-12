@@ -11,30 +11,30 @@ function getBillHtmlA4(shop, transaction, items) {
     <div style="">
     <table width="100%" style="text-align: left; border-collapse: collapse;">
         <tr style="padding: 0; height: 6mm;">
-            <td rowspan="2" width="16mm" style="border: solid 1px #bbb; border-width: 1px 0 1px 1px; vertical-align:top;">
+            <td rowspan="2" width="16mm" style="border: solid 0.5mm #bbb; border-width: 0.5mm 0 0.5mm 0.5mm; vertical-align:top;">
                 <div class="titleShopLogo">
                     <img src="${mdb.ui}assets/img/brand/shop-logo.png" style="width: 14mm;">
                 </div>
             </td>
-            <td rowspan="2" width="40%" style="border: solid 1px #bbb; border-width: 1px 1px 1px 0; vertical-align:top;">
+            <td rowspan="2" width="40%" style="border: solid 0.5mm #bbb; border-width: 0.5mm 0.5mm 0.5mm 0; vertical-align:top;">
                 <div class="titleShopBody">
-                    <div style="font-size: 6mm; text-transform: uppercase; margin: 0 0 4px 0;">${shop.shopname}</div>
-                    <div style="font-size: 11pt; margin: 0 0 4px 0;">${shop.shopdetails}</div>
-                    <div style="font-size: 10pt; margin: 0 0 2px 0;">${shop.shopaddress}</div>
-                    <div style="font-size: 10pt; margin: 0 0 2px 0;">${shop.shopphoneno}, ${shop.shopotherphoneno}</div>
+                    <div style="font-size: 6mm; text-transform: uppercase; margin: 0 0 2mm 0;">${shop.shopname}</div>
+                    <div style="font-size: 11pt; margin: 0 0 2mm 0;">${shop.shopdetails}</div>
+                    <div style="font-size: 10pt; margin: 0 0 1mm 0;">${shop.shopaddress}</div>
+                    <div style="font-size: 10pt; margin: 0 0 1mm 0;">${shop.shopphoneno}, ${shop.shopotherphoneno}</div>
                 </div>
             </td>
-            <td style="border: solid 1px #bbb; padding: 0;">
+            <td style="border: solid 0.5mm #bbb; padding: 0;">
                 <div class="titleLabel">Bill No :</div>
                 <div class="titleData">${transaction.id}</div><br>
             </td>
-            <td style="border: solid 1px #bbb; padding: 0;">
+            <td style="border: solid 0.5mm #bbb; padding: 0;">
                 <div class="titleLabel">Bill Date :</div>
                 <div class="titleData">${transaction.createdAt.toLocaleString()}</div>
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="border: solid 1px #bbb; vertical-align:top;">
+            <td colspan="2" style="border: solid 0.5mm #bbb; vertical-align:top;">
                 <div class="titleLabel">Reg ID</div>
                 <div class="titleData">: ${transaction.customerID}</div>
                 <div class="titleLabel">Custome Name</div>
@@ -45,7 +45,7 @@ function getBillHtmlA4(shop, transaction, items) {
         </tr>
     </table>
     `
-    var noOfPage = Math.ceil(items.length / 17);
+    var noOfPage = Math.ceil(items.length / 16);
     var html = `
     <html>
     <head>
@@ -53,6 +53,7 @@ function getBillHtmlA4(shop, transaction, items) {
         <style>
             body {
                 padding: 0 4mm;
+                font-size: 2mm;
             }
             .mainBody {
                 width: 100%;
@@ -93,36 +94,36 @@ function getBillHtmlA4(shop, transaction, items) {
             }
 
             .thItem {
-                border: solid 1px #bbb;
-                border-width: 0 1px;
+                border: solid 0.5mm #bbb;
+                border-width: 0 0.5mm;
             }
 
             .trItem {
-                border: solid 1px #bbb;
-                border-width: 0 1px;
+                border: solid 0.5mm #bbb;
+                border-width: 0 0.5mm;
             }
 
             .tdItem {
                 padding: 2mm 0;
-                border: solid 1px #bbb;
-                border-width: 0 1px;
-                height: 29px;
+                border: solid 0.5mm #bbb;
+                border-width: 0 0.5mm;
+                height: 7mm;
             }
 
             .trTotal {
-                border: solid 1px #bbb;
+                border: solid 0.5mm #bbb;
             }
 
             .tdTotal {
                 padding: 2mm 0;
-                border: solid 1px #bbb;
-                border-width: 0 1px;
+                border: solid 0.5mm #bbb;
+                border-width: 0 0.5mm;
             }
 
             .amountBody {
                 height: 22mm;
-                border: solid 1px #bbb;
-                border-width: 1px;
+                border: solid 0.5mm #bbb;
+                border-width: 0.5mm;
             }
 
             .amountLabel {
@@ -139,7 +140,7 @@ function getBillHtmlA4(shop, transaction, items) {
             }
             
             .footerBody {
-                border: solid 1px #bbb;
+                border: solid 0.5mm #bbb;
                 text-align: left;
                 padding: 0;
             }
@@ -156,7 +157,7 @@ function getBillHtmlA4(shop, transaction, items) {
             }
         </style>
     </head>
-    <body style="transform: scale(.72); zoom: .72;">
+    <body style="transform: scale(1); zoom: 1;">
     `;
     var i = 0;
     var total = 0;
@@ -166,17 +167,17 @@ function getBillHtmlA4(shop, transaction, items) {
             <div class="tableDiv">
             <table width="100%" style="text-align: left; border-collapse: collapse;">
                 <thead>
-                    <tr style="font-size: 10pt; margin: 6px 0 10px 0; border: solid 1px #bbb;">
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 3%;">#</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 27%;">Item Name</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 10%;">Expiry Date</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 10%;">QTY</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 10%;">Price/Unit</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 10%;">Amount</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 9%;">Disc Amount</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 6%;">Taxable</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 5%;">VAT</th>
-                        <th class="thItem" style="padding: 0 0 5px 0; width: 10%; text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">Total</th>
+                    <tr style="font-size: 10pt; margin: 3mm 0 5mm 0; border: solid 0.5mm #bbb;">
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 3%;">#</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 27%;">Item Name</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 10%;">Expiry Date</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 10%;">QTY</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 10%;">Price/Unit</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 10%;">Amount</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 9%;">Disc Amount</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 6%;">Taxable</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 5%;">VAT</th>
+                        <th class="thItem" style="padding: 0 0 2.5mm 0; width: 10%; text-align: right; border: solid 0.5mm #bbb; border-width: 0 0 0 0.5mm;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -187,7 +188,7 @@ function getBillHtmlA4(shop, transaction, items) {
         var tTaxable = 0;
         var tVat = 0;
         var tTotal = 0;
-        for (; i < (p * 17 + 17); i++) {
+        for (; i < (p * 16 + 16); i++) {
             if (i < items.length) {
                 var tot = Number((items[i].qty * Number(items[i].price)).toFixed(2));
                 var disc = Number((tot * Number(items[i].discount) / 100).toFixed(2));
@@ -208,7 +209,7 @@ function getBillHtmlA4(shop, transaction, items) {
                     <td class="tdItem">${disc}</td>
                     <td class="tdItem">${(tot - disc).toFixed(2)}</td>
                     <td class="tdItem">${((tot - disc) * (Number(items[i].vat) / 100)).toFixed(2)}</td>
-                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">${items[i].totalPrice}</td>
+                    <td class="tdItem" style="text-align: right; border: solid 0.5mm #bbb; border-width: 0 0 0 0.5mm;">${items[i].totalPrice}</td>
                 </tr>
                 `;
             } else {
@@ -223,7 +224,7 @@ function getBillHtmlA4(shop, transaction, items) {
                     <td class="tdItem"></td>
                     <td class="tdItem"></td>
                     <td class="tdItem"></td>
-                    <td class="tdItem" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;"></td>
+                    <td class="tdItem" style="text-align: right; border: solid 0.5mm #bbb; border-width: 0 0 0 0.5mm;"></td>
                 </tr>
                 `;
             }
@@ -240,7 +241,7 @@ function getBillHtmlA4(shop, transaction, items) {
                     <td class="tdTotal">${tDiscount.toFixed(2)}</td>
                     <td class="tdTotal">${tTaxable.toFixed(2)}</td>
                     <td class="tdTotal">${tVat.toFixed(2)}</td>
-                    <td class="tdTotal" style="text-align: right; border: solid 1px #bbb; border-width: 0 0 0 1px;">${tTotal.toFixed(2)}</td>
+                    <td class="tdTotal" style="text-align: right; border: solid 0.5mm #bbb; border-width: 0 0 0 0.5mm;">${tTotal.toFixed(2)}</td>
                 </tr>
             </tbody>
         </table>
@@ -268,15 +269,15 @@ function getBillHtmlA4(shop, transaction, items) {
         html += `
             <table width="100%" style="text-align: left; border-collapse: collapse;">
                 <tr>
-                    <td width="30%" style="border: solid 1px #bbb; border-width: 0 0 1px 1px;">
+                    <td width="30%" style="border: solid 0.5mm #bbb; border-width: 0 0 0.5mm 0.5mm;">
                         <div class="footerLabel">License No: </div>
                         <div class="footerData">${shop.licenseno}</div>
                     </td>
-                    <td width="55%" style="border: solid 1px #bbb; border-width: 0 0 1px 0;">
+                    <td width="55%" style="border: solid 0.5mm #bbb; border-width: 0 0 0.5mm 0;">
                         <div class="footerLabel">Prepared By :</div>
                         <div class="footerData">${transaction.userName}</div>
                     </td>
-                    <td width="" style="border: solid 1px #bbb; border-width: 0 1px 1px 0;">
+                    <td width="" style="border: solid 0.5mm #bbb; border-width: 0 0.5mm 0.5mm 0;">
                         <div class="footerLabel">Page :</div>
                         <div class="footerData">${p + 1} of ${noOfPage}</div>
                     </td>

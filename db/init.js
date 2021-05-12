@@ -25,6 +25,18 @@ var sequelize = new Sequelize('sql6411612', 'sql6411612', 'yrvSUvA5d3', {
 //         idle: 10000
 //     }
 // });
+
+
+
+
+
+const ui = 'https://med-ventory-ui.herokuapp.com/';
+// const ui = 'http://localhost:4200/';
+
+
+
+
+
 // users table (1: transaction, 2: inventory, 3: dashboard, 10: admin)
 var User = sequelize.define('users', {
     id: {
@@ -200,13 +212,6 @@ var Shop = sequelize.define('shop', {
 }, {
     freezeTableName: true
 });
-
-
-
-
-
-const ui = 'https://med-ventory-ui.herokuapp.com/';
-// const ui = 'http://localhost:4200/';
 
 module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, ItemUpdate, SaleData, ItemType, Shop, ui };
 
