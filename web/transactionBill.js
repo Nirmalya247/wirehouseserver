@@ -29,7 +29,7 @@ function getBillHtmlA4(shop, transaction, items) {
             </td>
             <td style="border: solid 1px #bbb; padding: 0;">
                 <div class="titleLabel">Bill Date :</div>
-                <div class="titleData">${transaction.createdAt}</div>
+                <div class="titleData">${transaction.createdAt.toLocaleString()}</div>
             </td>
         </tr>
         <tr>
