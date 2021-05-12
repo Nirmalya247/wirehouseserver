@@ -303,7 +303,8 @@ function getTransactionBill(req, res) {
                     var html = getBillHtmlA4(resShop, resTransaction, resTransactionItem);
                     var options = {
                         height: "210mm",
-                        width: "297mm"
+                        width: "297mm",
+                        zoomFactor: "1"
                     };
                     pdf.create(html, options).toStream(function (err, stream) {
                         stream.pipe(res);
