@@ -157,7 +157,7 @@ function getBillHtmlA4(shop, transaction, items) {
             }
         </style>
     </head>
-    <body style="transform: scale(1); zoom: 1;">
+    <body style="transform: scale(1); zoom: 0.72;">
     `;
     var i = 0;
     var total = 0;
