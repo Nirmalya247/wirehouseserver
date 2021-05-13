@@ -302,9 +302,8 @@ function getTransactionBill(req, res) {
                 if (req.query.paper == 'A4') {
                     var html = getBillHtmlA4(resShop, resTransaction, resTransactionItem);
                     var options = {
-                        height: "210mm",
-                        width: "297mm",
-                        zoomFactor: "1"
+                        format: 'a4',
+                        orientation: "landscape"
                     };
                     pdf.create(html, options).toStream(function (err, stream) {
                         stream.pipe(res);

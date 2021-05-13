@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 const user = require('./user');
 const item = require('./item');
 const transaction = require('./transaction');
+const purchase = require('./purchase');
 const customer = require('./customer');
+const salesman = require('./salesman');
 const saleData = require('./saleData');
 const shop = require('./shop');
 const transactionBill = require('./transactionBill');
@@ -41,16 +43,26 @@ app.all('/item/edit', item.edit);
 app.all('/item/update', item.update);
 app.all('/item/delete', item.deleteItem);
 app.all('/item/getitemtypes', item.getItemTypes);
+app.all('/item/racks', item.getRacks);
 
 app.all('/transaction/add', transaction.add);
 app.all('/transaction/gettransactionscount', transaction.getTransactionsCount);
 app.all('/transaction/gettransactions', transaction.getTransactions);
 app.all('/transaction/gettransactionitem', transaction.getTransactionItem);
 app.all('/transaction/gettransactionitembystock', transaction.getTransactionItemByStock);
+app.all('/transaction/getlasttransactionitem', transaction.getLastTransactionItem);
+
+app.all('/purchase/add', purchase.add);
+app.all('/purchase/getpurchasescount', purchase.getPurchasesCount);
+app.all('/purchase/getpurchases', purchase.getPurchases);
 
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
 app.all('/customer/update', customer.update);
+
+app.all('/salesman/get', salesman.get);
+app.all('/salesman/add', salesman.add);
+app.all('/salesman/update', salesman.update);
 
 app.all('/saledata/gettoday', saleData.getToday);
 app.all('/saledata/getgraphdata', saleData.getGraphData);

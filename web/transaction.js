@@ -209,6 +209,37 @@ function getTransactionItem(req, res) {
     }, 1);
 }
 
+// get last transaction item
+function getLastTransactionItem(req, res) {
+    user.check(req, function (authData) {
+        if (authData) {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1;
+            var yyyy = today.getFullYear();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            today = yyyy + '-' + mm + '-' + dd;
+
+            var wh = {
+                itemcode: req.body.itemcode,
+                qtystock: { [Op.gt]: 0 },
+                expiry: { [Op.gt]: today }
+            };
+            mdb.ItemUpdate.findOne({
+                where: wh,
+                order: [['createdAt', 'desc']]
+            }).then(data => {
+                if (data) {
+                    data['err'] = false;
+                    res.send(data);
+                } else res.send({ err: true });
+                
+            });
+        } else res.send({ err: true });
+    }, 1);
+}
+
 // transaction item update
 function transactionItemUpdate(itemcode, qty, callback) {
     var today = new Date();
@@ -269,4 +300,4 @@ function getTransactionItemByStock(req, res) {
     }, 1);
 }
 
-module.exports = { add, getTransactions, getTransactionsCount, getTransactionItem, transactionItemUpdate, getTransactionItemByStock }
+module.exports = { add, getTransactions, getTransactionsCount, getTransactionItem, transactionItemUpdate, getTransactionItemByStock, getLastTransactionItem }

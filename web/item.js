@@ -193,4 +193,11 @@ function getItemTypes(req, res) {
     });
 }
 
-module.exports = { addItem, getItems, getItemsCount, edit, update, deleteItem, getItemTypes }
+// get racks
+function getRacks(req, res) {
+    mdb.Rack.findAll({ }).then(data => {
+        res.send(data);
+    })
+}
+
+module.exports = { addItem, getItems, getItemsCount, edit, update, deleteItem, getItemTypes, getRacks }
