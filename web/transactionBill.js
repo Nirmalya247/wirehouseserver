@@ -45,7 +45,7 @@ function getBillHtmlA4(shop, transaction, items) {
         </tr>
     </table>
     `
-    var noOfPage = Math.ceil(items.length / 16);
+    var noOfPage = Math.ceil(items.length / 18);
     var html = `
     <html>
     <head>
@@ -53,7 +53,7 @@ function getBillHtmlA4(shop, transaction, items) {
         <style>
             body {
                 padding: 0 4mm;
-                font-size: 2mm;
+                font-size: 3.2mm;
             }
             .mainBody {
                 width: 100%;
@@ -104,7 +104,7 @@ function getBillHtmlA4(shop, transaction, items) {
             }
 
             .tdItem {
-                padding: 2mm 0;
+                padding: 0 0;
                 border: solid 0.5mm #bbb;
                 border-width: 0 0.5mm;
                 height: 7mm;
@@ -121,22 +121,23 @@ function getBillHtmlA4(shop, transaction, items) {
             }
 
             .amountBody {
+                position: relative;
                 height: 22mm;
                 border: solid 0.5mm #bbb;
                 border-width: 0.5mm;
             }
 
             .amountLabel {
-                display: inline-block;
+                position: absolute;
                 font-weight: bold;
-                float: right;
+                right: 28mm;
             }
 
             .amountData {
+                position: absolute;
                 text-align: right;
                 width: 28mm;
-                float: right;
-                display: inline-block;
+                right: 0;
             }
             
             .footerBody {
@@ -157,7 +158,7 @@ function getBillHtmlA4(shop, transaction, items) {
             }
         </style>
     </head>
-    <body style="transform: scale(1); zoom: 0.72;">
+    <body style="transform: scale(1); zoom: 1;">
     `;
     var i = 0;
     var total = 0;
@@ -188,7 +189,7 @@ function getBillHtmlA4(shop, transaction, items) {
         var tTaxable = 0;
         var tVat = 0;
         var tTotal = 0;
-        for (; i < (p * 16 + 16); i++) {
+        for (; i < (p * 18 + 18); i++) {
             if (i < items.length) {
                 var tot = Number((items[i].qty * Number(items[i].price)).toFixed(2));
                 var disc = Number((tot * Number(items[i].discount) / 100).toFixed(2));
@@ -308,6 +309,8 @@ function getTransactionBill(req, res) {
                     pdf.create(html, options).toStream(function (err, stream) {
                         stream.pipe(res);
                     });
+                } else if (req.query.paper == 'HTML') {
+                    res.send(getBillHtmlA4(resShop, resTransaction, resTransactionItem));
                 } else {
                     res.send('some error');
                 }
