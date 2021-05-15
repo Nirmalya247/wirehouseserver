@@ -144,7 +144,8 @@ var Customer = sequelize.define('customer', {
     name: { type: Sequelize.STRING },
     phone: { type: Sequelize.STRING(20) },
     email: { type: Sequelize.STRING(128) },
-    credit: { type: Sequelize.DECIMAL(10, 2) }
+    credit: { type: Sequelize.DECIMAL(10, 2) },
+    creditlimit: { type: Sequelize.DECIMAL(10, 2) }
 }, {
     freezeTableName: true
 });
