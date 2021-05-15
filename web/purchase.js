@@ -130,6 +130,12 @@ function getPurchases(req, res) {
                     {userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
                 ] }
             }
+            if (req.body.from && req.body.to && wh['where'] == null) {
+                wh['where'] = {
+                    createdAt: { [Op.lte]: req.body.from },
+                    createdAt: { [Op.gte]: req.body.to }
+                }
+            }
             mdb.Purchase.findAll(wh).then(function(data) {
                 if (data) {
                     res.send(data);
@@ -155,6 +161,12 @@ function getPurchasesCount(req, res) {
                     {userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
                 ] }
+            }
+            if (req.body.from && req.body.to && wh['where'] == null) {
+                wh['where'] = {
+                    createdAt: { [Op.lte]: req.body.from },
+                    createdAt: { [Op.gte]: req.body.to }
+                }
             }
             mdb.Purchase.count(wh).then(function(data) {
                 if (data) {

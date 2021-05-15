@@ -135,6 +135,12 @@ function getTransactions(req, res) {
                     {userName: { [Op.like]: `%${req.body.transactionSearchText}%` } }
                 ] }
             }
+            if (req.body.from && req.body.to && wh['where'] == null) {
+                wh['where'] = {
+                    createdAt: { [Op.lte]: req.body.from },
+                    createdAt: { [Op.gte]: req.body.to }
+                }
+            }
             mdb.Transaction.findAll(wh).then(function(data) {
                 if (data) {
                     res.send(data);
@@ -160,6 +166,12 @@ function getTransactionsCount(req, res) {
                     {userID: { [Op.like]: `%${req.body.transactionSearchText}%` } },
                     {userName: { [Op.like]: `%${req.body.transactionSearchText}%` } }
                 ] }
+            }
+            if (req.body.from && req.body.to && wh['where'] == null) {
+                wh['where'] = {
+                    createdAt: { [Op.lte]: req.body.from },
+                    createdAt: { [Op.gte]: req.body.to }
+                }
             }
             mdb.Transaction.count(wh).then(function(data) {
                 if (data) {
