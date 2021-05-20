@@ -73,4 +73,34 @@ function update(req, res) {
     }, 1);
 }
 
+function customerInfo(req, res) {
+    user.check(req, function (authData) {
+        if (authData) {
+            var data = { };
+
+            mdb.Customer.count().then(customerC => {
+                data['all'] = customerC;
+                mdb.Customer.count({ where: {
+                    updatedAt: { [Op.gte]: `%${req.body.transactionSearchText}%` }
+                } }).then(activeC => {
+                    
+                })
+            })
+
+            var dat = req.body;
+            var id = dat.id;
+            delete dat.id;
+            mdb.Customer.update(dat, { where: { id: id } }).then(function(data) {
+                if (data) {
+                    res.send({ msg: 'customer updated', err: false });
+                } else res.send({ msg: 'some error', err: true, id: '' });
+                console.log(data);
+            }).catch((err) => {
+                console.log(err);
+                res.send({ msg: 'some error', err: true });
+            });
+        } else res.send({ msg: 'some error', err: true });
+    }, 2);
+}
+
 module.exports = { get, add, update }

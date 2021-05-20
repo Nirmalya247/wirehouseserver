@@ -10,10 +10,12 @@ function add(req, res) {
             var data = req.body;
             var items = data.items;
             var customerCredit = data.customerCredit;
+            var cumulativeAmount = data.cumulativeAmount;
             delete data.items;
             delete data['SESSION_ID'];
             delete data['SESSION_USERID'];
             delete data['customerCredit'];
+            delete data['cumulativeAmount'];
 
             var today = new Date();
             var dd = today.getDate();
@@ -62,20 +64,22 @@ function add(req, res) {
                                             }
                                             else {
                                                 saleData.update(data.totalQTY, null, data.totalTaxable, null, dayData => {
+                                                    var customerUp = {
+                                                        qty: Sequelize.literal('qty + ' + data.totalQTY),
+                                                        amount: Sequelize.literal('amount + ' + cumulativeAmount),
+                                                        count: Sequelize.literal('count + ' + 1)
+                                                    };
                                                     if (data.creditAmount > 0 || data.addCredit == 1) {
-                                                        var cred = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
-                                                        //console.log
-                                                        mdb.Customer.update({ credit: cred }, { where: { id: data.customerID } }).then(function(uData) {
-                                                            if (uData) {
-                                                                res.send({ msg: 'done!', err: false, id: id });
-                                                            } else removeTransaction();
-                                                            console.log(data);
-                                                        }).catch((err) => {
-                                                            removeTransaction();
-                                                        });
-                                                    } else {
-                                                        res.send({ msg: 'done!', err: false, id: id });
+                                                        customerUp['credit'] = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
                                                     }
+                                                    mdb.Customer.update(customerUp, { where: { id: data.customerID } }).then(function(uData) {
+                                                        if (uData) {
+                                                            res.send({ msg: 'done!', err: false, id: id });
+                                                        } else removeTransaction();
+                                                        console.log(data);
+                                                    }).catch((err) => {
+                                                        removeTransaction();
+                                                    });
                                                 });
                                             }
                                         }

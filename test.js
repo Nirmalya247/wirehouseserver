@@ -1,12 +1,10 @@
 const { Sequelize, Model, DataTypes, Op } = require('sequelize');
-const uuid = require('uuidv4');
 
 
-var sequelize = new Sequelize('test', 'root', 'Nirmalya18147', {
-    host: 'localhost',
+var sequelize = new Sequelize('test_ng', 'remote', 'ab@1234CD', {
+    host: '157.245.105.80',
     dialect: 'mysql',
-    port: 3310,
-
+    port: 3306,
     pool: {
         max: 5,
         min: 0,
@@ -24,6 +22,17 @@ var Student = sequelize.define('student', {
     phoneno: { type: Sequelize.BIGINT },
     email: { type: Sequelize.STRING },
     name: { type: Sequelize.STRING },
+    dept: { type: Sequelize.STRING }
+}, {
+    freezeTableName: true
+});
+
+var Dept = sequelize.define('dept', {
+    id: {
+        type: Sequelize.STRING,
+        primaryKey: true
+    },
+    name: { type: Sequelize.STRING }
 }, {
     freezeTableName: true
 });

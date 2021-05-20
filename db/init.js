@@ -2,8 +2,8 @@ const { Sequelize, Model, DataTypes } = require('sequelize');
 
 // dbname, username, password
 
-var sequelize = new Sequelize('sql6411612', 'sql6411612', 'yrvSUvA5d3', {
-    host: 'sql6.freemysqlhosting.net',
+var sequelize = new Sequelize('wirehouse', 'remote', 'ab@1234CD', {
+    host: '157.245.105.80',
     dialect: 'mysql',
     port: 3306,
 
@@ -81,6 +81,7 @@ var Item = sequelize.define('items', {
     hsn: { type: Sequelize.STRING(45) },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
+    discountamount: { type: Sequelize.DECIMAL(10, 2) },
     manufacturer: { type: Sequelize.STRING },
     description: { type: Sequelize.STRING(1024) },
     qty: { type: Sequelize.BIGINT },
@@ -129,6 +130,7 @@ var TransactionItem = sequelize.define('transactionitem', {
     price: { type: Sequelize.DECIMAL(10, 2) },
     qty: { type: Sequelize.INTEGER },
     discount: { type: Sequelize.DECIMAL(10, 2) },
+    discountamount: { type: Sequelize.DECIMAL(10, 2) },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     totalPrice: { type: Sequelize.DECIMAL(10, 2) },
     expiry: { type: Sequelize.DATEONLY }
@@ -145,7 +147,10 @@ var Customer = sequelize.define('customer', {
     phone: { type: Sequelize.STRING(20) },
     email: { type: Sequelize.STRING(128) },
     credit: { type: Sequelize.DECIMAL(10, 2) },
-    creditlimit: { type: Sequelize.DECIMAL(10, 2) }
+    creditlimit: { type: Sequelize.DECIMAL(10, 2) },
+    qty: { type: Sequelize.INTEGER },
+    amount: { type: Sequelize.DECIMAL(10, 2) },
+    count: { type: Sequelize.INTEGER }
 }, {
     freezeTableName: true
 });
@@ -188,6 +193,7 @@ var ItemUpdate = sequelize.define('itemupdate', {
     qtystock: { type: Sequelize.BIGINT },
     price: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
+    discountamount: { type: Sequelize.DECIMAL(10, 2) },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     cost: { type: Sequelize.DECIMAL(10, 2) },
     totalcost: { type: Sequelize.DECIMAL(10, 2) },
@@ -250,8 +256,9 @@ var Shop = sequelize.define('shop', {
     shopotherphoneno: { type: Sequelize.STRING(20) },
     vatno: { type: Sequelize.STRING(512) },
     licenseno: { type: Sequelize.STRING(100) },
-    vat: { type: Sequelize.INTEGER },
-    discount: { type: Sequelize.INTEGER }
+    vat: { type: Sequelize.DECIMAL(10,2) },
+    discount: { type: Sequelize.DECIMAL(10,2) },
+    discountamount: { type: Sequelize.DECIMAL(10, 2) }
 }, {
     freezeTableName: true
 });
