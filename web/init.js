@@ -59,6 +59,10 @@ app.all('/purchase/getpurchases', purchase.getPurchases);
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
 app.all('/customer/update', customer.update);
+app.all('/customer/delete', customer.deleteCustomer);
+app.all('/customer/customerinfo', customer.customerInfo);
+app.all('/customer/getcustomer', customer.getCustomer);
+app.all('/customer/getcustomercount', customer.getCustomerCount);
 
 app.all('/salesman/get', salesman.get);
 app.all('/salesman/add', salesman.add);
