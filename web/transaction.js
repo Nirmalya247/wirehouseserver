@@ -10,12 +10,11 @@ function add(req, res) {
             var data = req.body;
             var items = data.items;
             var customerCredit = data.customerCredit;
-            var cumulativeAmount = data.cumulativeAmount;
+            var cumulativeAmount = data.totalCost;
             delete data.items;
             delete data['SESSION_ID'];
             delete data['SESSION_USERID'];
             delete data['customerCredit'];
-            delete data['cumulativeAmount'];
 
             var today = new Date();
             var dd = today.getDate();

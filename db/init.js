@@ -99,8 +99,9 @@ var Transaction = sequelize.define('transaction', {
     },
     totalItem: { type: Sequelize.INTEGER },
     totalQTY: { type: Sequelize.INTEGER },
-    totalTaxable: { type: Sequelize.DECIMAL(10, 2) },
     totalAmount: { type: Sequelize.DECIMAL(10, 2) },
+    totalTaxable: { type: Sequelize.DECIMAL(10, 2) },
+    totalCost: { type: Sequelize.DECIMAL(10, 2) },
     totalTendered: { type: Sequelize.DECIMAL(10, 2) },
     changeDue: { type: Sequelize.DECIMAL(10, 2) },
     creditAmount: { type: Sequelize.DECIMAL(10, 2) },
@@ -160,6 +161,7 @@ var Purchase = sequelize.define('purchase', {
         type: Sequelize.STRING(14),
         primaryKey: true
     },
+    billID: { type: Sequelize.STRING(40) },
     totalItem: { type: Sequelize.INTEGER },
     totalQTY: { type: Sequelize.INTEGER },
     totalAmount: { type: Sequelize.DECIMAL(10, 2) },

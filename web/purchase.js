@@ -124,6 +124,7 @@ function getPurchases(req, res) {
             if (req.body.purchaseSearchText && req.body.purchaseSearchText != '') {
                 wh['where'] = { [Op.or]: [
                     {id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                    {billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {salesmanName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {salesmanID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
@@ -156,6 +157,7 @@ function getPurchasesCount(req, res) {
             if (req.body.purchaseSearchText && req.body.purchaseSearchText != '') {
                 wh['where'] = { [Op.or]: [
                     {id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                    {billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {salesmanName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {salesmanID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
                     {userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },

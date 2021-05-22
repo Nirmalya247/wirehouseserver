@@ -11,6 +11,7 @@ const salesman = require('./salesman');
 const saleData = require('./saleData');
 const shop = require('./shop');
 const transactionBill = require('./transactionBill');
+const accounting = require('./accounting');
 const saleData2 = require('../db/saleData');
 
 var app = express();
@@ -81,6 +82,7 @@ app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
 
 app.all('/transaction-bill', transactionBill.getTransactionBill);
+app.all('/accounting/csv', accounting.getCSV);
 http.createServer(app).listen(process.env.PORT || 4210);
 
 console.log('*******web*******');
