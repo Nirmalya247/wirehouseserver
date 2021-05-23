@@ -81,53 +81,95 @@ function getGraphData(req, res) {
                 if (res) {
                     var datas = {
                         labels: [],
+                        itemsold: [],
+                        itembought: [],
                         earning: [],
                         spending: [],
                         profit: [],
+                        now: {
+                            itemsold: 0,
+                            itembought: 0,
+                            earning: 0,
+                            spending: 0,
+                            profit: 0
+                        },
                         err: false
                     };
                     if (findby == 'year') {
                         for (var i = 0; i < data.length; i++) {
                             datas.labels.push(data[i].dataValues.tim);
+                            datas.itemsold.push(Number(data[i].itemsold));
+                            datas.itembought.push(Number(data[i].itembought));
                             datas.earning.push(Number(data[i].earning));
                             datas.spending.push(Number(data[i].spending));
                             datas.profit.push(Number(data[i].earning) - Number(data[i].spending));
                         }
-                        // datas = {
-                        //     findby: 'year',
-                        //     data: data,
-                        //     datas: datas
-                        // };
+                        datas.now = {
+                            itemsold: Number(data[data.length - 1].itemsold),
+                            itembought: Number(data[data.length - 1].itembought),
+                            earning: Number(data[data.length - 1].earning),
+                            spending: Number(data[data.length - 1].spending),
+                            profit: Number(data[data.length - 1].earning) - Number(data[data.length - 1].spending)
+                        };
                     }
                     if (findby == 'month') {
                         datas.labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JULY', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                        datas.itemsold = Array(12).fill(0);
+                        datas.itembought = Array(12).fill(0);
                         datas.earning = Array(12).fill(0);
                         datas.spending = Array(12).fill(0);
                         datas.profit = Array(12).fill(0);
+                        var timM = -1;
+                        var iM = -1;
                         for (var i = 0; i < data.length; i++) {
                             var tim = Number(data[i].dataValues.tim) - 1;
+                            if (tim > timM) {
+                                timM = tim;
+                                iM = i;
+                            }
+                            datas.itemsold[tim] = Number(data[i].itemsold);
+                            datas.itembought[tim] = Number(data[i].itembought);
                             datas.earning[tim] = Number(data[i].earning);
                             datas.spending[tim] = Number(data[i].spending);
                             datas.profit[tim] = datas.earning[tim] - datas.spending[tim];
                         }
-                        // datas = {
-                        //     findby: 'month',
-                        //     data: data,
-                        //     datas: datas
-                        // };
+                        datas.now = {
+                            itemsold: Number(data[iM].itemsold),
+                            itembought: Number(data[iM].itembought),
+                            earning: Number(data[iM].earning),
+                            spending: Number(data[iM].spending),
+                            profit: Number(data[iM].earning) - Number(data[iM].spending)
+                        };
                     }
                     if (findby == 'day') {
                         var days = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
                         datas.labels = Array.from({ length: days }, (_, i) => i + 1);
+                        datas.itemsold = Array(days).fill(0);
+                        datas.itembought = Array(days).fill(0);
                         datas.earning = Array(days).fill(0);
                         datas.spending = Array(days).fill(0);
                         datas.profit = Array(days).fill(0);
+                        var timM = -1;
+                        var iM = -1;
                         for (var i = 0; i < data.length; i++) {
                             var tim = Number(data[i].dataValues.tim) - 1;
+                            if (tim > timM) {
+                                timM = tim;
+                                iM = i;
+                            }
+                            datas.itemsold[tim] = Number(data[i].itemsold);
+                            datas.itembought[tim] = Number(data[i].itembought);
                             datas.earning[tim] = Number(data[i].earning);
                             datas.spending[tim] = Number(data[i].spending);
                             datas.profit[tim] = datas.earning[tim] - datas.spending[tim];
                         }
+                        datas.now = {
+                            itemsold: Number(data[iM].itemsold),
+                            itembought: Number(data[iM].itembought),
+                            earning: Number(data[iM].earning),
+                            spending: Number(data[iM].spending),
+                            profit: Number(data[iM].earning) - Number(data[iM].spending)
+                        };
                         // datas = {
                         //     findby: 'day',
                         //     data: data,
