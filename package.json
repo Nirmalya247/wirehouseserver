@@ -21,6 +21,7 @@
     "json2csv": "^5.0.6",
     "jspdf": "^2.3.1",
     "mysql2": "^2.2.5",
+    "nodemailer": "^6.6.0",
     "sequelize": "^6.6.2",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.7"

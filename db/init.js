@@ -256,6 +256,8 @@ var Shop = sequelize.define('shop', {
     shopaddress: { type: Sequelize.STRING(1024) },
     shopphoneno: { type: Sequelize.STRING(20) },
     shopotherphoneno: { type: Sequelize.STRING(20) },
+    shopemail: { type: Sequelize.STRING(80) },
+    shopemailpassword: { type: Sequelize.STRING(80) },
     vatno: { type: Sequelize.STRING(512) },
     licenseno: { type: Sequelize.STRING(100) },
     vat: { type: Sequelize.DECIMAL(10,2) },
@@ -274,6 +276,10 @@ var Rack = sequelize.define('rack', {
 }, {
     freezeTableName: true
 });
+
+
+ItemUpdate.belongsTo(Salesman, {as: 'salesmans', foreignKey: 'salesmanid', targetKey: 'id'});
+Salesman.hasMany(ItemUpdate, {as: 'itemUpdates', foreignKey: 'salesmanid', targetKey: 'id'});
 
 module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, Purchase, ItemUpdate, Salesman, SaleData, ItemType, Shop, ui, Rack };
 

@@ -38,8 +38,18 @@ var Dept = sequelize.define('dept', {
 });
 
 
+Student.belongsTo(Dept, {as: 'depts', foreignKey: 'dept', targetKey: 'id'});
+Dept.hasMany(Student, {as: 'students', foreignKey: 'dept', targetKey: 'id'});
+
+
 sequelize.sync({ force: false }).then(function () {
     console.log('database connected');
+    Student.findAll({
+        include: [{ model: Dept, as: 'depts' }]
+      }).then(data => {
+          console.log(data[0].dataValues);
+      });
+    /*
     findAndUp(res => {
         console.log(res);
         res[1].name = 'rames4';
@@ -47,6 +57,7 @@ sequelize.sync({ force: false }).then(function () {
         res[2].name = 'rames5';
         res[2].save();
     });
+    */
 });
 
 function create(callback) {

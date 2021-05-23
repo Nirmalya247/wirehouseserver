@@ -1,6 +1,7 @@
 const mdb = require('../db/init');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
+const nodemailer = require('nodemailer');
 
 // today sales data
 function getToday(req, res) {
@@ -42,14 +43,14 @@ function getGraphData(req, res) {
                 [Sequelize.fn('sum', Sequelize.col('earning')), 'earning'],
                 [Sequelize.fn('sum', Sequelize.col('spending')), 'spending']
             ];
-            var condition = { }
+            var condition = {}
             var today = new Date();
             var dd = today.getDate();
             var mm = today.getMonth() + 1;
             var yyyy = today.getFullYear();
             if (dd < 10) dd = '0' + dd;
             if (mm < 10) mm = '0' + mm;
-        
+
             var lim = 0;
             if (findby == 'year') {
                 group = [Sequelize.literal('year(days)')];
@@ -117,7 +118,7 @@ function getGraphData(req, res) {
                     }
                     if (findby == 'day') {
                         var days = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-                        datas.labels = Array.from({length: days}, (_, i) => i + 1);
+                        datas.labels = Array.from({ length: days }, (_, i) => i + 1);
                         datas.earning = Array(days).fill(0);
                         datas.spending = Array(days).fill(0);
                         datas.profit = Array(days).fill(0);
@@ -158,9 +159,9 @@ function getStock(req, res) {
             };
             mdb.Item.findAll(wh).then(data => {
                 if (data) res.send(data);
-                else res.send([ ]);
+                else res.send([]);
             })
-        } else res.send([ ]);
+        } else res.send([]);
     });
 }
 
@@ -168,7 +169,7 @@ function getStock(req, res) {
 function getStockCount(req, res) {
     user.check(req, function (dataAuth) {
         if (dataAuth) {
-            var wh = { };
+            var wh = {};
             mdb.Item.count(wh).then(data => {
                 console.log('***********', data);
                 if (data) res.send(data.toString());
@@ -204,13 +205,13 @@ function getDemand(req, res) {
                     createdAt: { [Op.gte]: yyyy + '-' + mm + '-01' },
                     itemname: { [Op.ne]: 'credit amount' }
                 },
-                group: [ 'itemcode' ]
+                group: ['itemcode']
             };
             mdb.TransactionItem.findAll(wh).then(data => {
                 if (data) res.send(data);
-                else res.send([ ]);
+                else res.send([]);
             });
-        } else res.send([ ]);
+        } else res.send([]);
     });
 }
 
@@ -253,7 +254,7 @@ function getExpiry(req, res) {
             var page = req.body.page;
             var limit = req.body.limit;
             var order = req.body.order;
-        
+
             var today = new Date();
             today = new Date(today.setMonth(today.getMonth() + 12));
             var dd = today.getDate();
@@ -262,7 +263,7 @@ function getExpiry(req, res) {
             if (dd < 10) dd = '0' + dd;
             if (mm < 10) mm = '0' + mm;
             today = yyyy + '-' + mm + '-' + dd;
-        
+
             mdb.ItemUpdate.findAll({
                 offset: (parseInt(page) - 1) * parseInt(limit),
                 limit: parseInt(limit),
@@ -270,11 +271,12 @@ function getExpiry(req, res) {
                 where: {
                     qtystock: { [Op.gt]: 0 },
                     expiry: { [Op.lt]: today }
-                }
+                },
+                include: [{ model: mdb.Salesman, as: 'salesmans' }]
             }).then(data => {
                 res.send(data);
             });
-        } else res.send([ ]);
+        } else res.send([]);
     });
 }
 
@@ -285,7 +287,7 @@ function getExpiryCount(req, res) {
             var page = req.body.page;
             var limit = req.body.limit;
             var order = req.body.order;
-        
+
             var today = new Date();
             today = new Date(today.setMonth(today.getMonth() + 12));
             var dd = today.getDate();
@@ -294,7 +296,7 @@ function getExpiryCount(req, res) {
             if (dd < 10) dd = '0' + dd;
             if (mm < 10) mm = '0' + mm;
             today = yyyy + '-' + mm + '-' + dd;
-        
+
             mdb.ItemUpdate.count({
                 where: {
                     qtystock: { [Op.gt]: 0 },
@@ -307,4 +309,85 @@ function getExpiryCount(req, res) {
     });
 }
 
-module.exports = { getToday, getGraphData, getStock, getStockCount, getDemand, getDemandCount, getExpiry, getExpiryCount }
+// credit
+
+// get credit
+function getCredit(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+
+            mdb.Customer.findAll({
+                where: { credit: { [Op.gt]: 0 } },
+                offset: (parseInt(page) - 1) * parseInt(limit),
+                limit: parseInt(limit),
+                order: [[Sequelize.literal(`(creditlimit - credit)`), req.body.order]]
+            }).then(data => {
+                res.send(data);
+            });
+        } else res.send([]);
+    });
+}
+
+// get credit count
+function getCreditCount(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+
+            mdb.Customer.count({ where: { credit: { [Op.gt]: 0 } } }).then(data => {
+                res.send(data.toString());
+            });
+        } else res.send('0');
+    });
+}
+
+// send credit email
+function sendCreditEmail(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            mdb.Shop.findOne({ where: { id: 1 } }).then(shopData => {
+                mdb.Customer.findOne({ where: { id: req.body.customerid } }).then(customerData => {
+                    var transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: shopData.shopemail,
+                            pass: shopData.shopemailpassword
+                        }
+                    });
+
+                    var mailOptions = {
+                        from: shopData.shopemail,
+                        to: customerData.email,
+                        subject: `${shopData.shopname} Credit`,
+                        text: `
+Hello ${customerData.name}
+
+Your credit amount is ${customerData.credit} with a limit of ${customerData.creditlimit}.
+Please consider paying back your credit amount.
+
+Thank you.
+
+(Contact info)
+Address : ${shopData.shopaddress}
+Phone No: ${shopData.shopphoneno} / ${shopData.shopotherphoneno}
+Email   :${shopData.shopemail}
+`
+                    };
+
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            res.send(res.send({ msg: 'some error', err: true }));
+                        } else {
+                            res.send(res.send({ msg: 'email sent', err: false }));
+                        }
+                    });
+                });
+            });
+        } else res.send(res.send({ msg: 'not permitted', err: true }));
+    });
+}
+
+module.exports = { getToday, getGraphData, getStock, getStockCount, getDemand, getDemandCount, getExpiry, getExpiryCount, getCredit, getCreditCount, sendCreditEmail }

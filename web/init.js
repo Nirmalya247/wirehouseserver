@@ -77,6 +77,9 @@ app.all('/saledata/getdemand', saleData.getDemand);
 app.all('/saledata/getdemandcount', saleData.getDemandCount);
 app.all('/saledata/getexpiry', saleData.getExpiry);
 app.all('/saledata/getexpirycount', saleData.getExpiryCount);
+app.all('/saledata/getcredit', saleData.getCredit);
+app.all('/saledata/getcreditcount', saleData.getCreditCount);
+app.all('/saledata/sendcreditemail', saleData.sendCreditEmail);
 
 app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
