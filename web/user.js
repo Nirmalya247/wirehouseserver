@@ -1,5 +1,8 @@
 const mdb = require('../db/init');
 const { Op } = require('sequelize');
+const idgen = require('../db/idgen');
+
+
 function makeid(length) {
     var result = [];
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -35,6 +38,20 @@ function check(req, callback, isadmin) {
             } else callback(false);
         })
     } else callback(false);
+}
+
+async function checkAsync(req, isadmin) {
+    if (req.body.SESSION_ID && req.body.SESSION_USERID) {
+        var wh = { id: req.body.SESSION_ID, uid: req.body.SESSION_USERID, active: 1 }
+        var data = await mdb.Session.findOne({ where: wh })
+        if (data != null) {
+            if (isadmin) {
+                wh = { id: req.body.SESSION_USERID, isadmin: { [Op.gte]: isadmin } }
+                var data2 = await mdb.User.findOne({ where: wh })
+                return (data2 != null);
+            } else return true;
+        } else return false;
+    } else return false;
 }
 
 // all web
@@ -112,12 +129,15 @@ function create(req, res) {
             var dataUser = req.body;
             delete dataUser['SESSION_ID'];
             delete dataUser['SESSION_USERID'];
-            mdb.User.create( dataUser ).then((data) => {
-                if (data != null) {
-                    res.send({ msg: 'user created', err: false });
-                } else {
-                    res.send({ msg: 'some error', err: true });
-                }
+            idgen.getID(idgen.tableID.users, 'num', 1, false, id => {
+                dataUser['id'] = id;
+                mdb.User.create( dataUser ).then((data) => {
+                    if (data != null) {
+                        res.send({ msg: 'user created', err: false });
+                    } else {
+                        res.send({ msg: 'some error', err: true });
+                    }
+                });
             });
         }
         else {
@@ -270,4 +290,4 @@ function deleteUser(req, res) {
     }, 10);
 }
 
-module.exports = { makeid, makeidSmall, check, login, checklogin, logout, get, create, update, getUsers, getUsersCount, deactivate, activate, deleteUser }
+module.exports = { makeid, makeidSmall, check, checkAsync, login, checklogin, logout, get, create, update, getUsers, getUsersCount, deactivate, activate, deleteUser }

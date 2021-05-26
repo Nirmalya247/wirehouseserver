@@ -1,6 +1,7 @@
 const mdb = require('../db/init');
 const user = require('./user');
 const { Op } = require('sequelize');
+const idgen = require('../db/idgen');
 
 // get customer data
 function get(req, res) {
@@ -18,7 +19,7 @@ function get(req, res) {
                 v.push({ email: req.body.email });
             }
             wh['where'] = { [Op.or]: v };
-            mdb.Salesman.findOne(wh).then(function(data) {
+            mdb.Vendor.findOne(wh).then(function(data) {
                 console.log(data);
                 if (data) {
                     data.dataValues['found'] = true;
@@ -38,17 +39,19 @@ function add(req, res) {
     user.check(req, function (authData) {
         if (authData) {
             var dat = req.body;
-            dat['id'] = user.makeidSmall(8);
-            mdb.Salesman.create(dat).then(function(data) {
-                if (data) {
-                    data['msg'] = 'salesman added';
-                    data['err'] = false;
-                    res.send(data);
-                } else res.send({ msg: 'some error', err: true, id: '' });
-                console.log(data);
-            }).catch((err) => {
-                console.log(err);
-                res.send({ msg: 'some error', err: true, id: '' });
+            idgen.getID(idgen.tableID.vendor, 'num', 1, false, id => {
+                dat['id'] = id;
+                mdb.Vendor.create(dat).then(function(data) {
+                    if (data) {
+                        data['msg'] = 'vendor added';
+                        data['err'] = false;
+                        res.send(data);
+                    } else res.send({ msg: 'some error', err: true, id: '' });
+                    console.log(data);
+                }).catch((err) => {
+                    console.log(err);
+                    res.send({ msg: 'some error', err: true, id: '' });
+                });
             });
         } else res.send({ msg: 'some error', err: true, id: '' });
     }, 2);
@@ -60,9 +63,9 @@ function update(req, res) {
             var dat = req.body;
             var id = dat.id;
             delete dat.id;
-            mdb.Salesman.update(dat, { where: { id: id } }).then(function(data) {
+            mdb.Vendor.update(dat, { where: { id: id } }).then(function(data) {
                 if (data) {
-                    res.send({ msg: 'Salesman updated', err: false });
+                    res.send({ msg: 'Vendor updated', err: false });
                 } else res.send({ msg: 'some error', err: true, id: '' });
                 console.log(data);
             }).catch((err) => {

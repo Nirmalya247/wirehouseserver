@@ -6,7 +6,7 @@ var pdf = require('html-pdf');
 // shop ->
 //  shopname
 
-function getBillHtmlA4(shop, transaction, items) {
+function getBillHtmlA4(shop, sale, items) {
     var header = `
     <div style="">
     <table width="100%" style="text-align: left; border-collapse: collapse;">
@@ -26,21 +26,21 @@ function getBillHtmlA4(shop, transaction, items) {
             </td>
             <td style="border: solid 0.5mm #bbb; padding: 0;">
                 <div class="titleLabel">Bill No :</div>
-                <div class="titleData">${transaction.id}</div><br>
+                <div class="titleData">${sale.id}</div><br>
             </td>
             <td style="border: solid 0.5mm #bbb; padding: 0;">
                 <div class="titleLabel">Bill Date :</div>
-                <div class="titleData">${transaction.createdAt.toLocaleString()}</div>
+                <div class="titleData">${sale.createdAt.toLocaleString()}</div>
             </td>
         </tr>
         <tr>
             <td colspan="2" style="border: solid 0.5mm #bbb; vertical-align:top;">
                 <div class="titleLabel">Reg ID</div>
-                <div class="titleData">: ${transaction.customerID}</div>
+                <div class="titleData">: ${sale.customerID}</div>
                 <div class="titleLabel">Custome Name</div>
-                <div class="titleData">: ${transaction.customerName}</div><br>
+                <div class="titleData">: ${sale.customerName}</div><br>
                 <div class="titleLabel">Custome No</div>
-                <div class="titleData">: ${transaction.customerPhone}</div><br>
+                <div class="titleData">: ${sale.customerPhone}</div><br>
             </td>
         </tr>
     </table>
@@ -253,11 +253,11 @@ function getBillHtmlA4(shop, transaction, items) {
             <div class="amountBody">
                 <div class="amountData">${Math.floor(total)}</div>
                 <div class="amountLabel">Total Amount :</div><br><br>
-                <div class="amountData">${transaction.totalTendered}</div>
+                <div class="amountData">${sale.totalTendered}</div>
                 <div class="amountLabel">Payment :</div><br>
-                <div class="amountData">${transaction.changeDue}</div>
+                <div class="amountData">${sale.changeDue}</div>
                 <div class="amountLabel">Due :</div><br>
-                <div class="amountData">${transaction.creditAmount}</div>
+                <div class="amountData">${sale.creditAmount}</div>
                 <div class="amountLabel">Credit :</div>
             </div>
             `;
@@ -276,7 +276,7 @@ function getBillHtmlA4(shop, transaction, items) {
                     </td>
                     <td width="55%" style="border: solid 0.5mm #bbb; border-width: 0 0 0.5mm 0;">
                         <div class="footerLabel">Prepared By :</div>
-                        <div class="footerData">${transaction.userName}</div>
+                        <div class="footerData">${sale.userName}</div>
                     </td>
                     <td width="" style="border: solid 0.5mm #bbb; border-width: 0 0.5mm 0.5mm 0;">
                         <div class="footerLabel">Page :</div>
@@ -295,13 +295,13 @@ function getBillHtmlA4(shop, transaction, items) {
     return html;
 }
 
-function getTransactionBill(req, res) {
-    var transactionId = req.query.transactionId;
+function getSaleBill(req, res) {
+    var saleId = req.query.saleId;
     mdb.Shop.findOne({ where: { id: 1 } }).then(resShop => {
-        mdb.Transaction.findOne({ where: { id: transactionId } }).then(resTransaction => {
-            mdb.TransactionItem.findAll({ where: { transactionId: transactionId } }).then(resTransactionItem => {
+        mdb.Sale.findOne({ where: { id: saleId } }).then(resSale => {
+            mdb.SaleItem.findAll({ where: { saleId: saleId } }).then(resSaleItem => {
                 if (req.query.paper == 'A4') {
-                    var html = getBillHtmlA4(resShop, resTransaction, resTransactionItem);
+                    var html = getBillHtmlA4(resShop, resSale, resSaleItem);
                     var options = {
                         format: 'a4',
                         orientation: "landscape"
@@ -310,7 +310,7 @@ function getTransactionBill(req, res) {
                         stream.pipe(res);
                     });
                 } else if (req.query.paper == 'HTML') {
-                    res.send(getBillHtmlA4(resShop, resTransaction, resTransactionItem));
+                    res.send(getBillHtmlA4(resShop, resSale, resSaleItem));
                 } else {
                     res.send('some error');
                 }
@@ -319,4 +319,4 @@ function getTransactionBill(req, res) {
     });
 }
 
-module.exports = { getTransactionBill }
+module.exports = { getSaleBill }

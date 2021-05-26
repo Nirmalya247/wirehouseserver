@@ -37,11 +37,10 @@ const ui = 'https://med-ventory-ui.herokuapp.com/';
 
 
 
-// users table (1: transaction, 2: inventory, 3: dashboard, 10: admin)
+// users table (1: sale, 2: inventory, 3: dashboard, 10: admin)
 var User = sequelize.define('users', {
     id: {
-        type: Sequelize.BIGINT,
-        autoIncrement: true,
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
     phoneno: { type: Sequelize.STRING(20) },
@@ -91,10 +90,10 @@ var Item = sequelize.define('items', {
 }, {
     freezeTableName: true
 });
-// transaction table
-var Transaction = sequelize.define('transaction', {
+// Sale table
+var Sale = sequelize.define('sales', {
     id: {
-        type: Sequelize.STRING(14),
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
     totalItem: { type: Sequelize.INTEGER },
@@ -111,19 +110,19 @@ var Transaction = sequelize.define('transaction', {
     customerName: { type: Sequelize.STRING(255) },
     customerPhone: { type: Sequelize.STRING(20) },
     customerEmail: { type: Sequelize.STRING(128) },
-    userID: { type: Sequelize.BIGINT },
+    userID: { type: Sequelize.STRING(20) },
     userName: { type: Sequelize.STRING }
 }, {
     freezeTableName: true
 });
-// transactionItem table
-var TransactionItem = sequelize.define('transactionitem', {
+// saleItem table
+var SaleItem = sequelize.define('salesitem', {
     id: {
         allowNull: false,
         type: Sequelize.STRING(32),
         primaryKey: true
     },
-    transactionId: { type: Sequelize.STRING(14) },
+    saleId: { type: Sequelize.STRING(20) },
     stockid: { type: Sequelize.STRING(20) },
     itemcode: { type: Sequelize.STRING(512) },
     itemname: { type: Sequelize.STRING(255) },
@@ -134,6 +133,7 @@ var TransactionItem = sequelize.define('transactionitem', {
     discountamount: { type: Sequelize.DECIMAL(10, 2) },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     totalPrice: { type: Sequelize.DECIMAL(10, 2) },
+    mfg: { type: Sequelize.DATEONLY },
     expiry: { type: Sequelize.DATEONLY }
 }, {
     freezeTableName: true
@@ -141,7 +141,7 @@ var TransactionItem = sequelize.define('transactionitem', {
 // customer table
 var Customer = sequelize.define('customer', {
     id: {
-        type: Sequelize.STRING(8),
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
     name: { type: Sequelize.STRING },
@@ -158,7 +158,7 @@ var Customer = sequelize.define('customer', {
 // purchase table
 var Purchase = sequelize.define('purchase', {
     id: {
-        type: Sequelize.STRING(14),
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
     billID: { type: Sequelize.STRING(40) },
@@ -169,14 +169,17 @@ var Purchase = sequelize.define('purchase', {
     totalCost: { type: Sequelize.DECIMAL(10, 2) },
     totalTendered: { type: Sequelize.DECIMAL(10, 2) },
     changeDue: { type: Sequelize.DECIMAL(10, 2) },
-    creditAmount: { type: Sequelize.DECIMAL(10, 2) },
+    dueAmount: { type: Sequelize.DECIMAL(10, 2) },
+    dueDate: { type: Sequelize.DATEONLY },
     paymentMode: { type: Sequelize.STRING(14) },
-    addCredit: { type: Sequelize.INTEGER },
-    salesmanID: { type: Sequelize.STRING(8) },
-    salesmanName: { type: Sequelize.STRING(255) },
-    salesmanPhone: { type: Sequelize.STRING(20) },
-    salesmanEmail: { type: Sequelize.STRING(128) },
-    userID: { type: Sequelize.BIGINT },
+    addDue: { type: Sequelize.INTEGER },
+    vendorID: { type: Sequelize.STRING(20) },
+    vendorFName: { type: Sequelize.STRING(255) },
+    vendorLName: { type: Sequelize.STRING(255) },
+    vendorCompany: { type: Sequelize.STRING(255) },
+    vendorPhone: { type: Sequelize.STRING(20) },
+    vendorEmail: { type: Sequelize.STRING(128) },
+    userID: { type: Sequelize.STRING(20) },
     userName: { type: Sequelize.STRING }
 }, {
     freezeTableName: true
@@ -184,11 +187,10 @@ var Purchase = sequelize.define('purchase', {
 // item update
 var ItemUpdate = sequelize.define('itemupdate', {
     id: {
-        type: Sequelize.BIGINT,
-        autoIncrement: true,
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
-    purchaseId: { type: Sequelize.STRING(14) },
+    purchaseId: { type: Sequelize.STRING(20) },
     itemcode: { type: Sequelize.STRING(512) },
     itemname: { type: Sequelize.STRING(255) },
     qty: { type: Sequelize.BIGINT },
@@ -199,24 +201,76 @@ var ItemUpdate = sequelize.define('itemupdate', {
     vat: { type: Sequelize.DECIMAL(10, 2) },
     cost: { type: Sequelize.DECIMAL(10, 2) },
     totalcost: { type: Sequelize.DECIMAL(10, 2) },
+    mfg: { type: Sequelize.DATEONLY },
     expiry: { type: Sequelize.DATEONLY },
     rack: { type: Sequelize.STRING(20) },
-    salesmanid: { type: Sequelize.STRING(8) },
+    vendorid: { type: Sequelize.STRING(20) },
     description: { type: Sequelize.STRING(1024) }
 }, {
     freezeTableName: true
 });
-// salesman table
-var Salesman = sequelize.define('salesman', {
+// return table
+var Return = sequelize.define('return', {
     id: {
-        type: Sequelize.STRING(8),
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
-    name: { type: Sequelize.STRING },
+    totalItem: { type: Sequelize.INTEGER },
+    totalQTY: { type: Sequelize.INTEGER },
+    totalAmount: { type: Sequelize.DECIMAL(10, 2) },
+    totalTendered: { type: Sequelize.DECIMAL(10, 2) },
+    changeDue: { type: Sequelize.DECIMAL(10, 2) },
+    dueAmount: { type: Sequelize.DECIMAL(10, 2) },
+    dueDate: { type: Sequelize.DATEONLY },
+    paymentMode: { type: Sequelize.STRING(14) },
+    addDue: { type: Sequelize.INTEGER },
+    vendorID: { type: Sequelize.STRING(20) },
+    vendorFName: { type: Sequelize.STRING(255) },
+    vendorLName: { type: Sequelize.STRING(255) },
+    vendorCompany: { type: Sequelize.STRING(255) },
+    vendorPhone: { type: Sequelize.STRING(20) },
+    vendorEmail: { type: Sequelize.STRING(128) },
+    userID: { type: Sequelize.STRING(20) },
+    userName: { type: Sequelize.STRING }
+}, {
+    freezeTableName: true
+});
+// return item
+var ReturnItem = sequelize.define('returnitem', {
+    id: {
+        type: Sequelize.STRING(20),
+        primaryKey: true
+    },
+    returnid: { type: Sequelize.STRING(20) },
+    itemcode: { type: Sequelize.STRING(512) },
+    itemname: { type: Sequelize.STRING(255) },
+    batchno: { type: Sequelize.STRING(20) },
+    qty: { type: Sequelize.BIGINT },
+    price: { type: Sequelize.DECIMAL(10, 2) },
+    discount: { type: Sequelize.DECIMAL(10, 2) },
+    discountamount: { type: Sequelize.DECIMAL(10, 2) },
+    totalcost: { type: Sequelize.DECIMAL(10, 2) },
+    purchasedate: { type: Sequelize.DATEONLY },
+    mfg: { type: Sequelize.DATEONLY },
+    expiry: { type: Sequelize.DATEONLY },
+    vendorid: { type: Sequelize.STRING(20) },
+    reason: { type: Sequelize.STRING(1024) }
+}, {
+    freezeTableName: true
+});
+// vendor table
+var Vendor = sequelize.define('vendor', {
+    id: {
+        type: Sequelize.STRING(20),
+        primaryKey: true
+    },
+    fname: { type: Sequelize.STRING },
+    lname: { type: Sequelize.STRING },
+    company: { type: Sequelize.STRING },
     phone: { type: Sequelize.STRING(20) },
     email: { type: Sequelize.STRING(128) },
     vatno: { type: Sequelize.STRING(512) },
-    credit: { type: Sequelize.DECIMAL(10, 2) }
+    due: { type: Sequelize.DECIMAL(10, 2) }
 }, {
     freezeTableName: true
 });
@@ -236,8 +290,7 @@ var SaleData = sequelize.define('saledata', {
 // Item Type
 var ItemType = sequelize.define('itemtype', {
     id: {
-        type: Sequelize.BIGINT,
-        autoIncrement: true,
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
     itemtypename: { type: Sequelize.STRING(128) }
@@ -247,8 +300,7 @@ var ItemType = sequelize.define('itemtype', {
 // Shop
 var Shop = sequelize.define('shop', {
     id: {
-        type: Sequelize.BIGINT,
-        autoIncrement: true,
+        type: Sequelize.STRING(20),
         primaryKey: true
     },
     shopname: { type: Sequelize.STRING(512) },
@@ -276,11 +328,34 @@ var Rack = sequelize.define('rack', {
 }, {
     freezeTableName: true
 });
+/*
+// TransactionType
+var Rack = sequelize.define('transactiontype', {
+    id: {
+        type: Sequelize.BIGINT(11),
+        autoIncrement: true,
+        primaryKey: true
+    },
+    label: { type: Sequelize.STRING(100) }
+}, {
+    freezeTableName: true
+});
+*/
+// Counter
+var Counter = sequelize.define('counter', {
+    id: {
+        type: Sequelize.STRING(40),
+        primaryKey: true
+    },
+    val: { type: Sequelize.BIGINT(20) }
+}, {
+    freezeTableName: true
+});
 
 
-ItemUpdate.belongsTo(Salesman, {as: 'salesmans', foreignKey: 'salesmanid', targetKey: 'id'});
-Salesman.hasMany(ItemUpdate, {as: 'itemUpdates', foreignKey: 'salesmanid', targetKey: 'id'});
+ItemUpdate.belongsTo(Vendor, {as: 'vendors', foreignKey: 'vendorid', targetKey: 'id'});
+Vendor.hasMany(ItemUpdate, {as: 'itemUpdates', foreignKey: 'vendorid', targetKey: 'id'});
 
-module.exports = { sequelize, User, Session, Item, Transaction, TransactionItem, Customer, Purchase, ItemUpdate, Salesman, SaleData, ItemType, Shop, ui, Rack };
+module.exports = { sequelize, User, Session, Item, Sale, SaleItem, Customer, Purchase, ItemUpdate, Return, ReturnItem, Vendor, SaleData, ItemType, Shop, ui, Rack, Counter };
 
 console.log('*******db*******');

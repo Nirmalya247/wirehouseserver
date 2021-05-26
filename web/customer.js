@@ -1,6 +1,7 @@
 const mdb = require('../db/init');
 const user = require('./user');
 const { Op } = require('sequelize');
+const idgen = require('../db/idgen');
 
 // get customer data
 function get(req, res) {
@@ -38,17 +39,19 @@ function add(req, res) {
     user.check(req, function (authData) {
         if (authData) {
             var dat = req.body;
-            dat['id'] = user.makeidSmall(8);
-            mdb.Customer.create(dat).then(function (data) {
-                if (data) {
-                    data['msg'] = 'customer added';
-                    data['err'] = false;
-                    res.send(data);
-                } else res.send({ msg: 'some error', err: true, id: '' });
-                console.log(data);
-            }).catch((err) => {
-                console.log(err);
-                res.send({ msg: 'some error', err: true, id: '' });
+            idgen.getID(idgen.tableID.customer, 'num', 1, false, customerID => {
+                dat['id'] = customerID;
+                mdb.Customer.create(dat).then(function (data) {
+                    if (data) {
+                        data['msg'] = 'customer added';
+                        data['err'] = false;
+                        res.send(data);
+                    } else res.send({ msg: 'some error', err: true, id: '' });
+                    console.log(data);
+                }).catch((err) => {
+                    console.log(err);
+                    res.send({ msg: 'some error', err: true, id: '' });
+                });
             });
         } else res.send({ msg: 'some error', err: true, id: '' });
     }, 1);

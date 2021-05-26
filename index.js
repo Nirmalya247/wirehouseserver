@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
 const mdb = require('./db/init');
 const web = require('./web/init');
 
@@ -9,6 +10,10 @@ const web = require('./web/init');
 
 mdb.sequelize.sync({ force: false }).then(function () {
     console.log('database connected');
+
+
+    http.createServer(web.app).listen(process.env.PORT || 4210);
+    console.log('*******web*******');
     /*
     mdb.User.create({
         //id: 5,
