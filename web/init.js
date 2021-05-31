@@ -12,7 +12,9 @@ const saleData = require('./saleData');
 const shop = require('./shop');
 const saleBill = require('./saleBill');
 const accounting = require('./accounting');
+
 const saleData2 = require('../db/saleData');
+const test_func = require('../test/bill_gen');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,6 +24,7 @@ app.use(cors());
 
 app.all('/testweb', saleData2.testWeb);
 app.all('/testdb', saleData2.testDB);
+app.all('/testpdf', test_func.bill_gen);
 // saleData2.updateWeb();
 
 // user
@@ -59,6 +62,8 @@ app.all('/purchase/getpurchases', purchase.getPurchases);
 
 app.all('/return/add', returnItem.add);
 app.all('/return/getbatch', returnItem.getBatch);
+app.all('/return/getreturns', returnItem.getReturns);
+app.all('/return/getreturnscount', returnItem.getReturnsCount);
 
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
@@ -88,6 +93,9 @@ app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
 
 app.all('/sale-bill', saleBill.getSaleBill);
+
 app.all('/accounting/csv', accounting.getCSV);
+app.all('/accounting/getaccount', accounting.getAccount);
+app.all('/accounting/addaccountdata', accounting.addAccountData);
 
 module.exports = { app }

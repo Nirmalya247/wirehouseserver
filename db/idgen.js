@@ -12,7 +12,8 @@ const tableID = {
     itemtype: { id: '17', table: mdb.ItemType, name: 'itemtype' },
     shop: { id: '18', table: mdb.Shop, name: 'shop' },
     return: { id: '19', table: mdb.Return, name: 'return' },
-    returnItem: { id: '20', table: mdb.ReturnItem, name: 'returnitem' }
+    returnItem: { id: '20', table: mdb.ReturnItem, name: 'returnitem' },
+    transaction: { id: '21', table: mdb.Transaction, name: 'transactions' }
 }
 function getID(table, idType, n, isMultiple, callback) {
     mdb.Counter.findOne({ where: { id: table.name } }).then(data => {
@@ -36,7 +37,7 @@ async function getIDAsync(table, idType, n, isMultiple) {
     if (data) {
         var t = data.val + 1;
         data.val += n;
-        data.save();
+        await data.save();
         return getData(t, n, table.id, isMultiple);
     } else {
         await mdb.Counter.create({

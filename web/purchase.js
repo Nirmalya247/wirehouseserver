@@ -4,6 +4,58 @@ const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 const idgen = require('../db/idgen');
 
+async function add(req, res) {
+    var id = null;
+    var itemIDs = null;
+    try {
+        var dataAuth = await user.checkAsync(req, 1);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var data = req.body;
+        var items = data.items;
+        var customerCredit = data.customerCredit;
+        var cumulativeAmount = data.totalCost;
+        delete data.items;
+        delete data['SESSION_ID'];
+        delete data['SESSION_USERID'];
+        id = await idgen.getIDAsync(idgen.tableID.purchase, 'num', 1, false);
+        itemIDs = await idgen.getIDAsync(idgen.tableID.itemupdate, 'num', items.length, true);
+        data['id'] = id;
+        console.log(data);
+        var purchase = await mdb.Purchase.create(data);
+        if (purchase) {
+            for (var i = 0; i < items.length; i++) {
+                items[i]['id'] = itemIDs[i];
+                items[i]['purchaseId'] = id;
+                var item = await mdb.ItemUpdate.create(items[i]);
+                if (item) {
+                    if (items[i].itemname != 'due amount') {
+                        var itemUp = await mdb.Item.update({ qty: Sequelize.literal('qty + ' + items[i].qty) }, { where: { itemcode: items[i].itemcode } });
+                    }
+                } else {
+                    throw 'items';
+                }
+            }
+
+            dayData = await saleData.updateAsync(null, data.totalQTY, null, data.totalCost);
+            if (data.dueAmount > 0 || data.addDue == 1) {
+                var du = (data.addDue == 1) ? data.dueAmount : (data.dueAmount + vendorDue);
+                var uData = await mdb.Vendor.update({ due: du }, { where: { id: data.vendorID  } });
+                if (!uData) throw 'after up';
+            }
+            res.send({ msg: 'done!', err: false, id: id });
+        } else throw 'sale';
+    } catch (e) {
+        console.log(e);
+        await mdb.Purchase.destroy({ where: { id: id } })
+        await mdb.ItemUpdate.destroy({ where: { purchaseId: id } })
+        res.send({ msg: 'some error and deleted', err: true });
+    }
+}
+
+/*
 function add(req, res) {
     user.check(req, function (authData) {
         if (authData) {
@@ -31,7 +83,7 @@ function add(req, res) {
                     idgen.getID(idgen.tableID.itemupdate, 'num', items.length, true, itemIDs => {
                         data['id'] = id;
                         console.log('***********' + JSON.stringify(data));
-        
+
                         mdb.Purchase.create(data).then(purchase => {
                             if (purchase) {
                                 console.log(purchase);
@@ -40,8 +92,8 @@ function add(req, res) {
                                 console.log('***********' + JSON.stringify(items));
                                 function insertItems() {
                                     function removePurchase() {
-                                        mdb.Purchase.destroy({ where: { id: id }}).then(del => {
-                                            mdb.ItemUpdate.destroy({ where: { purchaseId: id }}).then(del => {
+                                        mdb.Purchase.destroy({ where: { id: id } }).then(del => {
+                                            mdb.ItemUpdate.destroy({ where: { purchaseId: id } }).then(del => {
                                                 res.send({ msg: 'some error and deleted', err: true });
                                             }).catch(err => {
                                                 res.send({ msg: 'some error', err: true });
@@ -66,7 +118,7 @@ function add(req, res) {
                                                         if (data.dueAmount > 0 || data.addDue == 1) {
                                                             var du = (data.addDue == 1) ? data.dueAmount : (data.dueAmount + vendorDue);
                                                             //console.log
-                                                            mdb.Vendor.update({ due: du }, { where: { id: data.vendorID } }).then(function(uData) {
+                                                            mdb.Vendor.update({ due: du }, { where: { id: data.vendorID } }).then(function (uData) {
                                                                 if (uData) {
                                                                     res.send({ msg: 'done!', err: false, id: id });
                                                                 } else removePurchase();
@@ -85,7 +137,7 @@ function add(req, res) {
                                                 mdb.Item.update(
                                                     {
                                                         qty: Sequelize.literal('qty + ' + items[i].qty)
-                                                    }, { where: { itemcode: items[i].itemcode }}).then( itemUp => {
+                                                    }, { where: { itemcode: items[i].itemcode } }).then(itemUp => {
                                                         afterItemUpdate();
                                                     });
                                             } else afterItemUpdate();
@@ -116,6 +168,7 @@ function add(req, res) {
         } else res.send({ msg: 'some error', err: true });
     }, 1);
 }
+*/
 
 // get purchases
 function getPurchases(req, res) {
@@ -127,16 +180,18 @@ function getPurchases(req, res) {
                 order: [[req.body.purchaseOrderBy, req.body.purchaseOrder]]
             };
             if (req.body.purchaseSearchText && req.body.purchaseSearchText != '') {
-                wh['where'] = { [Op.or]: [
-                    {id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {vendorFName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {vendorLName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {vendorCompany: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {vendorID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
-                ] }
+                wh['where'] = {
+                    [Op.or]: [
+                        { id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { vendorFName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { vendorLName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { vendorCompany: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { vendorID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
+                    ]
+                }
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
@@ -144,7 +199,7 @@ function getPurchases(req, res) {
                     createdAt: { [Op.gte]: req.body.to }
                 }
             }
-            mdb.Purchase.findAll(wh).then(function(data) {
+            mdb.Purchase.findAll(wh).then(function (data) {
                 if (data) {
                     res.send(data);
                 } else res.send([]);
@@ -162,14 +217,16 @@ function getPurchasesCount(req, res) {
         if (authData) {
             var wh = { };
             if (req.body.purchaseSearchText && req.body.purchaseSearchText != '') {
-                wh['where'] = { [Op.or]: [
-                    {id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {vendorName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {vendorID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                    {userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
-                ] }
+                wh['where'] = {
+                    [Op.or]: [
+                        { id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { vendorName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { vendorID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
+                        { userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
+                    ]
+                }
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
@@ -177,7 +234,7 @@ function getPurchasesCount(req, res) {
                     createdAt: { [Op.gte]: req.body.to }
                 }
             }
-            mdb.Purchase.count(wh).then(function(data) {
+            mdb.Purchase.count(wh).then(function (data) {
                 if (data) {
                     res.send(data.toString());
                 } else res.send('0');

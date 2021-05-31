@@ -101,4 +101,70 @@ function getCSV(req, res) {
     // }, 2);
 }
 
-module.exports = { getCSV }
+async function getAccount(req, res) {
+    try {
+        console.log(0);
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send([ ]);
+            return;
+        }
+        var col = req.body.col;
+        var whcol = req.body.whcol;
+        var whval = req.body.whval;
+        var page = req.body.page;
+        var limit = req.body.limit;
+        var order = req.body.order;
+        var searchText = req.body.searchText;
+        console.log(1);
+        
+        var wh = {
+            attributes: [
+                [Sequelize.fn('distinct', Sequelize.col(col)), col],
+                ...['type', 'accounttype', 'account', 'duration'].filter(a => a != col)
+            ],
+            offset: (parseInt(page) - 1) * parseInt(limit),
+            limit: parseInt(limit),
+            order: [[col, order]],
+            where: { }
+        };
+        console.log(2);
+        if (whcol) wh.where[whcol] = whval;
+        if (searchText && searchText != '') wh.where[col] = { [Op.like]: `%${ searchText }%` };
+        console.log(3);
+        var data = await mdb.Transaction.findAll(wh);
+        console.log(data);
+        res.send(data);
+    } catch (e) {
+        console.log(e);
+        res.send([ ]);
+    }
+}
+
+async function addAccountData(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var { account, accounttype, type, duration, amount, tendered, duedate, comment } = req.body;
+        console.log(account, accounttype, type, duration, amount, tendered, duedate, comment);
+        var data = await saleData.transactionAdd(account, accounttype, type, duration, amount, tendered, duedate, comment);
+        if (type == 'income') {
+            await saleData.updateAsync(0, null, tendered, null);
+        } else if (type == 'expense') {
+            await saleData.updateAsync(null, 0, null, tendered);
+        }
+        res.send({ msg: 'added', err: false, data: data });
+    } catch (e) {
+        console.log('addAccountData', e);
+        res.send({ msg: 'some error', err: true });
+    }
+}
+
+async function getReportData(req, res) {
+     
+}
+
+module.exports = { getCSV, getAccount, addAccountData }

@@ -4,67 +4,68 @@ const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 const idgen = require('../db/idgen');
 
-/*
 async function add(req, res) {
     var id = null;
     var itemIDs = null;
     try {
         var dataAuth = await user.checkAsync(req, 2);
-        if (dataAuth) {
-            var data = req.body;
-            var items = data.items;
-            var customerCredit = data.customerCredit;
-            var cumulativeAmount = data.totalCost;
-            delete data.items;
-            delete data['SESSION_ID'];
-            delete data['SESSION_USERID'];
-            id = await idgen.getIDAsync(idgen.tableID.sales, 'num', 1, false);
-            itemIDs = await idgen.getID(idgen.tableID.salesitem, 'num', items.length, true);
-            data['id'] = id;
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var data = req.body;
+        var items = data.items;
+        var customerCredit = data.customerCredit;
+        var cumulativeAmount = data.totalCost;
+        delete data.items;
+        delete data['SESSION_ID'];
+        delete data['SESSION_USERID'];
+        id = await idgen.getIDAsync(idgen.tableID.sales, 'num', 1, false);
+        itemIDs = await idgen.getIDAsync(idgen.tableID.salesitem, 'num', items.length, true);
+        data['id'] = id;
 
-            var sale = await mdb.Sale.create(data);
-            if (sale) {
-                for (var i = 0; i < items.length; i++) {
-                    items[i]['id'] = itemIDs[i];
-                    items[i]['saleId'] = id;
-                    var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].stockid } });
-                    var item = await mdb.SaleItem.create(items[i]);
+        var sale = await mdb.Sale.create(data);
+        if (sale) {
+            for (var i = 0; i < items.length; i++) {
+                items[i]['id'] = itemIDs[i];
+                items[i]['saleId'] = id;
+                var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].stockid } });
+                var item = await mdb.SaleItem.create(items[i]);
 
-                    if (item) {
-                        if (items[i].itemname != 'credit amount') {
-                            var itemUp = await mdb.Item.update({
-                                qty: Sequelize.literal('qty - ' + items[i].qty),
-                                totalsold: Sequelize.literal('totalsold + ' + items[i].qty),
-                                totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice)
-                            }, { where: { itemcode: items[i].itemcode } });
-                        }
-                    } else {
-                        throw 'items';
+                if (item) {
+                    if (items[i].itemname != 'credit amount') {
+                        var itemUp = await mdb.Item.update({
+                            qty: Sequelize.literal('qty - ' + items[i].qty),
+                            totalsold: Sequelize.literal('totalsold + ' + items[i].qty),
+                            totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice)
+                        }, { where: { itemcode: items[i].itemcode } });
                     }
+                } else {
+                    throw 'items';
                 }
-                dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null);
-                var customerUp = {
-                    qty: Sequelize.literal('qty + ' + data.totalQTY),
-                    amount: Sequelize.literal('amount + ' + cumulativeAmount),
-                    count: Sequelize.literal('count + ' + 1)
-                };
-                if (data.creditAmount > 0 || data.addCredit == 1) {
-                    customerUp['credit'] = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
-                }
-                var uData = await mdb.Customer.update(customerUp, { where: { id: data.customerID } });
-                if (uData) {
-                    res.send({ msg: 'done!', err: false, id: id });
-                } else throw 'after up';
-            } else throw 'sale';
-        } else res.send({ msg: 'not permitted', err: true });
+            }
+            dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null);
+            var customerUp = {
+                qty: Sequelize.literal('qty + ' + data.totalQTY),
+                amount: Sequelize.literal('amount + ' + cumulativeAmount),
+                count: Sequelize.literal('count + ' + 1)
+            };
+            if (data.creditAmount > 0 || data.addCredit == 1) {
+                customerUp['credit'] = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
+            }
+            var uData = await mdb.Customer.update(customerUp, { where: { id: data.customerID } });
+            if (uData) {
+                res.send({ msg: 'done!', err: false, id: id });
+            } else throw 'after up';
+        } else throw 'sale';
     } catch (e) {
         await mdb.Sale.destroy({ where: { id: id } })
         await mdb.SaleItem.destroy({ where: { saleId: id } })
         res.send({ msg: 'some error and deleted', err: true });
     }
 }
-*/
 
+/*
 function add(req, res) {
     user.check(req, function (authData) {
         if (authData) {
@@ -183,14 +184,15 @@ function add(req, res) {
         } else res.send({ msg: 'some error', err: true });
     }, 1);
 }
+*/
 
 // get sales
 function getSales(req, res) {
     user.check(req, function (authData) {
         if (authData) {
             var wh = {
-                offset: (parseInt(req.body.SalePage) - 1) * parseInt(req.body.SaleLimit),
-                limit: parseInt(req.body.SaleLimit),
+                offset: (parseInt(req.body.salePage) - 1) * parseInt(req.body.saleLimit),
+                limit: parseInt(req.body.saleLimit),
                 order: [[req.body.saleOrderBy, req.body.saleOrder]]
             };
             if (req.body.saleSearchText && req.body.saleSearchText != '') {

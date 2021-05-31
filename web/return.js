@@ -9,56 +9,51 @@ async function add(req, res) {
     var itemIDs = null;
     try {
         var dataAuth = await user.checkAsync(req, 2);
-        if (dataAuth) {
-            var data = req.body;
-            var items = data.items;
-            var customerCredit = data.customerCredit;
-            var cumulativeAmount = data.totalCost;
-            delete data.items;
-            delete data['SESSION_ID'];
-            delete data['SESSION_USERID'];
-            id = await idgen.getIDAsync(idgen.tableID.return, 'num', 1, false);
-            itemIDs = await idgen.getID(idgen.tableID.returnItem, 'num', items.length, true);
-            data['id'] = id;
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var data = req.body;
+        var items = data.items;
+        var customerCredit = data.customerCredit;
+        var cumulativeAmount = data.totalCost;
+        delete data.items;
+        delete data['SESSION_ID'];
+        delete data['SESSION_USERID'];
 
-            var sale = await mdb.Sale.create(data);
-            if (sale) {
-                for (var i = 0; i < items.length; i++) {
-                    items[i]['id'] = itemIDs[i];
-                    items[i]['saleId'] = id;
-                    var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].stockid } });
-                    var item = await mdb.SaleItem.create(items[i]);
+        id = await idgen.getIDAsync(idgen.tableID.return, 'num', 1, false);
+        itemIDs = await idgen.getIDAsync(idgen.tableID.returnItem, 'num', items.length, true);
+        data['id'] = id;
 
-                    if (item) {
-                        if (items[i].itemname != 'credit amount') {
-                            var itemUp = await mdb.Item.update({
-                                qty: Sequelize.literal('qty - ' + items[i].qty),
-                                totalsold: Sequelize.literal('totalsold + ' + items[i].qty),
-                                totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice)
-                            }, { where: { itemcode: items[i].itemcode } });
-                        }
-                    } else {
-                        throw 'items';
+        var returnD = await mdb.Return.create(data);
+        if (returnD) {
+            for (var i = 0; i < items.length; i++) {
+                items[i]['id'] = itemIDs[i];
+                items[i]['returnid'] = id;
+                delete items[i]['qtystock'];
+                console.log(items[i]);
+                var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].batchno } });
+                var item = await mdb.ReturnItem.create(items[i]);
+
+                if (item) {
+                    if (items[i].itemname != 'credit amount') {
+                        var itemUp = await mdb.Item.update({
+                            qty: Sequelize.literal('qty - ' + items[i].qty)
+                        }, { where: { itemcode: items[i].itemcode } });
                     }
+                } else {
+                    throw 'items';
                 }
-                dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null);
-                var customerUp = {
-                    qty: Sequelize.literal('qty + ' + data.totalQTY),
-                    amount: Sequelize.literal('amount + ' + cumulativeAmount),
-                    count: Sequelize.literal('count + ' + 1)
-                };
-                if (data.creditAmount > 0 || data.addCredit == 1) {
-                    customerUp['credit'] = (data.addCredit == 1) ? data.creditAmount : (data.creditAmount + customerCredit);
-                }
-                var uData = await mdb.Customer.update(customerUp, { where: { id: data.customerID } });
-                if (uData) {
-                    res.send({ msg: 'done!', err: false, id: id });
-                } else throw 'after up';
-            } else throw 'sale';
-        } else res.send({ msg: 'not permitted', err: true });
+            }
+            dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null);
+            if (dayData) {
+                res.send({ msg: 'done!', err: false, id: id });
+            } else throw 'after up';
+        } else throw 'return';
     } catch (e) {
-        await mdb.Sale.destroy({ where: { id: id } })
-        await mdb.SaleItem.destroy({ where: { saleId: id } })
+        console.log(e);
+        await mdb.Return.destroy({ where: { id: id } })
+        await mdb.ReturnItem.destroy({ where: { returnid: id } })
         res.send({ msg: 'some error and deleted', err: true });
     }
 }
@@ -105,4 +100,73 @@ function getBatch(req, res) {
     }, 2);
 }
 
-module.exports = { add, getBatch }
+
+// get returns
+async function getReturns(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var wh = {
+            offset: (parseInt(req.body.page) - 1) * parseInt(req.body.limit),
+            limit: parseInt(req.body.limit),
+            order: [[req.body.orderBy, req.body.order]]
+        };
+        if (req.body.searchText && req.body.searchText != '') {
+            wh['where'] = {
+                [Op.or]: [
+                    { id: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorFName: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorLName: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorCompany: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
+                    { userID: { [Op.like]: `%${req.body.searchText}%` } },
+                    { userName: { [Op.like]: `%${req.body.searchText}%` } }
+                ]
+            }
+        }
+        var data = await mdb.Return.findAll(wh);
+        if (data) {
+            res.send(data);
+        } else res.send([]);
+    } catch (e) {
+        res.send([]);
+    }
+}
+
+// get returns count
+async function getReturnsCount(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var wh = { };
+        if (req.body.searchText && req.body.searchText != '') {
+            wh['where'] = {
+                [Op.or]: [
+                    { id: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorFName: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorLName: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorCompany: { [Op.like]: `%${req.body.searchText}%` } },
+                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
+                    { userID: { [Op.like]: `%${req.body.searchText}%` } },
+                    { userName: { [Op.like]: `%${req.body.searchText}%` } }
+                ]
+            }
+        }
+        var data = await mdb.Return.findAll(wh);
+        if (data) {
+            res.send(data);
+        } else res.send([]);
+    } catch (e) {
+        res.send([]);
+    }
+}
+
+module.exports = { add, getBatch, getReturns, getReturnsCount }

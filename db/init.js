@@ -223,7 +223,6 @@ var Return = sequelize.define('return', {
     dueAmount: { type: Sequelize.DECIMAL(10, 2) },
     dueDate: { type: Sequelize.DATEONLY },
     paymentMode: { type: Sequelize.STRING(14) },
-    addDue: { type: Sequelize.INTEGER },
     vendorID: { type: Sequelize.STRING(20) },
     vendorFName: { type: Sequelize.STRING(255) },
     vendorLName: { type: Sequelize.STRING(255) },
@@ -255,6 +254,23 @@ var ReturnItem = sequelize.define('returnitem', {
     expiry: { type: Sequelize.DATEONLY },
     vendorid: { type: Sequelize.STRING(20) },
     reason: { type: Sequelize.STRING(1024) }
+}, {
+    freezeTableName: true
+});
+// other transactions
+var Transaction = sequelize.define('transactions', {
+    id: {
+        type: Sequelize.STRING(20),
+        primaryKey: true
+    },
+    type: { type: Sequelize.STRING(20) }, // asset, liability, income, expense, equity
+    accounttype: { type: Sequelize.STRING(40) }, // main catagory of account
+    account: { type: Sequelize.STRING(40) }, // account name
+    duration: { type: Sequelize.STRING(20) }, // long term or short term
+    amount: { type: Sequelize.DECIMAL(10, 2) },
+    tendered: { type: Sequelize.DECIMAL(10, 2) },
+    duedate: { type: Sequelize.DATEONLY },
+    comment: { type: Sequelize.STRING(1024) }
 }, {
     freezeTableName: true
 });
@@ -312,8 +328,8 @@ var Shop = sequelize.define('shop', {
     shopemailpassword: { type: Sequelize.STRING(80) },
     vatno: { type: Sequelize.STRING(512) },
     licenseno: { type: Sequelize.STRING(100) },
-    vat: { type: Sequelize.DECIMAL(10,2) },
-    discount: { type: Sequelize.DECIMAL(10,2) },
+    vat: { type: Sequelize.DECIMAL(10, 2) },
+    discount: { type: Sequelize.DECIMAL(10, 2) },
     discountamount: { type: Sequelize.DECIMAL(10, 2) }
 }, {
     freezeTableName: true
@@ -353,9 +369,32 @@ var Counter = sequelize.define('counter', {
 });
 
 
-ItemUpdate.belongsTo(Vendor, {as: 'vendors', foreignKey: 'vendorid', targetKey: 'id'});
-Vendor.hasMany(ItemUpdate, {as: 'itemUpdates', foreignKey: 'vendorid', targetKey: 'id'});
+ItemUpdate.belongsTo(Vendor, { as: 'vendors', foreignKey: 'vendorid', targetKey: 'id' });
+Vendor.hasMany(ItemUpdate, { as: 'itemUpdates', foreignKey: 'vendorid', targetKey: 'id' });
 
-module.exports = { sequelize, User, Session, Item, Sale, SaleItem, Customer, Purchase, ItemUpdate, Return, ReturnItem, Vendor, SaleData, ItemType, Shop, ui, Rack, Counter };
+SaleItem.belongsTo(Item, { as: 'item', foreignKey: 'itemcode', targetKey: 'itemcode' });
+Item.hasMany(SaleItem, { as: 'saleItems', foreignKey: 'itemcode', targetKey: 'itemcode' });
+
+module.exports = {
+    sequelize,
+    User,
+    Session,
+    Item,
+    Sale,
+    SaleItem,
+    Customer,
+    Purchase,
+    ItemUpdate,
+    Return,
+    ReturnItem,
+    Transaction,
+    Vendor,
+    SaleData,
+    ItemType,
+    Shop,
+    Rack,
+    Counter,
+    ui
+};
 
 console.log('*******db*******');
