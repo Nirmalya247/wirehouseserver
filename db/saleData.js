@@ -84,4 +84,4 @@ function testPost(req, res) {
     res.send((req.body.msg ? req.body.msg : 'hi'));
 }
 
-module.exports = { updateAsync, transactionAdd, testWeb, testDB }
+module.exports = { updateAsync, transactionAdd, testWeb, testDB, testGet, testPost }
