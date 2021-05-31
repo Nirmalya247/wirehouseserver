@@ -314,11 +314,11 @@ function getBillHtmlA4V2(shop, sale, items) {
                 padding: 0;
                 border: 1px solid gainsboro;
                 border-width: 0 0 1px 0;
-                height: 34mm;
+                height: 38mm;
             }
             .header .logo {
                 position: absolute;
-                top: 0;
+                top: 4mm;
                 left: 4mm;
                 height: 30mm;
                 width: 30mm;
@@ -326,7 +326,7 @@ function getBillHtmlA4V2(shop, sale, items) {
             .header .holder {
                 position: absolute;
                 text-align: right;
-                top: 0;
+                top: 4mm;
                 right: 4mm;
             }
             .holder .name {
@@ -395,11 +395,11 @@ function getBillHtmlA4V2(shop, sale, items) {
                         padding: 0;
                         border: 1px solid gainsboro;
                         border-width: 0 0 1px 0;
-                        height: 34mm;
+                        height: 38mm;
                     }
                     .header .logo {
                         position: absolute;
-                        top: 0;
+                        top: 4mm;
                         left: 4mm;
                         height: 30mm;
                         width: 30mm;
@@ -407,7 +407,7 @@ function getBillHtmlA4V2(shop, sale, items) {
                     .header .holder {
                         position: absolute;
                         text-align: right;
-                        top: 0;
+                        top: 4mm;
                         right: 4mm;
                     }
                     .holder .name {
