@@ -24,6 +24,8 @@ app.use(cors());
 
 app.all('/testweb', saleData2.testWeb);
 app.all('/testdb', saleData2.testDB);
+app.all('/testget', saleData2.testGet);
+app.all('/testpost', saleData2.testPost);
 app.all('/testpdf', test_func.bill_gen);
 // saleData2.updateWeb();
 

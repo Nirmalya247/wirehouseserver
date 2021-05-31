@@ -76,4 +76,12 @@ function testDB(req, res) {
     })
 }
 
+function testGet(req, res) {
+    res.send((req.query.msg ? req.query.msg : 'hi'));
+}
+
+function testPost(req, res) {
+    res.send((req.body.msg ? req.body.msg : 'hi'));
+}
+
 module.exports = { updateAsync, transactionAdd, testWeb, testDB }
