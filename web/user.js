@@ -1,6 +1,7 @@
 const mdb = require('../db/init');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 const idgen = require('../db/idgen');
+const saleData = require('../db/saleData');
 
 
 function makeid(length) {
@@ -290,4 +291,38 @@ function deleteUser(req, res) {
     }, 10);
 }
 
-module.exports = { makeid, makeidSmall, check, checkAsync, login, checklogin, logout, get, create, update, getUsers, getUsersCount, deactivate, activate, deleteUser }
+async function setSalary(req, res) {
+    try {
+        var dataAuth = await checkAsync(req, 10);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+
+        var tdd = dd.toString();
+        var tmm = dd.toString();
+        if (dd < 10) tdd = '0' + dd;
+        if (mm < 10) tmm = '0' + mm;
+
+        var today = yyyy + '-' + tmm + '-' + tdd;
+
+        var totalSalary = await mdb.User.findOne({
+            attributes: [Sequelize.fn('sum', Sequelize.col('salary')), 'salary'],
+            where: { deleted: 0, active: 1 }
+        });
+        console.log(totalSalary);
+        await saleData.updateAsync(null, null, null, totalSalary.salary, totalSalary.salary, null, 'employee', 'salay', true);
+        
+        await mdb.User.update({ lastsalary: today }, { where: { deleted: 0, active: 1  } });
+        res.send({ msg: 'done!', err: false });
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: 'some error', err: true });
+    }
+}
+
+module.exports = { makeid, makeidSmall, check, checkAsync, login, checklogin, logout, get, create, update, getUsers, getUsersCount, deactivate, activate, deleteUser, setSalary }

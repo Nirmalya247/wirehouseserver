@@ -51,6 +51,8 @@ var User = sequelize.define('users', {
     deleted: { type: Sequelize.INTEGER },
     name: { type: Sequelize.STRING },
     pincode: { type: Sequelize.STRING(10) },
+    salary: { type: Sequelize.DECIMAL(10, 2) },
+    lastsalary: { type: Sequelize.DATEONLY },
     address: { type: Sequelize.STRING(1024) },
     password: { type: Sequelize.STRING.BINARY }
 }, {

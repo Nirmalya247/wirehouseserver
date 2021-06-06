@@ -15,8 +15,8 @@ async function add(req, res) {
         }
         var data = req.body;
         var items = data.items;
-        var customerCredit = data.customerCredit;
-        var cumulativeAmount = data.totalCost;
+        // var customerCredit = data.customerCredit;
+        // var cumulativeAmount = data.totalCost;
         delete data.items;
         delete data['SESSION_ID'];
         delete data['SESSION_USERID'];
@@ -45,7 +45,7 @@ async function add(req, res) {
                     throw 'items';
                 }
             }
-            dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null);
+            dayData = await saleData.updateAsync(data.totalQTY, null, data.totalAmount, null, Number(data.totalAmount) - Number(data.dueAmount), data.dueDate, 'products', 'return', true);
             if (dayData) {
                 res.send({ msg: 'done!', err: false, id: id });
             } else throw 'after up';
@@ -169,4 +169,30 @@ async function getReturnsCount(req, res) {
     }
 }
 
-module.exports = { add, getBatch, getReturns, getReturnsCount }
+// remove due by return
+async function removeDueByReturn(req, res) {
+    var returnId = req.body.id;
+    try {
+        var dataAuth = await user.checkAsync(req, 1);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var amount;
+        upData = await mdb.Return.findOne({ where: { id: returnId } });
+        amount = upData.dueAmount;
+        upData.totalTendered = Number(upData.totalTendered) + Number(upData.dueAmount);
+        upData.dueAmount = 0;
+        upData.dueDate = null;
+
+        await upData.save();
+
+        await saleData.transactionAdd('return', 'products', 'income', 'short term', amount, amount, null, 'income from return');
+        res.send({ err: false, msg: 'done!' });
+    } catch(e) {
+        console.log(e);
+        res.send({ err: true, msg: 'some error' });
+    }
+}
+
+module.exports = { add, getBatch, getReturns, getReturnsCount, removeDueByReturn }

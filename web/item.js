@@ -131,7 +131,7 @@ async function update(req, res) {
             }
             var data2 = await mdb.ItemUpdate.create(dataItemUpdate);
             if (dataItem.type == 'add') {
-                var dayData = await saleData.updateAsync(null, dataItem.qty, null, Number(dataItem.cost) * Number(dataItem.qty));
+                var dayData = await saleData.updateAsync(null, dataItem.qty, null, Number(dataItem.cost) * Number(dataItem.qty), Number(dataItem.cost) * Number(dataItem.qty), null, 'products', 'purchase', true);
                 if (dayData != null) {
                     res.send({ msg: 'item updated', err: false });
                 } else {

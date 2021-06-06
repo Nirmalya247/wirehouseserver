@@ -44,7 +44,7 @@ async function add(req, res) {
                     throw 'items';
                 }
             }
-            dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null);
+            dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null, Number(data.totalTaxable) - Number(data.creditAmount), null, 'income', 'sales', true);
             var customerUp = {
                 qty: Sequelize.literal('qty + ' + data.totalQTY),
                 amount: Sequelize.literal('amount + ' + cumulativeAmount),
@@ -206,8 +206,10 @@ function getSales(req, res) {
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
-                    createdAt: { [Op.lte]: req.body.from },
-                    createdAt: { [Op.gte]: req.body.to }
+                    [Op.and]: [
+                        { createdAt: { [Op.lte]: req.body.from } },
+                        { createdAt: { [Op.gte]: req.body.to } }
+                    ]
                 }
             }
             mdb.Sale.findAll(wh).then(function(data) {

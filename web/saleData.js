@@ -189,6 +189,7 @@ function getGraphData(req, res) {
     }, 3);
 }
 */
+
 function getGraphData(req, res) {
     user.check(req, function (dataAuth) {
         if (dataAuth) {
@@ -590,4 +591,90 @@ Email   :${shopData.shopemail}
     });
 }
 
-module.exports = { getToday, getGraphData, getStock, getStockCount, getDemand, getDemandCount, getExpiry, getExpiryCount, getCredit, getCreditCount, sendCreditEmail }
+
+
+
+// get purchase due
+function getPurchaseDue(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+
+            mdb.Purchase.findAll({
+                where: { dueAmount: { [Op.gt]: 0 } },
+                offset: (parseInt(page) - 1) * parseInt(limit),
+                limit: parseInt(limit),
+                order: [ [ 'dueAmount', req.body.order], [ 'dueDate', 'desc'] ]
+            }).then(data => {
+                res.send(data);
+            });
+        } else res.send([]);
+    });
+}
+
+// get purchase due count
+function getPurchaseDueCount(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+
+            mdb.Purchase.count({ where: { dueAmount: { [Op.gt]: 0 } } }).then(data => {
+                res.send(data.toString());
+            });
+        } else res.send('0');
+    });
+}
+
+
+// get return due
+function getReturnDue(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+
+            mdb.Return.findAll({
+                where: { dueAmount: { [Op.gt]: 0 } },
+                offset: (parseInt(page) - 1) * parseInt(limit),
+                limit: parseInt(limit),
+                order: [ [ 'dueAmount', req.body.order], [ 'dueDate', 'desc'] ]
+            }).then(data => {
+                res.send(data);
+            });
+        } else res.send([]);
+    });
+}
+
+// get return due count
+function getReturnDueCount(req, res) {
+    user.check(req, function (dataAuth) {
+        if (dataAuth) {
+            var page = req.body.page;
+            var limit = req.body.limit;
+
+            mdb.Return.count({ where: { dueAmount: { [Op.gt]: 0 } } }).then(data => {
+                res.send(data.toString());
+            });
+        } else res.send('0');
+    });
+}
+
+module.exports = {
+    getToday,
+    getGraphData,
+    getStock,
+    getStockCount,
+    getDemand,
+    getDemandCount,
+    getExpiry,
+    getExpiryCount,
+    getCredit,
+    getCreditCount,
+    sendCreditEmail,
+    getPurchaseDue,
+    getPurchaseDueCount,
+    getReturnDue,
+    getReturnDueCount
+}

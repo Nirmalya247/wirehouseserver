@@ -13,8 +13,10 @@ function getCSV(req, res) {
             };
             if (req.query.from) {
                 wh['where'] = {
-                    createdAt: { [Op.lte]: req.query.from },
-                    createdAt: { [Op.gte]: req.query.to }
+                    [Op.and]: [
+                        { createdAt: { [Op.lte]: req.query.from } },
+                        { createdAt: { [Op.gte]: req.query.to } }
+                    ]
                 }
             }
             if (req.query.type == 'sales') {
@@ -152,9 +154,9 @@ async function addAccountData(req, res) {
         console.log(account, accounttype, type, duration, amount, tendered, duedate, comment);
         var data = await saleData.transactionAdd(account, accounttype, type, duration, amount, tendered, duedate, comment);
         if (type == 'income') {
-            await saleData.updateAsync(0, null, tendered, null);
+            await saleData.updateAsync(0, null, tendered, null, amount, duedate, accounttype, account, false);
         } else if (type == 'expense') {
-            await saleData.updateAsync(null, 0, null, tendered);
+            await saleData.updateAsync(null, 0, null, tendered, amount, duedate, accounttype, account, false);
         }
         res.send({ msg: 'added', err: false, data: data });
     } catch (e) {
@@ -164,7 +166,58 @@ async function addAccountData(req, res) {
 }
 
 async function getReportData(req, res) {
-     
+    try {
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var data = {
+            saledata: null,
+            transactions: null
+        };
+        var from = new Date(req.body.from);
+        var to = new Date(req.body.to);
+        console.log(from, to);
+        var attributes = [
+            [Sequelize.fn('sum', Sequelize.col('itemsold')), 'itemsold'],
+            [Sequelize.fn('sum', Sequelize.col('itembought')), 'itembought'],
+            [Sequelize.fn('sum', Sequelize.col('earning')), 'earning'],
+            [Sequelize.fn('sum', Sequelize.col('spending')), 'spending']
+        ];
+        var where = {
+            [Op.and]: [
+                { days: { [Op.lte]: from } },
+                { days: { [Op.gte]: to } }
+            ]
+        }
+        data.saledata = await mdb.SaleData.findAll({ attributes: attributes, where: where });
+
+        attributes = [
+            'type',
+            'accounttype',
+            'account',
+            [Sequelize.fn('sum', Sequelize.col('amount')), 'amount'],
+            [Sequelize.fn('sum', Sequelize.col('tendered')), 'tendered']
+        ];
+        where = {
+            [Op.and]: [
+                { createdAt: { [Op.lte]: from } },
+                { createdAt: { [Op.gte]: to } }
+            ]
+        }
+        var group = ['type', 'accounttype', 'account'];
+        data.transactions = await mdb.Transaction.findAll({
+            attributes: attributes,
+            group: group,
+            where: where
+        });
+
+        res.send(data);
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: 'some error', err: true });
+    }
 }
 
-module.exports = { getCSV, getAccount, addAccountData }
+module.exports = { getCSV, getAccount, addAccountData, getReportData }

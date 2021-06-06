@@ -15,11 +15,11 @@ async function add(req, res) {
         }
         var data = req.body;
         var items = data.items;
-        var customerCredit = data.customerCredit;
-        var cumulativeAmount = data.totalCost;
+        var vendorDue = data.vendorDue;
         delete data.items;
         delete data['SESSION_ID'];
         delete data['SESSION_USERID'];
+        delete data['vendorDue'];
         id = await idgen.getIDAsync(idgen.tableID.purchase, 'num', 1, false);
         itemIDs = await idgen.getIDAsync(idgen.tableID.itemupdate, 'num', items.length, true);
         data['id'] = id;
@@ -39,9 +39,9 @@ async function add(req, res) {
                 }
             }
 
-            dayData = await saleData.updateAsync(null, data.totalQTY, null, data.totalCost);
+            dayData = await saleData.updateAsync(null, data.totalQTY, null, data.totalCost, Number(data.totalCost) - Number(data.dueAmount), data.dueDate, 'products', 'purchase', true);
             if (data.dueAmount > 0 || data.addDue == 1) {
-                var du = (data.addDue == 1) ? data.dueAmount : (data.dueAmount + vendorDue);
+                var du = (data.addDue == 1) ? data.dueAmount : (Number(data.dueAmount) + Number(vendorDue));
                 var uData = await mdb.Vendor.update({ due: du }, { where: { id: data.vendorID  } });
                 if (!uData) throw 'after up';
             }
@@ -195,8 +195,10 @@ function getPurchases(req, res) {
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
-                    createdAt: { [Op.lte]: req.body.from },
-                    createdAt: { [Op.gte]: req.body.to }
+                    [Op.and]: [
+                        { createdAt: { [Op.lte]: req.body.from } },
+                        { createdAt: { [Op.gte]: req.body.to } }
+                    ]
                 }
             }
             mdb.Purchase.findAll(wh).then(function (data) {
@@ -246,5 +248,54 @@ function getPurchasesCount(req, res) {
     }, 1);
 }
 
+// remove due by purchase
+async function removeDueByPurchase(req, res) {
+    var purchaseId = req.body.id;
+    try {
+        var dataAuth = await user.checkAsync(req, 1);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var amount;
+        upData = await mdb.Purchase.findOne({ where: { id: purchaseId } });
+        amount = upData.dueAmount;
+        upData.totalTendered = Number(upData.totalTendered) + Number(upData.dueAmount);
+        upData.dueAmount = 0;
+        upData.dueDate = null;
 
-module.exports = { add, getPurchases, getPurchasesCount }
+        upDataVendor = await mdb.Vendor.findOne({ where: { id: upData.vendorID } });
+        upDataVendor.due = Number(upDataVendor.due) - Number(amount);
+
+        await upData.save();
+        await upDataVendor.save();
+
+        await saleData.transactionAdd('purchase', 'products', 'expense', 'short term', amount, amount, null, 'expense for purchase');
+        res.send({ err: false, msg: 'done!' });
+    } catch(e) {
+        console.log(e);
+        res.send({ err: true, msg: 'some error' });
+    }
+}
+
+// remove due by vendor
+async function removeDueByVendor(req, res) {
+    var vendorId = req.body.id;
+    var amount = req.body.amount;
+    try {
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        upDataVendor = await mdb.Vendor.findOne({ where: { id: vendorId } });
+        if (amount == null) upDataVendor.due = 0;
+        else upDataVendor.due -= Number(amount);
+        upData.dueDate = null;
+    } catch(e) {
+
+    }
+}
+
+
+module.exports = { add, getPurchases, getPurchasesCount, removeDueByPurchase }

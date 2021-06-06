@@ -6,7 +6,7 @@ const user = require('../web/user');
 const idgen = require('./idgen');
 
 // update sale data async
-async function updateAsync(itemsold, itembought, earning, spending) {
+async function updateAsync(itemsold, itembought, earning, spending, tendered, duedate, accounttype, account, addToTransaction) {
     itemsold = isNaN(Number(itemsold)) ? null : Number(itemsold);
     itembought = isNaN(Number(itembought)) ? null : Number(itembought);
     earning = isNaN(Number(earning)) ? null : Number(earning);
@@ -29,6 +29,11 @@ async function updateAsync(itemsold, itembought, earning, spending) {
         createData['earning'] = (earning ? earning : 0);
         createData['spending'] = (spending ? spending : 0);
         upData = await mdb.SaleData.create(createData);
+    }
+    if (earning && addToTransaction) {
+        var tData = await transactionAdd(account, accounttype, 'income', 'short term', earning, tendered, duedate, 'income from ' + account);
+    } else if (spending && addToTransaction) {
+        var tData = await transactionAdd(account, accounttype, 'expense', 'short term', spending, tendered, duedate, 'expense for ' + account);
     }
     return upData;
 }

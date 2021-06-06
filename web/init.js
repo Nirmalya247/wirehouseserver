@@ -41,6 +41,7 @@ app.all('/users/getuserscount', user.getUsersCount);
 app.all('/users/deactivate', user.deactivate);
 app.all('/users/activate', user.activate);
 app.all('/users/deleteuser', user.deleteUser);
+app.all('/users/setsalary', user.setSalary);
 
 app.all('/item/additem', item.addItem);
 app.all('/item/getitems', item.getItems);
@@ -61,11 +62,13 @@ app.all('/sale/getlastsaleitem', sale.getLastSaleItem);
 app.all('/purchase/add', purchase.add);
 app.all('/purchase/getpurchasescount', purchase.getPurchasesCount);
 app.all('/purchase/getpurchases', purchase.getPurchases);
+app.all('/purchase/removeduebypurchase', purchase.removeDueByPurchase);
 
 app.all('/return/add', returnItem.add);
 app.all('/return/getbatch', returnItem.getBatch);
 app.all('/return/getreturns', returnItem.getReturns);
 app.all('/return/getreturnscount', returnItem.getReturnsCount);
+app.all('/return/removeduebyreturn', returnItem.removeDueByReturn);
 
 app.all('/customer/get', customer.get);
 app.all('/customer/add', customer.add);
@@ -90,6 +93,10 @@ app.all('/saledata/getexpirycount', saleData.getExpiryCount);
 app.all('/saledata/getcredit', saleData.getCredit);
 app.all('/saledata/getcreditcount', saleData.getCreditCount);
 app.all('/saledata/sendcreditemail', saleData.sendCreditEmail);
+app.all('/saledata/getpurchasedue', saleData.getPurchaseDue);
+app.all('/saledata/getpurchaseduecount', saleData.getPurchaseDueCount);
+app.all('/saledata/getreturndue', saleData.getReturnDue);
+app.all('/saledata/getreturnduecount', saleData.getReturnDueCount);
 
 app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
@@ -99,5 +106,6 @@ app.all('/sale-bill', saleBill.getSaleBill);
 app.all('/accounting/csv', accounting.getCSV);
 app.all('/accounting/getaccount', accounting.getAccount);
 app.all('/accounting/addaccountdata', accounting.addAccountData);
+app.all('/accounting/getreportdata', accounting.getReportData);
 
 module.exports = { app }
