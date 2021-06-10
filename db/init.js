@@ -326,6 +326,7 @@ var Shop = sequelize.define('shop', {
     shopaddress: { type: Sequelize.STRING(1024) },
     shopphoneno: { type: Sequelize.STRING(20) },
     shopotherphoneno: { type: Sequelize.STRING(20) },
+    shopwebsite: { type: Sequelize.STRING(100) },
     shopemail: { type: Sequelize.STRING(80) },
     shopemailpassword: { type: Sequelize.STRING(80) },
     vatno: { type: Sequelize.STRING(512) },
@@ -343,6 +344,19 @@ var Rack = sequelize.define('rack', {
         primaryKey: true
     },
     label: { type: Sequelize.STRING(100) }
+}, {
+    freezeTableName: true
+});
+// Message
+var Message = sequelize.define('messages', {
+    id: {
+        type: Sequelize.STRING(20),
+        primaryKey: true
+    },
+    for: { type: Sequelize.STRING(40) },
+    type: { type: Sequelize.STRING(40) },
+    label: { type: Sequelize.STRING(40) },
+    message: { type: Sequelize.TEXT }
 }, {
     freezeTableName: true
 });
@@ -395,6 +409,7 @@ module.exports = {
     ItemType,
     Shop,
     Rack,
+    Message,
     Counter,
     ui
 };

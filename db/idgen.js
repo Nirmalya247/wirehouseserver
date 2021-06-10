@@ -13,7 +13,8 @@ const tableID = {
     shop: { id: '18', table: mdb.Shop, name: 'shop' },
     return: { id: '19', table: mdb.Return, name: 'return' },
     returnItem: { id: '20', table: mdb.ReturnItem, name: 'returnitem' },
-    transaction: { id: '21', table: mdb.Transaction, name: 'transactions' }
+    transaction: { id: '21', table: mdb.Transaction, name: 'transactions' },
+    message: { id: '22', table: mdb.Message, name: 'messages' }
 }
 function getID(table, idType, n, isMultiple, callback) {
     mdb.Counter.findOne({ where: { id: table.name } }).then(data => {

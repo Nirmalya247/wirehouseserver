@@ -10,6 +10,7 @@ const customer = require('./customer');
 const vendor = require('./vendor');
 const saleData = require('./saleData');
 const shop = require('./shop');
+const message = require('./message');
 const saleBill = require('./saleBill');
 const accounting = require('./accounting');
 
@@ -100,6 +101,13 @@ app.all('/saledata/getreturnduecount', saleData.getReturnDueCount);
 
 app.all('/shop/get', shop.getShop);
 app.all('/shop/save', shop.saveShop);
+
+app.all('/message/add', message.add);
+app.all('/message/update', message.update);
+app.all('/message/deletemessage', message.deleteMessage);
+app.all('/message/getmessage', message.getMessage);
+app.all('/message/getmessagecount', message.getMessageCount);
+app.all('/message/sendmessage', message.sendMessage);
 
 app.all('/sale-bill', saleBill.getSaleBill);
 
