@@ -82,6 +82,8 @@ app.all('/customer/getcustomercount', customer.getCustomerCount);
 app.all('/vendor/get', vendor.get);
 app.all('/vendor/add', vendor.add);
 app.all('/vendor/update', vendor.update);
+app.all('/vendor/getvendor', vendor.getVendor);
+app.all('/vendor/getvendorcount', vendor.getVendorCount);
 
 app.all('/saledata/gettoday', saleData.getToday);
 app.all('/saledata/getgraphdata', saleData.getGraphData);
@@ -108,6 +110,7 @@ app.all('/message/deletemessage', message.deleteMessage);
 app.all('/message/getmessage', message.getMessage);
 app.all('/message/getmessagecount', message.getMessageCount);
 app.all('/message/sendmessage', message.sendMessage);
+app.all('/message/sendmessagemultiple', message.sendMessageMultiple);
 
 app.all('/sale-bill', saleBill.getSaleBill);
 
