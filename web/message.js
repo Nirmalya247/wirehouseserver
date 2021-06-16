@@ -146,14 +146,14 @@ async function getMessageCount(req, res) {
 // type: email/mobile, (email, passwoed): shop, to, subject, message
 async function send(data) {
     var shop = data.shop || await mdb.Shop.findOne({ where: { id: 1 } });
+    var message = data.message.replace(/{{[\w.]*}}/g, x => {
+        var tAttr = x.substr(2, x.length - 4).split('.');
+        return data[tAttr[0]][tAttr[1]];
+    });
 
     if (data.type == 'email') {
         var email = data.email || shop.shopemail;
         var password = data.password || shop.shopemailpassword;
-        var message = data.message.replace(/{{[\w.]*}}/g, x => {
-            var tAttr = x.substr(2, x.length - 4).split('.');
-            return data[tAttr[0]][tAttr[1]];
-        });
 
         var transporter = nodemailer.createTransport({
             host: 'smtp.zoho.com',
@@ -182,14 +182,19 @@ async function send(data) {
             });
         });
     } else {
-        var api = 'https://www.smschef.com/system/api/send';
-        var key = data.key || shop.shopphoneapi;
-        var phone = data.phone || shop.shopphoneno;
+        var key = data.smskey || shop.smskey;
+        var apiHost = 'https://www.smschef.com';
+        var apiPath = '/system/api/send';
         return new Promise((resolve, reject) => {
-            https.get(`${api}?key=${key}&phone=${phone}&message=${message}`, res => {
-                console.log(3, res);
-                resolve({ msg: 'email sent', err: false, info: info });
-            });
+            if (data.to.length <= 10) {
+                resolve({ msg: 'wrong number', err: true });
+            } else {
+                message = message.replace(/(\r\n|\n|\r)/gm, '\\n');
+                https.get(`${ apiHost + apiPath }?key=${ key }&phone=${ data.to }&message=${ message }`, res => {
+                    console.log(3, res);
+                    resolve({ msg: 'email sent', err: false, info: res });
+                });
+            }
         });
     }
 }
@@ -205,12 +210,20 @@ async function sendMessage(req, res) {
         var customerId = req.body.customerId;
         var vendorId = req.body.vendorId;
         var userId = req.body.userId;
-        var salesId = req.body.userId;
+        var salesId = req.body.salesId;
 
-        var fordata = req.body.for.split('.');
+
+        var fordata = req.body.for;
         var type = req.body.type;
         var label = req.body.label;
         var message = req.body.message;
+        if (req.body.messageId) {
+            message = await mdb.Message.findOne({ where: { id: idgen.tableID.message.id + req.body.messageId } });
+            fordata = message.for.split('.');
+            type = message.type;
+            label = message.label;
+            message = message.message;
+        } else fordata = fordata.split('.');
 
         var data = {
             shop: {},
@@ -223,7 +236,9 @@ async function sendMessage(req, res) {
         if (customerId) data.customer = await mdb.Customer.findOne({ where: { id: customerId } });
         if (vendorId) data.vendor = await mdb.Vendor.findOne({ where: { id: vendorId } });
         if (userId) data.user = await mdb.User.findOne({ where: { id: userId } });
-        if (salesId) data.sales = await mdb.Sales.findOne({ where: { id: salesId } });
+        if (salesId) {
+            data.sales = await mdb.Sale.findOne({ where: { id: salesId } });
+        }
 
         data['email'] = data.shop.shopemail;
         data['password'] = data.shop.shopemailpassword;
@@ -262,7 +277,7 @@ async function sendMessageMultiple(req, res) {
         var message = await mdb.Message.findOne({ where: { id: idgen.tableID.message.id + req.body.message } });
         var fordata = message.for.split('.');
         var type = message.type;
-        var label = message.type;
+        var label = message.label;
         message = message.message;
 
         var data = {
@@ -279,11 +294,11 @@ async function sendMessageMultiple(req, res) {
         if (customerId) data.customer = await mdb.Customer.findOne({ where: { id: customerId } });
         if (vendorId) data.vendor = await mdb.Vendor.findOne({ where: { id: vendorId } });
         if (userId) data.user = await mdb.User.findOne({ where: { id: userId } });
-        if (salesId) data.sales = await mdb.Sales.findOne({ where: { id: salesId } });
+        if (salesId) data.sales = await mdb.Sale.findOne({ where: { id: salesId } });
 
         data['email'] = data.shop.shopemail;
         data['password'] = data.shop.shopemailpassword;
-        if (messagetype == 1 || messagetype == 2) {
+        if (messagetype == 1 || messagetype == 2) { // customer due
             var customers = await mdb.Customer.findAll({
                 where: {
                     credit: {
@@ -291,13 +306,50 @@ async function sendMessageMultiple(req, res) {
                     }
                 }
             });
+            // console.log('@@@@@@@@@@@ sending ' + messagetype + ' @@@@@@@@@@@', customers.length);
             for (var i = 0; i < customers.length; i++) {
                 data.customer = customers[i];
                 data['to'] = data[fordata[0]][fordata[1]];
                 var tRet = await send(data);
-                console.log(`########### email sent ${data.to} ###########`);
+                // console.log(`########### email sent ${data.to} ###########`);
             }
-            res.send({ msg: `sent to ${customers.length} customers` });
+            res.send({ msg: `sent to ${ customers.length } customers` });
+        } else if (messagetype == 3 || messagetype == 4) { // purchase due
+            var purchases = await mdb.Purchase.findAll({
+                where: {
+                    dueAmount: {
+                        [Op.gt]: 0
+                    }
+                },
+                include: [{ model: mdb.Vendor, as: 'vendors' }]
+            });
+            console.log('@@@@@@@@@@@ sending ' + messagetype + ' @@@@@@@@@@@', purchases);
+            for (var i = 0; i < purchases.length; i++) {
+                data.purchase = purchases[i];
+                data.vendor = purchases[i].vendors;
+                data['to'] = data[fordata[0]][fordata[1]];
+                var tRet = await send(data);
+                // console.log(`########### email sent ${data.to} ###########`);
+            }
+            res.send({ msg: `sent to ${ purchases.length } customers` });
+        } else if (messagetype == 5 || messagetype == 6) { // return due
+            var returns = await mdb.Return.findAll({
+                where: {
+                    dueAmount: {
+                        [Op.gt]: 0
+                    }
+                },
+                include: [{ model: mdb.Vendor, as: 'vendors' }]
+            });
+            console.log('@@@@@@@@@@@ sending ' + messagetype + ' @@@@@@@@@@@', returns);
+            for (var i = 0; i < returns.length; i++) {
+                data.return = returns[i];
+                data.vendor = returns[i].vendors;
+                data['to'] = data[fordata[0]][fordata[1]];
+                var tRet = await send(data);
+                // console.log(`########### email sent ${data.to} ###########`);
+            }
+            res.send({ msg: `sent to ${ returns.length } customers` });
         }
         // console.log(message);
         // res.send({ msg: 'done!', err: false });

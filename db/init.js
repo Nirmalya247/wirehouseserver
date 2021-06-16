@@ -326,6 +326,7 @@ var Shop = sequelize.define('shop', {
     shopaddress: { type: Sequelize.STRING(1024) },
     shopphoneno: { type: Sequelize.STRING(20) },
     shopotherphoneno: { type: Sequelize.STRING(20) },
+    smskey: { type: Sequelize.STRING(64) },
     shopwebsite: { type: Sequelize.STRING(100) },
     shopemail: { type: Sequelize.STRING(80) },
     shopemailpassword: { type: Sequelize.STRING(80) },
@@ -390,6 +391,12 @@ Vendor.hasMany(ItemUpdate, { as: 'itemUpdates', foreignKey: 'vendorid', targetKe
 
 SaleItem.belongsTo(Item, { as: 'item', foreignKey: 'itemcode', targetKey: 'itemcode' });
 Item.hasMany(SaleItem, { as: 'saleItems', foreignKey: 'itemcode', targetKey: 'itemcode' });
+
+Purchase.belongsTo(Vendor, { as: 'vendors', foreignKey: 'vendorID', targetKey: 'id' });
+Vendor.hasMany(Purchase, { as: 'purchases', foreignKey: 'vendorID', targetKey: 'id' });
+
+Return.belongsTo(Vendor, { as: 'vendors', foreignKey: 'vendorID', targetKey: 'id' });
+Vendor.hasMany(Return, { as: 'returns', foreignKey: 'vendorID', targetKey: 'id' });
 
 module.exports = {
     sequelize,
