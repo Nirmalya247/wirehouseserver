@@ -82,6 +82,7 @@ app.all('/customer/getcustomercount', customer.getCustomerCount);
 app.all('/vendor/get', vendor.get);
 app.all('/vendor/add', vendor.add);
 app.all('/vendor/update', vendor.update);
+app.all('/vendor/delete', vendor.deleteVendor);
 app.all('/vendor/getvendor', vendor.getVendor);
 app.all('/vendor/getvendorcount', vendor.getVendorCount);
 

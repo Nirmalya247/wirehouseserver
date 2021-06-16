@@ -78,6 +78,23 @@ function update(req, res) {
     }, 2);
 }
 
+function deleteVendor(req, res) {
+    user.check(req, function(dataAuth) {
+        if (dataAuth) {
+            var dataVendor = req.body;
+            var id = dataVendor.id;
+            console.log(id);
+            mdb.Vendor.destroy({ where: { id: id } }).then((data) => {
+                res.send({ msg: 'vendor deleted', err: false });
+            }).catch(err => {
+                res.send({ msg: 'some error', err: true });
+            });
+        } else {
+            res.send({ msg: 'not permitted', err: true });
+        }
+    }, 2);
+}
+
 // get vendor
 function getVendor(req, res) {
     user.check(req, function(dataAuth) {
@@ -204,4 +221,4 @@ function getVendorCount(req, res) {
     }, 2);
 }
 
-module.exports = {get, add, update, getVendor, getVendorCount }
+module.exports = {get, add, update, deleteVendor, getVendor, getVendorCount }

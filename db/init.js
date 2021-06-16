@@ -351,7 +351,7 @@ var Rack = sequelize.define('rack', {
 // Message
 var Message = sequelize.define('messages', {
     id: {
-        type: Sequelize.STRING(20),
+        type: Sequelize.BIGINT,
         primaryKey: true
     },
     for: { type: Sequelize.STRING(40) },

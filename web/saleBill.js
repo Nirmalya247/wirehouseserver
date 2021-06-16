@@ -351,12 +351,12 @@ function getBillHtmlA4V2(shop, sale, items) {
                 <div class="name">${shop.shopname}</div>
                 <div class="addr">${shop.shopaddress}</div>
                 <div class="phone">Phone: ${shop.shopphoneno} / ${shop.shopotherphoneno}</div>
-                <div class="website">${shop.shopname}</div>
+                <div class="website">${shop.shopwebsite}</div>
                 <div class="email">${shop.shopemail}</div>
             </div>
         </div>
     `;
-    
+
     var footer = `
         <style>
             .footer {
@@ -706,12 +706,12 @@ function getSaleBill(req, res) {
                         format: 'a4',
                         orientation: "landscape"
                     };
-                    pdf.create(html, options).toStream(function (err, stream) {
+                    pdf.create(html, options).toStream(function(err, stream) {
                         stream.pipe(res);
                     });
                 } else if (req.query.paper == 'A4V2') {
                     var data = getBillHtmlA4V2(resShop, resSale, resSaleItem);
-                    pdf.create(data.html, data.options).toStream(function (err, stream) {
+                    pdf.create(data.html, data.options).toStream(function(err, stream) {
                         stream.pipe(res);
                     });
                     // res.send(resSaleItem);
