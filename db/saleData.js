@@ -34,6 +34,7 @@ async function updateAsync(itemsold, itembought, earning, spending, tendered, du
         var tData = await transactionAdd(account, accounttype, 'income', 'short term', earning, tendered, duedate, 'income from ' + account);
     } else if (spending && addToTransaction) {
         var tData = await transactionAdd(account, accounttype, 'expense', 'short term', spending, tendered, duedate, 'expense for ' + account);
+        if (Number(spending) > Number(tendered)) await transactionAdd(account, accounttype, 'liability', 'short term', Number(spending) - Number(tendered), Number(spending) - Number(tendered), duedate, 'expense for ' + account);
     }
     return upData;
 }
@@ -51,11 +52,12 @@ async function transactionAdd(account, accounttype, type, duration, amount, tend
             amount: amount,
             tendered: tendered,
             duedate: duedate,
-            comment, comment
+            comment,
+            comment
         }
         console.log(duedate, comment, data);
         return await mdb.Transaction.create(data);
-    } catch(e) {
+    } catch (e) {
         console.log('transactionAdd', e);
     }
 }
@@ -70,7 +72,7 @@ function testWeb(req, res) {
         format: 'a4',
         orientation: "landscape"
     };
-    pdf.create(html, options).toStream(function (err, stream) {
+    pdf.create(html, options).toStream(function(err, stream) {
         stream.pipe(res);
     });
 }

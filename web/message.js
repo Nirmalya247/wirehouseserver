@@ -209,8 +209,9 @@ async function sendMessage(req, res) {
         var shopId = req.body.shopId || 1;
         var customerId = req.body.customerId;
         var vendorId = req.body.vendorId;
-        var userId = req.body.userId;
+        var userId = req.body.userId || req.body.SESSION_USERID;
         var salesId = req.body.salesId;
+        var returnId = req.body.salesId;
 
 
         var fordata = req.body.for;
@@ -230,7 +231,8 @@ async function sendMessage(req, res) {
             customer: {},
             vendor: {},
             user: {},
-            sales: {}
+            sales: {},
+            return: {}
         };
         if (shopId) data.shop = await mdb.Shop.findOne({ where: { id: shopId } });
         if (customerId) data.customer = await mdb.Customer.findOne({ where: { id: customerId } });
@@ -238,6 +240,9 @@ async function sendMessage(req, res) {
         if (userId) data.user = await mdb.User.findOne({ where: { id: userId } });
         if (salesId) {
             data.sales = await mdb.Sale.findOne({ where: { id: salesId } });
+        }
+        if (returnId) {
+            data.return = await mdb.Return.findOne({ where: { id: returnId } });
         }
 
         data['email'] = data.shop.shopemail;
@@ -270,8 +275,9 @@ async function sendMessageMultiple(req, res) {
         var shopId = req.body.shopId || 1;
         var customerId = req.body.customerId;
         var vendorId = req.body.vendorId;
-        var userId = req.body.userId;
-        var salesId = req.body.userId;
+        var userId = req.body.userId || req.body.SESSION_USERID;
+        var salesId = req.body.salesId;
+        var returnId = req.body.returnId;
 
         var messagetype = req.body.message;
         var message = await mdb.Message.findOne({ where: { id: idgen.tableID.message.id + req.body.message } });
@@ -288,13 +294,15 @@ async function sendMessageMultiple(req, res) {
             customer: {},
             vendor: {},
             user: {},
-            sales: {}
+            sales: {},
+            return: {}
         };
         if (shopId) data.shop = await mdb.Shop.findOne({ where: { id: shopId } });
         if (customerId) data.customer = await mdb.Customer.findOne({ where: { id: customerId } });
         if (vendorId) data.vendor = await mdb.Vendor.findOne({ where: { id: vendorId } });
         if (userId) data.user = await mdb.User.findOne({ where: { id: userId } });
         if (salesId) data.sales = await mdb.Sale.findOne({ where: { id: salesId } });
+        if (returnId) data.return = await mdb.Return.findOne({ where: { id: returnId } });
 
         data['email'] = data.shop.shopemail;
         data['password'] = data.shop.shopemailpassword;

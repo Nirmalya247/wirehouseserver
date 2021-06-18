@@ -12,6 +12,7 @@ const saleData = require('./saleData');
 const shop = require('./shop');
 const message = require('./message');
 const saleBill = require('./saleBill');
+const returnBill = require('./returnBill');
 const accounting = require('./accounting');
 
 const saleData2 = require('../db/saleData');
@@ -114,6 +115,8 @@ app.all('/message/sendmessage', message.sendMessage);
 app.all('/message/sendmessagemultiple', message.sendMessageMultiple);
 
 app.all('/sale-bill', saleBill.getSaleBill);
+
+app.all('/return-bill', returnBill.getReturnBill);
 
 app.all('/accounting/csv', accounting.getCSV);
 app.all('/accounting/getaccount', accounting.getAccount);

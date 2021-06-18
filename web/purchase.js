@@ -42,7 +42,7 @@ async function add(req, res) {
             dayData = await saleData.updateAsync(null, data.totalQTY, null, data.totalCost, Number(data.totalCost) - Number(data.dueAmount), data.dueDate, 'products', 'purchase', true);
             if (data.dueAmount > 0 || data.addDue == 1) {
                 var du = (data.addDue == 1) ? data.dueAmount : (Number(data.dueAmount) + Number(vendorDue));
-                var uData = await mdb.Vendor.update({ due: du }, { where: { id: data.vendorID  } });
+                var uData = await mdb.Vendor.update({ due: du }, { where: { id: data.vendorID } });
                 if (!uData) throw 'after up';
             }
             res.send({ msg: 'done!', err: false, id: id });
@@ -172,36 +172,76 @@ function add(req, res) {
 
 // get purchases
 function getPurchases(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
             var wh = {
                 offset: (parseInt(req.body.purchasePage) - 1) * parseInt(req.body.purchaseLimit),
                 limit: parseInt(req.body.purchaseLimit),
-                order: [[req.body.purchaseOrderBy, req.body.purchaseOrder]]
+                order: [
+                    [req.body.purchaseOrderBy, req.body.purchaseOrder]
+                ]
             };
             if (req.body.purchaseSearchText && req.body.purchaseSearchText != '') {
                 wh['where'] = {
-                    [Op.or]: [
-                        { id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { vendorFName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { vendorLName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { vendorCompany: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { vendorID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            billID: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            vendorFName: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            vendorLName: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            vendorCompany: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            vendorID: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        }
                     ]
                 }
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
-                    [Op.and]: [
-                        { createdAt: { [Op.lte]: req.body.from } },
-                        { createdAt: { [Op.gte]: req.body.to } }
+                    [Op.and]: [{
+                            createdAt: {
+                                [Op.lte]: req.body.from
+                            }
+                        },
+                        {
+                            createdAt: {
+                                [Op.gte]: req.body.to
+                            }
+                        }
                     ]
                 }
             }
-            mdb.Purchase.findAll(wh).then(function (data) {
+            mdb.Purchase.findAll(wh).then(function(data) {
                 if (data) {
                     res.send(data);
                 } else res.send([]);
@@ -215,28 +255,55 @@ function getPurchases(req, res) {
 
 // get purchases count
 function getPurchasesCount(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
-            var wh = { };
+            var wh = {};
             if (req.body.purchaseSearchText && req.body.purchaseSearchText != '') {
                 wh['where'] = {
-                    [Op.or]: [
-                        { id: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { billID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { vendorName: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { vendorID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { userID: { [Op.like]: `%${req.body.purchaseSearchText}%` } },
-                        { userName: { [Op.like]: `%${req.body.purchaseSearchText}%` } }
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            billID: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            vendorName: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            vendorID: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.purchaseSearchText}%`
+                            }
+                        }
                     ]
                 }
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
-                    createdAt: { [Op.lte]: req.body.from },
-                    createdAt: { [Op.gte]: req.body.to }
+                    createdAt: {
+                        [Op.lte]: req.body.from
+                    },
+                    createdAt: {
+                        [Op.gte]: req.body.to
+                    }
                 }
             }
-            mdb.Purchase.count(wh).then(function (data) {
+            mdb.Purchase.count(wh).then(function(data) {
                 if (data) {
                     res.send(data.toString());
                 } else res.send('0');
@@ -270,9 +337,11 @@ async function removeDueByPurchase(req, res) {
         await upData.save();
         await upDataVendor.save();
 
-        await saleData.transactionAdd('purchase', 'products', 'expense', 'short term', amount, amount, null, 'expense for purchase');
+        await saleData.transactionAdd('purchase', 'products', 'expense', 'short term', amount, amount, null, 'due expense for purchase');
+
+        await saleData.transactionAdd('purchase', 'products', 'liability', 'short term', -amount, -amount, null, 'due expense for purchase');
         res.send({ err: false, msg: 'done!' });
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.send({ err: true, msg: 'some error' });
     }
@@ -288,12 +357,22 @@ async function removeDueByVendor(req, res) {
             res.send({ msg: 'not permitted', err: true });
             return;
         }
+        var dueAmount = 0;
         upDataVendor = await mdb.Vendor.findOne({ where: { id: vendorId } });
-        if (amount == null) upDataVendor.due = 0;
-        else upDataVendor.due -= Number(amount);
-        upData.dueDate = null;
-    } catch(e) {
+        if (amount == null) {
+            dueAmount = upDataVendor.due;
+            upDataVendor.due = 0;
+        } else {
+            upDataVendor.due -= Number(amount);
+            upDataVendor.due = Number(amount);
+        }
+        upDataVendor.save();
 
+        await saleData.transactionAdd('return', 'products', 'income', 'short term', amount, amount, null, 'income from return');
+        res.send({ err: false, msg: 'done!' });
+    } catch (e) {
+        console.log(e);
+        res.send({ err: true, msg: 'some error' });
     }
 }
 
