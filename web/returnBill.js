@@ -355,6 +355,7 @@ function getBillHtmlA4V2(shop, returns, items) {
                 <td class="item-td item-td-items">
                     <div class="item-name">${items[i].itemname}</div>
                     <div class="item-batch">Batch NO: ${items[i].batchno}</div>
+                    <div class="item-description">${items[i].item.reason}</div>
                     <div class="item-batch">Purchase: ${ purchase }</div>
                     <div class="item-batch">Mfg. Date: ${ mfg }</div>
                     <div class="item-batch">Exp. Date: ${ expiry }</div>
