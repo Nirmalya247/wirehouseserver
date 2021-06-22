@@ -330,6 +330,7 @@ var Shop = sequelize.define('shop', {
     shopwebsite: { type: Sequelize.STRING(100) },
     shopemail: { type: Sequelize.STRING(80) },
     shopemailpassword: { type: Sequelize.STRING(80) },
+    hubspotkey: { type: Sequelize.STRING(80) },
     vatno: { type: Sequelize.STRING(512) },
     licenseno: { type: Sequelize.STRING(100) },
     vat: { type: Sequelize.DECIMAL(10, 2) },

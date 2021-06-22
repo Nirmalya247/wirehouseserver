@@ -5,7 +5,7 @@ const { Op, Sequelize } = require('sequelize');
 
 
 function addItem(req, res) {
-    user.check(req, function (data3) {
+    user.check(req, function(data3) {
         if (data3) {
             var it = req.body;
             delete it['SESSION_ID'];
@@ -21,8 +21,9 @@ function addItem(req, res) {
             } else {
                 createItem(it);
             }
+
             function createItem(item) {
-                mdb.Item.create(item).then(function (data) {
+                mdb.Item.create(item).then(function(data) {
                     if (data) {
                         res.send({ msg: 'item added', err: false });
                     } else res.send({ msg: 'some error', err: true });
@@ -34,15 +35,31 @@ function addItem(req, res) {
     }, 2);
 }
 
-// get items for inventory
+// get items for inventory and sales
 function getItems(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
-            var wh = { offset: (parseInt(req.body.itemPage) - 1) * parseInt(req.body.itemLimit), limit: parseInt(req.body.itemLimit), order: [[req.body.itemOrderBy, req.body.itemOrder]] };
+            var wh = {
+                offset: (parseInt(req.body.itemPage) - 1) * parseInt(req.body.itemLimit),
+                limit: parseInt(req.body.itemLimit),
+                order: [
+                    [req.body.itemOrderBy, req.body.itemOrder]
+                ]
+            };
             if (req.body.itemSearch && req.body.itemSearch != '') {
-                wh['where'] = { [Op.or]: [{ itemcode: { [Op.like]: `%${req.body.itemSearch}%` } }, { itemname: { [Op.like]: `%${req.body.itemSearch}%` } }] }
+                wh['where'] = {
+                    [Op.or]: [{
+                        itemcode: {
+                            [Op.like]: `%${req.body.itemSearch}%`
+                        }
+                    }, {
+                        itemname: {
+                            [Op.like]: `%${req.body.itemSearch}%`
+                        }
+                    }]
+                }
             }
-            mdb.Item.findAll(wh).then(function (data) {
+            mdb.Item.findAll(wh).then(function(data) {
                 if (data) {
                     res.send(data);
                 } else res.send([]);
@@ -56,13 +73,23 @@ function getItems(req, res) {
 
 // get items count for inventory
 function getItemsCount(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
             var wh = {};
             if (req.body.itemSearch && req.body.itemSearch != '') {
-                wh['where'] = { [Op.or]: [{ itemcode: { [Op.like]: `%${req.body.itemSearch}%` } }, { itemname: { [Op.like]: `%${req.body.itemSearch}%` } }] };
+                wh['where'] = {
+                    [Op.or]: [{
+                        itemcode: {
+                            [Op.like]: `%${req.body.itemSearch}%`
+                        }
+                    }, {
+                        itemname: {
+                            [Op.like]: `%${req.body.itemSearch}%`
+                        }
+                    }]
+                };
             }
-            mdb.Item.count(wh).then(function (data) {
+            mdb.Item.count(wh).then(function(data) {
                 console.log('ok1');
                 if (data) {
                     console.log(data);
@@ -76,9 +103,30 @@ function getItemsCount(req, res) {
     }, 1);
 }
 
+// get items for barcode scan
+function getItemsScan(req, res) {
+    user.check(req, function(authData) {
+        if (authData && req.body.code && req.body.code.length >= 2) {
+            var wh = {
+                where: {
+                    [Op.or]: [{ itemcode: req.body.code }, { id: req.body.code }]
+                }
+            };
+            mdb.ItemUpdate.findOne(wh).then(function(data) {
+                if (data) {
+                    res.send({ err: false, msg: 'item found', itemcode: data.itemcode, item: data });
+                } else res.send({ err: true, msg: 'not found', itemcode: 0 });
+            }).catch((err) => {
+                console.log(err);
+                res.send({ err: true, msg: 'not found', itemcode: 0 });
+            });
+        } else res.send({ err: true, msg: 'not found', itemcode: 0 });
+    }, 1);
+}
+
 // edit item
 function edit(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var dataItem = req.body;
             var itemcode = dataItem.oldcode;
@@ -94,8 +142,7 @@ function edit(req, res) {
             }).catch(err => {
                 res.send({ msg: 'some error (may be duplicate code)', err: true });
             });
-        }
-        else {
+        } else {
             res.send({ msg: 'not permitted', err: true });
         }
     }, 2);
@@ -205,7 +252,7 @@ function update(req, res) {
 
 // delete item
 function deleteItem(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var dataItem = req.body;
             var itemcode = dataItem.itemcode;
@@ -214,8 +261,7 @@ function deleteItem(req, res) {
             }).catch(err => {
                 res.send({ msg: 'some error', err: true });
             });
-        }
-        else {
+        } else {
             res.send({ msg: 'not permitted', err: true });
         }
     }, 2);
@@ -223,21 +269,26 @@ function deleteItem(req, res) {
 
 // get item types
 function getItemTypes(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var search = req.body.itemTypeSearch;
             mdb.ItemType.findAll({
-                where: { itemtypename: { [Op.like]: `%${search}%` } },
+                where: {
+                    itemtypename: {
+                        [Op.like]: `%${search}%`
+                    }
+                },
                 limit: 20,
-                order: [['itemtypename', 'asc']]
+                order: [
+                    ['itemtypename', 'asc']
+                ]
             }).then((data) => {
                 if (data) res.send(data);
                 else res.send([]);
             }).catch(err => {
                 res.send([]);
             });
-        }
-        else {
+        } else {
             res.send([]);
         }
     });
@@ -250,4 +301,4 @@ function getRacks(req, res) {
     })
 }
 
-module.exports = { addItem, getItems, getItemsCount, edit, update, deleteItem, getItemTypes, getRacks }
+module.exports = { addItem, getItems, getItemsCount, getItemsScan, edit, update, deleteItem, getItemTypes, getRacks }

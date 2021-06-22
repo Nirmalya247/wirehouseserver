@@ -48,6 +48,7 @@ app.all('/users/setsalary', user.setSalary);
 app.all('/item/additem', item.addItem);
 app.all('/item/getitems', item.getItems);
 app.all('/item/getitemscount', item.getItemsCount);
+app.all('/item/getitemsscan', item.getItemsScan);
 app.all('/item/edit', item.edit);
 app.all('/item/update', item.update);
 app.all('/item/delete', item.deleteItem);
@@ -79,6 +80,7 @@ app.all('/customer/delete', customer.deleteCustomer);
 app.all('/customer/customerinfo', customer.customerInfo);
 app.all('/customer/getcustomer', customer.getCustomer);
 app.all('/customer/getcustomercount', customer.getCustomerCount);
+app.all('/customer/fetchcustomerfromhubspot', customer.fetchCustomerFromHubSpot);
 
 app.all('/vendor/get', vendor.get);
 app.all('/vendor/add', vendor.add);

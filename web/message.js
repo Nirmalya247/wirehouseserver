@@ -192,7 +192,7 @@ async function send(data) {
                 message = message.replace(/(\r\n|\n|\r)/gm, '\\n');
                 https.get(`${ apiHost + apiPath }?key=${ key }&phone=${ data.to }&message=${ message }`, res => {
                     console.log(3, res);
-                    resolve({ msg: 'email sent', err: false, info: res });
+                    resolve({ msg: 'email sent', err: false });
                 });
             }
         });
@@ -235,15 +235,21 @@ async function sendMessage(req, res) {
             return: {}
         };
         if (shopId) data.shop = await mdb.Shop.findOne({ where: { id: shopId } });
+        console.log('hi3', userId);
         if (customerId) data.customer = await mdb.Customer.findOne({ where: { id: customerId } });
+        console.log('hi4', userId);
         if (vendorId) data.vendor = await mdb.Vendor.findOne({ where: { id: vendorId } });
+        console.log('hi6', userId);
         if (userId) data.user = await mdb.User.findOne({ where: { id: userId } });
+        console.log('hi7', userId);
         if (salesId) {
             data.sales = await mdb.Sale.findOne({ where: { id: salesId } });
         }
+        console.log('hi8', userId);
         if (returnId) {
             data.return = await mdb.Return.findOne({ where: { id: returnId } });
         }
+        console.log('hi9', userId);
 
         data['email'] = data.shop.shopemail;
         data['password'] = data.shop.shopemailpassword;
@@ -251,8 +257,10 @@ async function sendMessage(req, res) {
         data['type'] = type;
         data['subject'] = label;
         data['message'] = message;
+        console.log('hi10', userId);
 
         var mailData = await send(data);
+        console.log('hi11', userId);
         res.send(mailData);
     } catch (e) {
         console.log(e);
