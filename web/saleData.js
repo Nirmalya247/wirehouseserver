@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 
 // today sales data
 function getToday(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var today = new Date();
             mdb.SaleData.findOne({ where: { days: today } }).then(data => {
@@ -23,8 +23,7 @@ function getToday(req, res) {
                     res.send({ days: days, itemsold: 0, itembought: 0, earning: 0, spending: 0, msg: 'no data', err: false })
                 }
             });
-        }
-        else {
+        } else {
             res.send(res.send({ days: days, itemsold: 0, itembought: 0, earning: 0, spending: 0, msg: 'not permitted', err: true }));
         }
     }, 3);
@@ -191,7 +190,7 @@ function getGraphData(req, res) {
 */
 
 function getGraphData(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var findby = req.body.findby;
             var group = [];
@@ -340,8 +339,7 @@ function getGraphData(req, res) {
                     res.send({ err: true });
                 }
             });
-        }
-        else {
+        } else {
             res.send({ err: true });
         }
     }, 3);
@@ -351,12 +349,14 @@ function getGraphData(req, res) {
 
 // get items high/low stock
 function getStock(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var wh = {
                 offset: (parseInt(req.body.page) - 1) * parseInt(req.body.limit),
                 limit: parseInt(req.body.limit),
-                order: [['qty', req.body.order]]
+                order: [
+                    ['qty', req.body.order]
+                ]
             };
             mdb.Item.findAll(wh).then(data => {
                 if (data) res.send(data);
@@ -368,7 +368,7 @@ function getStock(req, res) {
 
 // get items count high/low stock
 function getStockCount(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var wh = {};
             mdb.Item.count(wh).then(data => {
@@ -382,7 +382,7 @@ function getStockCount(req, res) {
 
 // get items high/low demand/earning (qty/totalprice)
 function getDemand(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var today = new Date();
             today = new Date(today.setMonth(today.getMonth() - 1));
@@ -395,16 +395,21 @@ function getDemand(req, res) {
             var wh = {
                 attributes: [
                     'itemcode',
-                    'itemname',
-                    [Sequelize.fn('sum', Sequelize.col('totalPrice')), 'totalprice'],
+                    'itemname', [Sequelize.fn('sum', Sequelize.col('totalPrice')), 'totalprice'],
                     [Sequelize.fn('sum', Sequelize.col('qty')), 'qty']
                 ],
                 offset: (parseInt(req.body.page) - 1) * parseInt(req.body.limit),
                 limit: parseInt(req.body.limit),
-                order: [[Sequelize.literal(`sum(${req.body.orderby})`), req.body.order]],
+                order: [
+                    [Sequelize.literal(`sum(${req.body.orderby})`), req.body.order]
+                ],
                 where: {
-                    createdAt: { [Op.gte]: yyyy + '-' + mm + '-01' },
-                    itemname: { [Op.ne]: 'credit amount' }
+                    createdAt: {
+                        [Op.gte]: yyyy + '-' + mm + '-01'
+                    },
+                    itemname: {
+                        [Op.ne]: 'credit amount'
+                    }
                 },
                 group: ['itemcode']
             };
@@ -418,7 +423,7 @@ function getDemand(req, res) {
 
 // get items count high/low demand/earning
 function getDemandCount(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var today = new Date();
             today = new Date(today.setMonth(today.getMonth() - 1));
@@ -433,8 +438,12 @@ function getDemandCount(req, res) {
                     [Sequelize.fn('distinct', Sequelize.col('itemcode')), 'itemcode']
                 ],
                 where: {
-                    createdAt: { [Op.gte]: yyyy + '-' + mm + '-01' },
-                    itemname: { [Op.ne]: 'credit amount' }
+                    createdAt: {
+                        [Op.gte]: yyyy + '-' + mm + '-01'
+                    },
+                    itemname: {
+                        [Op.ne]: 'credit amount'
+                    }
                 }
             };
             mdb.SaleItem.findAll(wh).then(data => {
@@ -450,7 +459,7 @@ function getDemandCount(req, res) {
 
 // get expiry
 function getExpiry(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
@@ -468,10 +477,16 @@ function getExpiry(req, res) {
             mdb.ItemUpdate.findAll({
                 offset: (parseInt(page) - 1) * parseInt(limit),
                 limit: parseInt(limit),
-                order: [['expiry', order]],
+                order: [
+                    ['expiry', order]
+                ],
                 where: {
-                    qtystock: { [Op.gt]: 0 },
-                    expiry: { [Op.lt]: today }
+                    qtystock: {
+                        [Op.gt]: 0
+                    },
+                    expiry: {
+                        [Op.lt]: today
+                    }
                 },
                 include: [{ model: mdb.Vendor, as: 'vendors' }]
             }).then(data => {
@@ -483,7 +498,7 @@ function getExpiry(req, res) {
 
 // get expiry count
 function getExpiryCount(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
@@ -500,8 +515,12 @@ function getExpiryCount(req, res) {
 
             mdb.ItemUpdate.count({
                 where: {
-                    qtystock: { [Op.gt]: 0 },
-                    expiry: { [Op.lt]: today }
+                    qtystock: {
+                        [Op.gt]: 0
+                    },
+                    expiry: {
+                        [Op.lt]: today
+                    }
                 }
             }).then(data => {
                 res.send(data.toString());
@@ -514,16 +533,55 @@ function getExpiryCount(req, res) {
 
 // get credit
 function getCredit(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
-
-            mdb.Customer.findAll({
-                where: { credit: { [Op.gt]: 0 } },
+            var wh = {
+                creditAmount: {
+                    [Op.gt]: 0
+                }
+            };
+            if (req.body.searchText && req.body.searchText != '') {
+                wh = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            customerName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            customerID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        }
+                    ],
+                    creditAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
+            mdb.Sale.findAll({
+                where: wh,
                 offset: (parseInt(page) - 1) * parseInt(limit),
                 limit: parseInt(limit),
-                order: [[Sequelize.literal(`(creditlimit - credit)`), req.body.order]]
+                order: [
+                    ['creditAmount', req.body.order]
+                ]
             }).then(data => {
                 res.send(data);
             });
@@ -533,61 +591,55 @@ function getCredit(req, res) {
 
 // get credit count
 function getCreditCount(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
+            var wh = {
+                creditAmount: {
+                    [Op.gt]: 0
+                }
+            };
+            if (req.body.searchText && req.body.searchText != '') {
+                wh = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            customerName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            customerID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        }
+                    ],
+                    creditAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
 
-            mdb.Customer.count({ where: { credit: { [Op.gt]: 0 } } }).then(data => {
+            mdb.Sale.count({
+                where: wh
+            }).then(data => {
                 res.send(data.toString());
             });
         } else res.send('0');
-    });
-}
-
-// send credit email
-function sendCreditEmail(req, res) {
-    user.check(req, function (dataAuth) {
-        if (dataAuth) {
-            mdb.Shop.findOne({ where: { id: 1 } }).then(shopData => {
-                mdb.Customer.findOne({ where: { id: req.body.customerid } }).then(customerData => {
-                    var transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: shopData.shopemail,
-                            pass: shopData.shopemailpassword
-                        }
-                    });
-
-                    var mailOptions = {
-                        from: shopData.shopemail,
-                        to: customerData.email,
-                        subject: `${shopData.shopname} Credit`,
-                        text: `
-Hello ${customerData.name}
-
-Your credit amount is ${customerData.credit} with a limit of ${customerData.creditlimit}.
-Please consider paying back your credit amount.
-
-Thank you.
-
-(Contact info)
-Address : ${shopData.shopaddress}
-Phone No: ${shopData.shopphoneno} / ${shopData.shopotherphoneno}
-Email   :${shopData.shopemail}
-`
-                    };
-
-                    transporter.sendMail(mailOptions, function (error, info) {
-                        if (error) {
-                            res.send(res.send({ msg: 'some error', err: true }));
-                        } else {
-                            res.send(res.send({ msg: 'email sent', err: false }));
-                        }
-                    });
-                });
-            });
-        } else res.send(res.send({ msg: 'not permitted', err: true }));
     });
 }
 
@@ -596,16 +648,67 @@ Email   :${shopData.shopemail}
 
 // get purchase due
 function getPurchaseDue(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
+            var wh = {
+                dueAmount: {
+                    [Op.gt]: 0
+                }
+            };
+            if (req.body.searchText && req.body.searchText != '') {
+                wh = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            billID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorFName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorLName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        }
+                    ],
+                    dueAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
 
             mdb.Purchase.findAll({
-                where: { dueAmount: { [Op.gt]: 0 } },
+                where: wh,
                 offset: (parseInt(page) - 1) * parseInt(limit),
                 limit: parseInt(limit),
-                order: [ [ 'dueAmount', req.body.order], [ 'dueDate', 'desc'] ]
+                order: [
+                    ['dueAmount', req.body.order],
+                    ['dueDate', 'desc']
+                ]
             }).then(data => {
                 res.send(data);
             });
@@ -615,12 +718,62 @@ function getPurchaseDue(req, res) {
 
 // get purchase due count
 function getPurchaseDueCount(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
+            var wh = {
+                dueAmount: {
+                    [Op.gt]: 0
+                }
+            };
+            if (req.body.searchText && req.body.searchText != '') {
+                wh = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            billID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorFName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorLName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        }
+                    ],
+                    dueAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
 
-            mdb.Purchase.count({ where: { dueAmount: { [Op.gt]: 0 } } }).then(data => {
+            mdb.Purchase.count({
+                where: wh
+            }).then(data => {
                 res.send(data.toString());
             });
         } else res.send('0');
@@ -630,16 +783,62 @@ function getPurchaseDueCount(req, res) {
 
 // get return due
 function getReturnDue(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
+            var wh = {
+                dueAmount: {
+                    [Op.gt]: 0
+                }
+            };
+            if (req.body.searchText && req.body.searchText != '') {
+                wh = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorFName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorLName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        }
+                    ],
+                    dueAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
 
             mdb.Return.findAll({
-                where: { dueAmount: { [Op.gt]: 0 } },
+                where: wh,
                 offset: (parseInt(page) - 1) * parseInt(limit),
                 limit: parseInt(limit),
-                order: [ [ 'dueAmount', req.body.order], [ 'dueDate', 'desc'] ]
+                order: [
+                    ['dueAmount', req.body.order],
+                    ['dueDate', 'desc']
+                ]
             }).then(data => {
                 res.send(data);
             });
@@ -649,12 +848,57 @@ function getReturnDue(req, res) {
 
 // get return due count
 function getReturnDueCount(req, res) {
-    user.check(req, function (dataAuth) {
+    user.check(req, function(dataAuth) {
         if (dataAuth) {
             var page = req.body.page;
             var limit = req.body.limit;
+            var wh = {
+                dueAmount: {
+                    [Op.gt]: 0
+                }
+            };
+            if (req.body.searchText && req.body.searchText != '') {
+                wh = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorFName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorLName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            vendorID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.searchText}%`
+                            }
+                        }
+                    ],
+                    dueAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
 
-            mdb.Return.count({ where: { dueAmount: { [Op.gt]: 0 } } }).then(data => {
+            mdb.Return.count({
+                where: wh
+            }).then(data => {
                 res.send(data.toString());
             });
         } else res.send('0');
@@ -672,7 +916,6 @@ module.exports = {
     getExpiryCount,
     getCredit,
     getCreditCount,
-    sendCreditEmail,
     getPurchaseDue,
     getPurchaseDueCount,
     getReturnDue,

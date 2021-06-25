@@ -5,6 +5,7 @@ const user = require('./user');
 const item = require('./item');
 const sale = require('./sale');
 const purchase = require('./purchase');
+const purchaseBarcode = require('./purchaseBarcode');
 const returnItem = require('./return');
 const customer = require('./customer');
 const vendor = require('./vendor');
@@ -17,6 +18,7 @@ const accounting = require('./accounting');
 
 const saleData2 = require('../db/saleData');
 const test_func = require('../test/bill_gen');
+const test_func2 = require('../test/barcode_gen');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,6 +31,7 @@ app.all('/testdb', saleData2.testDB);
 app.all('/testget', saleData2.testGet);
 app.all('/testpost', saleData2.testPost);
 app.all('/testpdf', test_func.bill_gen);
+app.get('/testbarcode', test_func2.bill_gen);
 // saleData2.updateWeb();
 
 // user
@@ -61,6 +64,7 @@ app.all('/sale/getsales', sale.getSales);
 app.all('/sale/getsaleitem', sale.getSaleItem);
 app.all('/sale/getsaleitembystock', sale.getSaleItemByStock);
 app.all('/sale/getlastsaleitem', sale.getLastSaleItem);
+app.all('/sale/removecreditbysale', sale.removeCreditBySale);
 
 app.all('/purchase/add', purchase.add);
 app.all('/purchase/getpurchasescount', purchase.getPurchasesCount);
@@ -99,7 +103,6 @@ app.all('/saledata/getexpiry', saleData.getExpiry);
 app.all('/saledata/getexpirycount', saleData.getExpiryCount);
 app.all('/saledata/getcredit', saleData.getCredit);
 app.all('/saledata/getcreditcount', saleData.getCreditCount);
-app.all('/saledata/sendcreditemail', saleData.sendCreditEmail);
 app.all('/saledata/getpurchasedue', saleData.getPurchaseDue);
 app.all('/saledata/getpurchaseduecount', saleData.getPurchaseDueCount);
 app.all('/saledata/getreturndue', saleData.getReturnDue);
@@ -119,6 +122,8 @@ app.all('/message/sendmessagemultiple', message.sendMessageMultiple);
 app.all('/sale-bill', saleBill.getSaleBill);
 
 app.all('/return-bill', returnBill.getReturnBill);
+
+app.all('/purchase-barcode', purchaseBarcode.purchaseBarcode);
 
 app.all('/accounting/csv', accounting.getCSV);
 app.all('/accounting/getaccount', accounting.getAccount);

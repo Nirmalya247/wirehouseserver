@@ -1,6 +1,7 @@
 const mdb = require('../db/init');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
+const NepaliDate = require('nepali-date');
 var pdf = require('html-pdf');
 
 function getBillHtmlA4V2(shop, returns, items) {
@@ -165,7 +166,7 @@ function getBillHtmlA4V2(shop, returns, items) {
                     .bill .value {
                         color: black;
                         display: inline-block;
-                        width: 80pt;
+                        width: 100pt;
                         text-align: left;
                         padding: 0 0 0 4pt;
                     }
@@ -308,19 +309,19 @@ function getBillHtmlA4V2(shop, returns, items) {
                                 <div class="phone">${ returns.vendorPhone }</div>
                             </div>
                         </td>
-                        <td rowspan="2" style="vertical-align: top; width: 40%;">
+                        <td rowspan="2" style="vertical-align: top; width: 50%;">
                             <div class="bill">
                                 <div class="invoice-no">
                                     <div class="label">Invoice Number:</div>
-                                    <div class="value">${returns.id}</div>
+                                    <div class="value">${ returns.id }</div>
                                 </div>
                                 <div class="invoice-date">
                                     <div class="label">Invoice Date:</div>
-                                    <div class="value">${returns.createdAt.toDateString()}</div>
+                                    <div class="value">${ (new NepaliDate(returns.createdAt)).format('DDD MMMM DD, YYYY') }</div>
                                 </div>
                                 <div class="due-amount">
                                     <div class="label">Amount Due:</div>
-                                    <div class="value">${returns.dueAmount}</div>
+                                    <div class="value">${ returns.dueAmount }</div>
                                 </div>
                             </div>
                         </td>
@@ -329,7 +330,7 @@ function getBillHtmlA4V2(shop, returns, items) {
                         <td>
                             <div class="bill-by">
                                 <div class="label">PRODUCED BY</div>
-                                <div class="name">${returns.userName} ${returns.userID}</div>
+                                <div class="name">${ returns.userName } ${ returns.userID }</div>
                             </div>
                         </td>
                     </tr>
@@ -342,45 +343,55 @@ function getBillHtmlA4V2(shop, returns, items) {
                         <th class="item-th item-th-amount">Amount</th>
                     </tr>
     `;
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var totalCost = 0;
     for (var i = 0; i < items.length; i++) {
-        var mfg = new Date(items[i].mfg);
-        mfg = months[mfg.getMonth()] + ' ' + mfg.getFullYear();
-        var expiry = new Date(items[i].expiry);
-        expiry = months[expiry.getMonth()] + ' ' + expiry.getFullYear();
-        var purchase = new Date(items[i].purchasedate);
-        purchase = months[purchase.getMonth()] + ' ' + purchase.getFullYear();
+        var mfg = new NepaliDate(new Date(items[i].mfg));
+        mfg = mfg.format('MMMM YYYY'); // months[mfg.getMonth()] + ' ' + mfg.getYear();
+        var expiry = new NepaliDate(new Date(items[i].expiry));
+        expiry = expiry.format('MMMM YYYY');
+        var purchase = new NepaliDate(new Date(items[i].purchasedate));
+        purchase = purchase.format('MMMM YYYY');
         html += `
             <tr class="item-tr item-tr-data">
                 <td class="item-td item-td-items">
-                    <div class="item-name">${items[i].itemname}</div>
-                    <div class="item-batch">Batch NO: ${items[i].batchno}</div>
-                    <div class="item-description">${items[i].reason}</div>
+                    <div class="item-name">${ items[i].itemname }</div>
+                    <div class="item-batch">Batch NO: ${ items[i].batchno }</div>
+                    <div class="item-description">${ items[i].reason }</div>
                     <div class="item-batch">Purchase: ${ purchase }</div>
                     <div class="item-batch">Mfg. Date: ${ mfg }</div>
                     <div class="item-batch">Exp. Date: ${ expiry }</div>
                 </td>
-                <td class="item-td item-td-qty">${items[i].qty}</td>
-                <td class="item-td item-td-price">${items[i].price}</td>
-                <td class="item-td item-td-amount">${items[i].totalcost}</td>
+                <td class="item-td item-td-qty">${ items[i].qty }</td>
+                <td class="item-td item-td-price">${ items[i].price }</td>
+                <td class="item-td item-td-amount">${ (Number(items[i].qty) * Number(items[i].price)).toFixed(2) }</td>
             </tr>
         `;
+        totalCost += Number(items[i].qty) * Number(items[i].price);
     }
+    var billDate = new NepaliDate(new Date(returns.createdAt));
     html += `
             </table>
             <div class="total-holder">
                 <div class="total-sub-holder">
                     <div class="total">
                         <div class="label">Total:</div>
-                        <div class="value">${ returns.totalAmount }</div>
+                        <div class="value">${ totalCost.toFixed(2) } Rs.</div>
+                    </div>
+                    <div class="total">
+                        <div class="label">Discount:</div>
+                        <div class="value">${ (totalCost - Number(returns.totalAmount)).toFixed(2) } Rs.</div>
+                    </div>
+                    <div class="total">
+                        <div class="label">Payable:</div>
+                        <div class="value">${ returns.totalAmount } Rs.</div>
                     </div>
                     <div class="tendered">
-                        <div class="label">Payment on May 25, 2021 using cash:</div>
-                        <div class="value">${ returns.totalTendered }</div>
+                        <div class="label">Payment on ${ billDate.format('MMMM DD, YYYY') } using ${ returns.paymentMode }:</div>
+                        <div class="value">${ returns.totalTendered } Rs.</div>
                     </div>
                     <div class="payment-due">
                         <div class="label">Amount Due:</div>
-                        <div class="value">${ returns.dueAmount }</div>
+                        <div class="value">${ returns.dueAmount } Rs.</div>
                     </div>
                 </div>
             </div>

@@ -59,7 +59,7 @@ async function add(req, res) {
 }
 
 function getBatch(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         var page = req.body.page;
         var limit = req.body.limit;
         var orderBy = req.body.orderBy;
@@ -69,26 +69,43 @@ function getBatch(req, res) {
             var wh = {
                 offset: (parseInt(page) - 1) * parseInt(limit),
                 limit: parseInt(limit),
-                order: [[orderBy, order]],
+                order: [
+                    [orderBy, order]
+                ],
                 include: [{ model: mdb.Vendor, as: 'vendors' }]
             };
             wh['where'] = {
-                qtystock: { [Op.gt]: 0 }
+                qtystock: {
+                    [Op.gt]: 0
+                }
             };
             if (searchText && searchText != '') {
                 wh['where'] = {
                     ...wh['where'],
-                    [Op.or]: [
-                        { id: { [Op.like]: `%${searchText}%` } },
-                        { purchaseId: { [Op.like]: `%${searchText}%` } },
-                        { vendorid: { [Op.like]: `%${searchText}%` } }
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${searchText}%`
+                            }
+                        },
+                        {
+                            purchaseId: {
+                                [Op.like]: `%${searchText}%`
+                            }
+                        },
+                        {
+                            vendorid: {
+                                [Op.like]: `%${searchText}%`
+                            }
+                        }
                     ]
                 }
             }
             if (req.body.vendorid) {
-                wh['where']['vendorid'] = { [Op.like]: req.body.vendorid };
+                wh['where']['vendorid'] = {
+                    [Op.like]: req.body.vendorid
+                };
             }
-            mdb.ItemUpdate.findAll(wh).then(function (data) {
+            mdb.ItemUpdate.findAll(wh).then(function(data) {
                 if (data) {
                     res.send(data);
                 } else res.send([]);
@@ -112,19 +129,52 @@ async function getReturns(req, res) {
         var wh = {
             offset: (parseInt(req.body.page) - 1) * parseInt(req.body.limit),
             limit: parseInt(req.body.limit),
-            order: [[req.body.orderBy, req.body.order]]
+            order: [
+                [req.body.orderBy, req.body.order]
+            ]
         };
         if (req.body.searchText && req.body.searchText != '') {
             wh['where'] = {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorFName: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorLName: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorCompany: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
-                    { userID: { [Op.like]: `%${req.body.searchText}%` } },
-                    { userName: { [Op.like]: `%${req.body.searchText}%` } }
+                [Op.or]: [{
+                        id: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorID: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorFName: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorLName: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorCompany: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorID: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        userID: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        userName: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    }
                 ]
             }
         }
@@ -145,18 +195,49 @@ async function getReturnsCount(req, res) {
             res.send({ msg: 'not permitted', err: true });
             return;
         }
-        var wh = { };
+        var wh = {};
         if (req.body.searchText && req.body.searchText != '') {
             wh['where'] = {
-                [Op.or]: [
-                    { id: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorFName: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorLName: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorCompany: { [Op.like]: `%${req.body.searchText}%` } },
-                    { vendorID: { [Op.like]: `%${req.body.searchText}%` } },
-                    { userID: { [Op.like]: `%${req.body.searchText}%` } },
-                    { userName: { [Op.like]: `%${req.body.searchText}%` } }
+                [Op.or]: [{
+                        id: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorID: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorFName: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorLName: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorCompany: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        vendorID: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        userID: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    },
+                    {
+                        userName: {
+                            [Op.like]: `%${req.body.searchText}%`
+                        }
+                    }
                 ]
             }
         }
@@ -172,24 +253,24 @@ async function getReturnsCount(req, res) {
 // remove due by return
 async function removeDueByReturn(req, res) {
     var returnId = req.body.id;
+    var amountReceived = Number(req.body.amount);
     try {
         var dataAuth = await user.checkAsync(req, 1);
         if (!dataAuth) {
             res.send({ msg: 'not permitted', err: true });
             return;
         }
-        var amount;
-        upData = await mdb.Return.findOne({ where: { id: returnId } });
-        amount = upData.dueAmount;
-        upData.totalTendered = Number(upData.totalTendered) + Number(upData.dueAmount);
-        upData.dueAmount = 0;
-        upData.dueDate = null;
+        var upData = await mdb.Return.findOne({ where: { id: returnId } });
+        if (isNaN(amountReceived)) amountReceived = Number(upData.dueAmount);
+        upData.totalTendered = Number(upData.totalTendered) + amountReceived;
+        if (Number(upData.dueAmount) - amountReceived <= 0) upData.dueDate = null;
+        upData.dueAmount = Number(upData.dueAmount) - amountReceived;
 
         await upData.save();
 
-        await saleData.transactionAdd('return', 'products', 'income', 'short term', amount, amount, null, 'income from return');
+        await saleData.transactionAdd('return', 'products', 'income', 'short term', amountReceived, amountReceived, null, 'income from return');
         res.send({ err: false, msg: 'done!' });
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         res.send({ err: true, msg: 'some error' });
     }

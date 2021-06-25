@@ -14,8 +14,10 @@ const tableID = {
     return: { id: '19', table: mdb.Return, name: 'return' },
     returnItem: { id: '20', table: mdb.ReturnItem, name: 'returnitem' },
     transaction: { id: '21', table: mdb.Transaction, name: 'transactions' },
-    message: { id: '22', table: mdb.Message, name: 'messages' }
+    message: { id: '22', table: mdb.Message, name: 'messages' },
+    item: { id: '23', table: mdb.Item, name: 'items' }
 }
+
 function getID(table, idType, n, isMultiple, callback) {
     mdb.Counter.findOne({ where: { id: table.name } }).then(data => {
         if (data) {
@@ -48,6 +50,7 @@ async function getIDAsync(table, idType, n, isMultiple) {
         return getData(1, n, table.id, isMultiple);
     }
 }
+
 function getData(now, n, con, isMultiple) {
     if (isMultiple) {
         var ret = [];

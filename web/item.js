@@ -1,38 +1,45 @@
 const mdb = require('../db/init');
 const saleData = require('../db/saleData');
+const idgen = require('../db/idgen');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 
 
-function addItem(req, res) {
-    user.check(req, function(data3) {
-        if (data3) {
-            var it = req.body;
-            delete it['SESSION_ID'];
-            delete it['SESSION_USERID'];
-            it['qty'] = 0;
-            it['totalsold'] = 0;
-            it['totalearned'] = 0;
-            if (Number(it['itemtypeid']) == 0) {
-                mdb.ItemType.create({ itemtypename: it['itemtypename'] }).then(itemtype => {
-                    it['itemtypeid'] = itemtype.id;
-                    createItem(it);
-                })
-            } else {
-                createItem(it);
-            }
+async function addItem(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 2);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
 
-            function createItem(item) {
-                mdb.Item.create(item).then(function(data) {
-                    if (data) {
-                        res.send({ msg: 'item added', err: false });
-                    } else res.send({ msg: 'some error', err: true });
-                }).catch((err) => {
-                    res.send({ msg: 'same item code or some error', err: true });
-                });
-            }
-        } else res.send({ msg: 'you have no permit', err: true });
-    }, 2);
+        var it = req.body;
+        delete it['SESSION_ID'];
+        delete it['SESSION_USERID'];
+
+        if (!it['itemcode'] || it['itemcode'] == '') {
+            id = await idgen.getIDAsync(idgen.tableID.item, 'num', 1, false);
+            it['itemcode'] = id;
+        }
+        it['vat'] = 0;
+        it['discount'] = 0;
+        it['qty'] = 0;
+        it['totalsold'] = 0;
+        it['totalearned'] = 0;
+        if (Number(it['itemtypeid']) == 0) {
+            var typeId = await idgen.getIDAsync(idgen.tableID.itemtype, 'num', 1, false);
+            var itemtype = await mdb.ItemType.create({ id: typeId, itemtypename: it['itemtypename'] })
+            it['itemtypeid'] = typeId;
+        }
+
+        var data = await mdb.Item.create(it)
+        if (data) {
+            res.send({ msg: 'item added', err: false });
+        } else res.send({ msg: 'some error', err: true });
+    } catch (e) {
+        console.log(e);
+        res.send({ err: true, msg: 'some error' });
+    }
 }
 
 // get items for inventory and sales

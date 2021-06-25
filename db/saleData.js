@@ -32,6 +32,7 @@ async function updateAsync(itemsold, itembought, earning, spending, tendered, du
     }
     if (earning && addToTransaction) {
         var tData = await transactionAdd(account, accounttype, 'income', 'short term', earning, tendered, duedate, 'income from ' + account);
+        if (Number(earning) > Number(tendered)) await transactionAdd(account, accounttype, 'asset', 'short term', Number(earning) - Number(tendered), Number(earning) - Number(tendered), null, 'income from ' + account);
     } else if (spending && addToTransaction) {
         var tData = await transactionAdd(account, accounttype, 'expense', 'short term', spending, tendered, duedate, 'expense for ' + account);
         if (Number(spending) > Number(tendered)) await transactionAdd(account, accounttype, 'liability', 'short term', Number(spending) - Number(tendered), Number(spending) - Number(tendered), duedate, 'expense for ' + account);

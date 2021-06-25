@@ -188,27 +188,57 @@ function add(req, res) {
 
 // get sales
 function getSales(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
             var wh = {
                 offset: (parseInt(req.body.salePage) - 1) * parseInt(req.body.saleLimit),
                 limit: parseInt(req.body.saleLimit),
-                order: [[req.body.saleOrderBy, req.body.saleOrder]]
+                order: [
+                    [req.body.saleOrderBy, req.body.saleOrder]
+                ]
             };
             if (req.body.saleSearchText && req.body.saleSearchText != '') {
-                wh['where'] = { [Op.or]: [
-                    {id: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {customerName: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {customerID: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {userID: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {userName: { [Op.like]: `%${req.body.saleSearchText}%` } }
-                ] }
+                wh['where'] = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            customerName: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            customerID: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        }
+                    ]
+                }
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
-                    [Op.and]: [
-                        { createdAt: { [Op.lte]: req.body.from } },
-                        { createdAt: { [Op.gte]: req.body.to } }
+                    [Op.and]: [{
+                            createdAt: {
+                                [Op.lte]: req.body.from
+                            }
+                        },
+                        {
+                            createdAt: {
+                                [Op.gte]: req.body.to
+                            }
+                        }
                     ]
                 }
             }
@@ -226,22 +256,47 @@ function getSales(req, res) {
 
 // get sales count
 function getSalesCount(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
-            var wh = { };
+            var wh = {};
             if (req.body.saleSearchText && req.body.saleSearchText != '') {
-                wh['where'] = { [Op.or]: [
-                    {id: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {customerName: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {customerID: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {userID: { [Op.like]: `%${req.body.saleSearchText}%` } },
-                    {userName: { [Op.like]: `%${req.body.saleSearchText}%` } }
-                ] }
+                wh['where'] = {
+                    [Op.or]: [{
+                            id: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            customerName: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            customerID: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            userID: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        },
+                        {
+                            userName: {
+                                [Op.like]: `%${req.body.saleSearchText}%`
+                            }
+                        }
+                    ]
+                }
             }
             if (req.body.from && req.body.to && wh['where'] == null) {
                 wh['where'] = {
-                    createdAt: { [Op.lte]: req.body.from },
-                    createdAt: { [Op.gte]: req.body.to }
+                    createdAt: {
+                        [Op.lte]: req.body.from
+                    },
+                    createdAt: {
+                        [Op.gte]: req.body.to
+                    }
                 }
             }
             mdb.Sale.count(wh).then(function(data) {
@@ -258,7 +313,7 @@ function getSalesCount(req, res) {
 
 // get sale item which has less expiry
 function getSaleItem(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
             var today = new Date();
             var dd = today.getDate();
@@ -268,33 +323,43 @@ function getSaleItem(req, res) {
             if (mm < 10) mm = '0' + mm;
             today = yyyy + '-' + mm + '-' + dd;
 
-            var wh = { };
+            var wh = {};
             if (req.body.batchID) {
                 wh = {
                     id: req.body.batchID,
-                    qtystock: { [Op.gt]: 0 },
-                    expiry: { [Op.gt]: today }
+                    qtystock: {
+                        [Op.gt]: 0
+                    },
+                    expiry: {
+                        [Op.gt]: today
+                    }
                 }
             } else {
                 wh = {
                     itemcode: req.body.itemcode,
-                    qtystock: { [Op.gt]: 0 },
-                    expiry: { [Op.gt]: today }
+                    qtystock: {
+                        [Op.gt]: 0
+                    },
+                    expiry: {
+                        [Op.gt]: today
+                    }
                 }
             }
             mdb.ItemUpdate.findAll({
                 where: wh,
-                order: [['expiry', 'asc']]
+                order: [
+                    ['expiry', 'asc']
+                ]
             }).then(data => {
                 res.send(data);
             });
-        } else res.send([ ]);
+        } else res.send([]);
     }, 1);
 }
 
 // get last sale item
 function getLastSaleItem(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
             var today = new Date();
             var dd = today.getDate();
@@ -306,18 +371,24 @@ function getLastSaleItem(req, res) {
 
             var wh = {
                 itemcode: req.body.itemcode,
-                qtystock: { [Op.gt]: 0 },
-                expiry: { [Op.gt]: today }
+                qtystock: {
+                    [Op.gt]: 0
+                },
+                expiry: {
+                    [Op.gt]: today
+                }
             };
             mdb.ItemUpdate.findOne({
                 where: wh,
-                order: [['createdAt', 'desc']]
+                order: [
+                    ['createdAt', 'desc']
+                ]
             }).then(data => {
                 if (data) {
                     data['err'] = false;
                     res.send(data);
                 } else res.send({ err: true });
-                
+
             });
         } else res.send({ err: true });
     }, 1);
@@ -335,10 +406,16 @@ function saleItemUpdate(itemcode, qty, callback) {
     mdb.ItemUpdate.findAll({
         where: {
             itemcode: itemcode,
-            qtystock: { [Op.gt]: 0 },
-            expiry: { [Op.gt]: today }
+            qtystock: {
+                [Op.gt]: 0
+            },
+            expiry: {
+                [Op.gt]: today
+            }
         },
-        order: [['expiry', 'asc']]
+        order: [
+            ['expiry', 'asc']
+        ]
     }).then(data => {
         // console.log(data);
         var i = 0;
@@ -362,7 +439,7 @@ function saleItemUpdate(itemcode, qty, callback) {
 
 // get sale item by stock
 function getSaleItemByStock(req, res) {
-    user.check(req, function (authData) {
+    user.check(req, function(authData) {
         if (authData) {
             var stockid = req.body.stockid;
             mdb.ItemUpdate.findOne({ where: { id: stockid } }).then(resItemUpdate => {
@@ -383,4 +460,44 @@ function getSaleItemByStock(req, res) {
     }, 1);
 }
 
-module.exports = { add, getSales, getSalesCount, getSaleItem, saleItemUpdate, getSaleItemByStock, getLastSaleItem }
+// remove credit by sale
+async function removeCreditBySale(req, res) {
+    var saleId = req.body.id;
+    var amountReceived = Number(req.body.amount);
+    try {
+        var dataAuth = await user.checkAsync(req, 1);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var upData = await mdb.Sale.findOne({ where: { id: saleId } });
+        if (isNaN(amountReceived)) amountReceived = Number(upData.creditAmount);
+        upData.totalTendered = Number(upData.totalTendered) + amountReceived;
+        upData.creditAmount = Number(upData.creditAmount) - amountReceived;
+
+        var upDataCustomer = await mdb.Customer.findOne({ where: { id: upData.customerID } });
+        upDataCustomer.credit = Number(upDataCustomer.credit) - amountReceived;
+
+        await upData.save();
+        await upDataCustomer.save();
+
+        await saleData.transactionAdd('sales', 'income', 'income', 'short term', amountReceived, amountReceived, null, 'due credit for sales');
+
+        await saleData.transactionAdd('sales', 'income', 'asset', 'short term', -amountReceived, -amountReceived, null, 'due credit for sales');
+        res.send({ err: false, msg: 'done!' });
+    } catch (e) {
+        console.log(e);
+        res.send({ err: true, msg: 'some error' });
+    }
+}
+
+module.exports = {
+    add,
+    getSales,
+    getSalesCount,
+    getSaleItem,
+    saleItemUpdate,
+    getSaleItemByStock,
+    getLastSaleItem,
+    removeCreditBySale
+}

@@ -318,28 +318,28 @@ function getPurchasesCount(req, res) {
 // remove due by purchase
 async function removeDueByPurchase(req, res) {
     var purchaseId = req.body.id;
+    var amountPaid = Number(req.body.amount);
     try {
         var dataAuth = await user.checkAsync(req, 1);
         if (!dataAuth) {
             res.send({ msg: 'not permitted', err: true });
             return;
         }
-        var amount;
-        upData = await mdb.Purchase.findOne({ where: { id: purchaseId } });
-        amount = upData.dueAmount;
-        upData.totalTendered = Number(upData.totalTendered) + Number(upData.dueAmount);
-        upData.dueAmount = 0;
-        upData.dueDate = null;
+        var upData = await mdb.Purchase.findOne({ where: { id: purchaseId } });
+        if (isNaN(amountPaid)) amountPaid = Number(upData.dueAmount);
+        upData.totalTendered = Number(upData.totalTendered) + amountPaid;
+        if (Number(upData.dueAmount) - amountPaid <= 0) upData.dueDate = null;
+        upData.dueAmount = Number(upData.dueAmount) - amountPaid;
 
-        upDataVendor = await mdb.Vendor.findOne({ where: { id: upData.vendorID } });
-        upDataVendor.due = Number(upDataVendor.due) - Number(amount);
+        var upDataVendor = await mdb.Vendor.findOne({ where: { id: upData.vendorID } });
+        upDataVendor.due = Number(upDataVendor.due) - amountPaid;
 
         await upData.save();
         await upDataVendor.save();
 
-        await saleData.transactionAdd('purchase', 'products', 'expense', 'short term', amount, amount, null, 'due expense for purchase');
+        await saleData.transactionAdd('purchase', 'products', 'expense', 'short term', amountPaid, amountPaid, null, 'due expense for purchase');
 
-        await saleData.transactionAdd('purchase', 'products', 'liability', 'short term', -amount, -amount, null, 'due expense for purchase');
+        await saleData.transactionAdd('purchase', 'products', 'liability', 'short term', -amountPaid, -amountPaid, null, 'due expense for purchase');
         res.send({ err: false, msg: 'done!' });
     } catch (e) {
         console.log(e);
