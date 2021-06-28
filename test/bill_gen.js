@@ -485,7 +485,8 @@ function bill_gen(req, res) {
         "renderDelay": 1000,
         "border": "0"
     };
-    pdf.create(html, options).toStream(function (err, stream) {
+    res.setHeader('Content-Type', 'application/pdf');
+    pdf.create(html, options).toStream(function(err, stream) {
         stream.pipe(res);
     });
 }

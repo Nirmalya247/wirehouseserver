@@ -424,6 +424,7 @@ function getReturnBill(req, res) {
             mdb.ReturnItem.findAll({ where: { returnid: returnId } }).then(resReturnItem => {
                 if (req.query.paper == 'A4V2') {
                     var data = getBillHtmlA4V2(resShop, resReturn, resReturnItem);
+                    res.setHeader('Content-Type', 'application/pdf');
                     pdf.create(data.html, data.options).toStream(function(err, stream) {
                         stream.pipe(res);
                     });

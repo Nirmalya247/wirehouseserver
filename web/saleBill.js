@@ -719,11 +719,13 @@ function getSaleBill(req, res) {
                         format: 'a4',
                         orientation: "landscape"
                     };
+                    res.setHeader('Content-Type', 'application/pdf');
                     pdf.create(html, options).toStream(function(err, stream) {
                         stream.pipe(res);
                     });
                 } else if (req.query.paper == 'A4V2') {
                     var data = getBillHtmlA4V2(resShop, resSale, resSaleItem);
+                    res.setHeader('Content-Type', 'application/pdf');
                     pdf.create(data.html, data.options).toStream(function(err, stream) {
                         stream.pipe(res);
                     });

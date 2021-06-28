@@ -73,6 +73,7 @@ function testWeb(req, res) {
         format: 'a4',
         orientation: "landscape"
     };
+    res.setHeader('Content-Type', 'application/pdf');
     pdf.create(html, options).toStream(function(err, stream) {
         stream.pipe(res);
     });

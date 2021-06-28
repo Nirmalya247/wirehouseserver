@@ -60,6 +60,7 @@ async function bill_gen(req, res) {
     html += `</div></body></html>`;
     // console.log(html);
     // res.send(html);
+    res.setHeader('Content-Type', 'application/pdf');
     pdf.create(html, options).toStream(function(err, stream) {
         stream.pipe(res);
     });
