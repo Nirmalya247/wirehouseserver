@@ -194,7 +194,7 @@ async function send(data) {
                 resolve({ msg: 'wrong number', err: true });
                 return;
             }
-            data.to = data.to.toString().replaceAll('+', '').trim();
+            data.to = data.to.toString().replace(/[+]/g, '').trim();
             if (data.to.length < 10) {
                 resolve({ msg: 'wrong number', err: true });
                 return;

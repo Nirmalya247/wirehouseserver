@@ -374,8 +374,8 @@ function getBillHtmlA4V2(shop, returns, items) {
         totalCost += Number(items[i].qty) * Number(items[i].price);
     }
     var billDate = new NepaliDate(new Date(returns.createdAt));
-    var change = Number(sale.changeDue);
-    var dueAmount = Number(sale.dueAmount);
+    var change = Number(returns.changeDue);
+    var dueAmount = Number(returns.dueAmount);
     html += `
             </table>
             <div class="total-holder">
