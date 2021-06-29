@@ -355,7 +355,7 @@ function getStock(req, res) {
                 offset: (parseInt(req.body.page) - 1) * parseInt(req.body.limit),
                 limit: parseInt(req.body.limit),
                 order: [
-                    ['qty', req.body.order]
+                    [Sequelize.literal(`qty - lowlimit`), req.body.order]
                 ]
             };
             mdb.Item.findAll(wh).then(data => {

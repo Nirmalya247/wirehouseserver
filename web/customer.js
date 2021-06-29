@@ -269,6 +269,8 @@ function getCustomerCount(req, res) {
 
 // fetch all customer
 async function fetchCustomerFromHubSpot(req, res) {
+    var apilink = 'https://api.hubapi.com/contacts/v1/lists/all/contacts/all';
+    if (req.body.recent) apilink = 'https://api.hubapi.com/contacts/v1/lists/recently_updated/contacts/recent';
     var hubkey = await mdb.Shop.findOne({ where: { id: 1 } });
     var dataHub = [];
     // var datares = await getHub();
@@ -282,7 +284,7 @@ async function fetchCustomerFromHubSpot(req, res) {
         if (offset) offset = `&vidOffset=${offset}`;
         else offset = ``;
         return new Promise((resolve, reject) => {
-            https.get(`https://api.hubapi.com/contacts/v1/lists/all/contacts/all?hapikey=${hubkey.hubspotkey}&count=100&property=phone&property=firstname&property=lastname&property=email${offset}`, res => {
+            https.get(`${ apilink }?hapikey=${ hubkey.hubspotkey }&count=100&property=phone&property=firstname&property=lastname&property=email${ offset }`, res => {
                 var str = '';
                 res.on('data', (d) => {
                     str += d;

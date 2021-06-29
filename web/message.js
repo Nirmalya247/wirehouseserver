@@ -172,6 +172,10 @@ async function send(data) {
             text: message
         };
         return new Promise((resolve, reject) => {
+            if (data.to == null || data.to.toString().trim() == '') {
+                resolve({ msg: 'wrong email', err: true });
+                return;
+            }
             transporter.sendMail(mailOptions, function(error, info) {
                 console.log(2, error, info);
                 if (error) {
@@ -186,13 +190,20 @@ async function send(data) {
         var apiHost = 'https://www.smschef.com';
         var apiPath = '/system/api/send';
         return new Promise((resolve, reject) => {
-            if (data.to.length <= 10) {
+            if (data.to == null || data.to.toString().trim() == '') {
                 resolve({ msg: 'wrong number', err: true });
+                return;
+            }
+            data.to = data.to.toString().replaceAll('+', '').trim();
+            if (data.to.length < 10) {
+                resolve({ msg: 'wrong number', err: true });
+                return;
             } else {
+                if (data.to.length == 10) data.to = '977' + data.to;
                 message = message.replace(/(\r\n|\n|\r)/gm, '\\n');
                 https.get(`${ apiHost + apiPath }?key=${ key }&phone=${ data.to }&message=${ message }`, res => {
                     console.log(3, res);
-                    resolve({ msg: 'email sent', err: false });
+                    resolve({ msg: 'message sent', err: false });
                 });
             }
         });

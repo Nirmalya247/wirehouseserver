@@ -2,8 +2,9 @@ const { Sequelize, Model, DataTypes } = require('sequelize');
 
 // dbname, username, password
 
-var sequelize = new Sequelize('wirehouse', process.env.DB_USER || 'remote', process.env.DB_PASSWORD || 'Med@130867_Ventory@Sql_Remote' || 'ab@1234CD', {
-    host: process.env.DB_HOST || '139.59.39.133' || '157.245.105.80',
+var datafrom = 'shakil'; // shakil/shesh
+var sequelize = new Sequelize('wirehouse', process.env.DB_USER || 'remote', process.env.DB_PASSWORD || (datafrom == 'shakil' ? 'ab@1234CD' : 'Med@130867_Ventory@Sql_Remote'), {
+    host: process.env.DB_HOST || (datafrom == 'shakil' ? '157.245.105.80' : '139.59.39.133'),
     dialect: 'mysql',
     port: 3306,
 
@@ -88,7 +89,8 @@ var Item = sequelize.define('items', {
     qty: { type: Sequelize.BIGINT },
     price: { type: Sequelize.DECIMAL(10, 2) },
     totalsold: { type: Sequelize.BIGINT },
-    totalearned: { type: Sequelize.DECIMAL(10, 2) }
+    totalearned: { type: Sequelize.DECIMAL(10, 2) },
+    lowlimit: { type: Sequelize.BIGINT }
 }, {
     freezeTableName: true
 });
