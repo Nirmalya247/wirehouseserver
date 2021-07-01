@@ -4,7 +4,9 @@ body {
     margin: 0;
     padding: 0;
 }
-th, td {
+
+th,
+td {
     font-family: sans-serif;
     font-size: 10pt;
 }
@@ -16,63 +18,68 @@ th, td {
     border-width: 0 0 1px 0;
     height: 38mm;
 }
+
 .header .logo {
     position: absolute;
     top: 4mm;
     left: 4mm;
     height: 30mm;
-    width: 30mm;
 }
+
 .header .holder {
     position: absolute;
     text-align: right;
     top: 4mm;
     right: 4mm;
 }
+
 .holder .name {
     font-size: 16pt;
 }
+
 .addr {
     margin: 0 0 14pt 0;
 }
-.phone {
 
-}
-.website {
+.phone {}
 
-}
-.email {
+.website {}
 
-}
+.email {}
 
 .bill-info {
     position: relative;
     padding: 14pt;
     width: 100%;
 }
+
 .bill-info .label {
     color: gray;
     font-weight: bold;
     margin: 0 0 1pt 0;
 }
+
 .bill-info .name {
     font-weight: bold;
 }
-.bill-info .phone {
-    
-}
+
+.bill-info .phone {}
+
 .bill-to {
     margin: 0 0 6pt 0;
 }
-.bill-by {
-}
+
+.bill-by {}
+
 .bill {
     text-align: right;
 }
+
 .bill .label {
     color: black;
     display: inline-block;
 }
+
 .bill .value {
     color: black;
     display: inline-block;
@@ -80,12 +87,15 @@ th, td {
     text-align: left;
     padding: 0 0 0 4pt;
 }
+
 .invoice-no {
     margin: 6pt;
 }
+
 .invoice-date {
     margin: 6pt;
 }
+
 .due-amount {
     background-color: rgb(236, 236, 236);
     border-radius: 4pt;
@@ -99,45 +109,50 @@ th, td {
     border: 1px solid gainsboro;
     border-width: 0 0 1px 0;
 }
-.item-tr {
 
-}
-.item-tr-data {
+.item-tr {}
 
-}
+.item-tr-data {}
+
 .item-th {
     background-color: #1891b1;
     color: white;
     font-size: 11pt;
     padding: 4pt;
 }
+
 .item-th-items {
     text-align: left;
     padding: 4pt 0pt 4pt 16pt;
 }
+
 .item-th-qty {
     width: 30mm;
     padding: 4pt 0pt 4pt 0pt;
 }
+
 .item-th-price {
     text-align: left;
     width: 20mm;
     padding: 4pt 0pt 4pt 0pt;
 }
+
 .item-th-amount {
     text-align: left;
     width: 16mm;
     padding: 4pt 16pt 4pt 0pt;
 }
-.item-td {
 
-}
+.item-td {}
+
 .item-td-items {
     padding: 4pt 4pt 4pt 16pt;
 }
+
 .item-td-qty {
     text-align: center;
 }
+
 .item-name {
     font-weight: bold;
 }
@@ -145,32 +160,35 @@ th, td {
 .total-holder {
     text-align: right;
 }
+
 .total-sub-holder {
     text-align: right;
     display: inline-block;
     margin: 14pt;
 }
+
 .total-sub-holder .label {
     display: inline-block;
     font-weight: bold;
 }
+
 .total-sub-holder .value {
     display: inline-block;
     width: 80pt;
     text-align: left;
     padding: 0 0 0 4pt;
 }
+
 .total {
     border-radius: 4pt;
     margin: 2pt;
     padding: 4pt;
 }
-.total .label {
 
-}
-.total .value {
+.total .label {}
 
-}
+.total .value {}
+
 .tendered {
     border-radius: 0;
     margin: 2pt;
@@ -178,20 +196,19 @@ th, td {
     border: 1px solid gainsboro;
     border-width: 0 0 1px 0;
 }
-.tendered .label {
 
-}
-.tendered .value {
+.tendered .label {}
 
-}
+.tendered .value {}
+
 .payment-due {
     border-radius: 4pt;
     margin: 2pt;
     padding: 4pt;
 }
-.payment-due .label {
 
-}
+.payment-due .label {}
+
 .payment-due .value {
     font-weight: bold;
 }
@@ -200,6 +217,7 @@ th, td {
     margin: 0 0 4mm 0;
     text-align: center;
 }
+
 .footer-holder {
     display: inline-block;
     color: gray;

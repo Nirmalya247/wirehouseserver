@@ -340,7 +340,9 @@ var Shop = sequelize.define('shop', {
     licenseno: { type: Sequelize.STRING(100) },
     vat: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
-    discountamount: { type: Sequelize.DECIMAL(10, 2) }
+    discountamount: { type: Sequelize.DECIMAL(10, 2) },
+    billfooter: { type: Sequelize.STRING(128) },
+    billnote: { type: Sequelize.STRING(1024) }
 }, {
     freezeTableName: true
 });

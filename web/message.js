@@ -200,9 +200,10 @@ async function send(data) {
                 return;
             } else {
                 if (data.to.length == 10) data.to = '977' + data.to;
-                message = message.replace(/(\r\n|\n|\r)/gm, '\\n');
+                // message = message.replace(/(\r\n|\n|\r)/gm, '\\n');
+                message = encodeURIComponent(message);
+                // console.log(3, message);
                 https.get(`${ apiHost + apiPath }?key=${ key }&phone=${ data.to }&message=${ message }`, res => {
-                    console.log(3, res);
                     resolve({ msg: 'message sent', err: false });
                 });
             }
