@@ -4,6 +4,7 @@ const saleData = require('../db/saleData');
 const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 
+// add return
 async function add(req, res) {
     var id = null;
     var itemIDs = null;
@@ -58,6 +59,40 @@ async function add(req, res) {
     }
 }
 
+// delete return
+async function deleteReturn(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 3);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var id = req.body.id;
+        var data = await mdb.Return.findOne({ where: { id: id } });
+        var items = await mdb.ReturnItem.findAll({ where: { returnid: id } });
+
+        await mdb.Return.destroy({ where: { id: id } });
+        await mdb.ReturnItem.destroy({ where: { returnid: id } })
+        for (var i = 0; i < items.length; i++) {
+            await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock + ' + items[i].qty) }, { where: { id: items[i].batchno } });
+
+            if (items[i].itemname != 'credit amount') {
+                await mdb.Item.update({
+                    qty: Sequelize.literal('qty + ' + items[i].qty)
+                }, { where: { itemcode: items[i].itemcode } });
+            }
+        }
+        dayData = await saleData.updateAsync(-Number(data.totalQTY), null, -Number(data.totalAmount), null, -(Number(data.totalAmount) - Number(data.dueAmount)), null, 'products', 'return', true);
+        if (dayData) {
+            res.send({ msg: 'done!', err: false, id: id });
+        } else throw 'after up';
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: 'some error', err: true });
+    }
+}
+
+// get batch
 function getBatch(req, res) {
     user.check(req, function(authData) {
         var page = req.body.page;
@@ -276,4 +311,11 @@ async function removeDueByReturn(req, res) {
     }
 }
 
-module.exports = { add, getBatch, getReturns, getReturnsCount, removeDueByReturn }
+module.exports = {
+    add,
+    deleteReturn,
+    getBatch,
+    getReturns,
+    getReturnsCount,
+    removeDueByReturn
+}

@@ -380,23 +380,23 @@ function getBillHtmlA4V2(shop, returns, items) {
                 <div class="total-sub-holder">
                     <div class="total">
                         <div class="label">Total:</div>
-                        <div class="value">${ totalCost.toFixed(2) } Rs.</div>
+                        <div class="value">Rs. ${ totalCost.toFixed(2) }</div>
                     </div>
                     <div class="total">
                         <div class="label">Discount:</div>
-                        <div class="value">${ (totalCost - Number(returns.totalAmount)).toFixed(2) } Rs.</div>
+                        <div class="value">Rs. ${ (totalCost - Number(returns.totalAmount)).toFixed(2) }</div>
                     </div>
                     <div class="total">
                         <div class="label">Payable:</div>
-                        <div class="value">${ returns.totalAmount } Rs.</div>
+                        <div class="value">Rs. ${ returns.totalAmount }</div>
                     </div>
                     <div class="tendered">
                         <div class="label">Payment on ${ billDate.format('MMMM DD, YYYY') } (${ dateFormat(billDate.getEnglishDate(), 'mmmm dd, yyyy') }) using ${ returns.paymentMode }:</div>
-                        <div class="value">${ returns.totalTendered } Rs.</div>
+                        <div class="value">Rs. ${ returns.totalTendered }</div>
                     </div>
                     <div class="payment-due">
                         <div class="label">${ (dueAmount > 0 ? 'Amount Due:' : 'Change:') }</div>
-                        <div class="value">${ (dueAmount > 0 ? dueAmount.toFixed(2) : change.toFixed(2)) } Rs.</div>
+                        <div class="value">Rs. ${ (dueAmount > 0 ? dueAmount.toFixed(2) : change.toFixed(2)) }</div>
                     </div>
                 </div>
             </div>

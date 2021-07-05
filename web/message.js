@@ -394,6 +394,7 @@ module.exports = {
     deleteMessage,
     getMessage,
     getMessageCount,
+    send,
     sendMessage,
     sendMessageMultiple
 }

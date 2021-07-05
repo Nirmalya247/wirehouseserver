@@ -654,9 +654,9 @@ function getBillHtmlA4V2(shop, sale, items) {
                 <td class="item-td item-td-items">
                     <div class="item-name">${items[i].itemname}</div>
                     <div class="item-description">${items[i].item.description}</div>
-                    <div class="item-batch">Batch No: ${items[i].stockid}, Sale No: ${items[i].id}</div>
-                    <div class="item-batch">Mfg. Date: ${mfg} (${ dateFormat(new Date(items[i].mfg), 'mmmm yyyy') })</div>
-                    <div class="item-batch">Exp. Date: ${expiry} (${ dateFormat(new Date(items[i].expiry), 'mmmm yyyy') })</div>
+                    <div class="item-batch">${ (items[i].stockid ? `Batch No: ${items[i].stockid}, ` : ``) }Sale No: ${items[i].id}</div>
+                    ${ (items[i].mfg ? `<div class="item-batch">Mfg. Date: ${mfg} (${ dateFormat(new Date(items[i].mfg), 'mmmm yyyy') })</div>` : ``) }
+                    ${ (items[i].expiry ? `<div class="item-batch">Exp. Date: ${expiry} (${ dateFormat(new Date(items[i].expiry), 'mmmm yyyy') })</div>` : ``) }
                 </td>
                 <td class="item-td item-td-qty">${items[i].qty}</td>
                 <td class="item-td item-td-price">${items[i].price}</td>
@@ -673,31 +673,31 @@ function getBillHtmlA4V2(shop, sale, items) {
                 <div class="total-sub-holder">
                     <div class="total">
                         <div class="label">Total Amount:</div>
-                        <div class="value">  ${ sale.totalAmount } Rs.</div>
+                        <div class="value">  Rs. ${ sale.totalAmount }</div>
                     </div>
                     <div class="total">
-                        <div class="label">Discount ${ sale.discount } % + ${ sale.discountamount } Rs.:</div>
-                        <div class="value">- ${ (Number(sale.totalAmount) * Number(sale.discount) / 100 + Number(sale.discountamount)).toFixed(2) } Rs.</div>
+                        <div class="label">Discount ${ sale.discount } % + Rs. ${ sale.discountamount }:</div>
+                        <div class="value">- Rs. ${ (Number(sale.totalAmount) * Number(sale.discount) / 100 + Number(sale.discountamount)).toFixed(2) }</div>
                     </div>
                     <div class="tendered">
                         <div class="label">Taxable:</div>
-                        <div class="value">${ sale.totalTaxable } Rs.</div>
+                        <div class="value">Rs. ${ sale.totalTaxable }</div>
                     </div>
                     <div class="total">
                         <div class="label">Vat (${ Number(sale.vat).toFixed(0) } %):</div>
-                        <div class="value">+ ${ (Number(sale.totalTaxable) * Number(sale.vat) / 100).toFixed(2) } Rs.</div>
+                        <div class="value">+ Rs. ${ (Number(sale.totalTaxable) * Number(sale.vat) / 100).toFixed(2) }</div>
                     </div>
                     <div class="tendered">
                         <div class="label">Payable:</div>
-                        <div class="value">${ sale.totalCost } Rs.</div>
+                        <div class="value">Rs. ${ sale.totalCost }</div>
                     </div>
                     <div class="tendered">
                         <div class="label">Payment on ${ billDate.format('MMMM DD, YYYY') } (${ dateFormat(billDate.getEnglishDate(), 'mmmm dd, yyyy') }) using ${ sale.paymentMode }:</div>
-                        <div class="value">${ sale.totalTendered } Rs.</div>
+                        <div class="value">Rs. ${ sale.totalTendered }</div>
                     </div>
                     <div class="payment-due">
                         <div class="label">${ (creditAmount > 0 ? 'Amount Due:' : 'Change:') }</div>
-                        <div class="value">${ (creditAmount > 0 ? creditAmount.toFixed(2) : change.toFixed(2)) } Rs.</div>
+                        <div class="value">Rs. ${ (creditAmount > 0 ? creditAmount.toFixed(2) : change.toFixed(2)) }</div>
                     </div>
                 </div>
             </div>

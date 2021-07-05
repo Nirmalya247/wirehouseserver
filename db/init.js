@@ -12,7 +12,11 @@ var sequelize = new Sequelize('wirehouse', process.env.DB_USER || 'remote', proc
         max: 5,
         min: 0,
         idle: 10000
-    }
+    },
+    dialectOptions: {
+        useUTC: false, // for reading from database
+    },
+    timezone: '+05:45'
 });
 
 // var sequelize = new Sequelize('wirehouse', 'root', 'Nirmalya18147', {
@@ -38,7 +42,7 @@ const ui = 'https://med-ventory-ui.herokuapp.com/';
 
 
 
-// users table (1: sale, 2: inventory, 3: dashboard, 10: admin)
+// users table (1: sale, 2: inventory, 3: admin, 10: super admin)
 var User = sequelize.define('users', {
     id: {
         type: Sequelize.STRING(20),
@@ -102,12 +106,13 @@ var Sale = sequelize.define('sales', {
     },
     totalItem: { type: Sequelize.INTEGER },
     totalQTY: { type: Sequelize.INTEGER },
+    totalPurchaseCost: { type: Sequelize.DECIMAL(10, 2) }, // total cost
     totalAmount: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
     discountamount: { type: Sequelize.DECIMAL(10, 2) },
     totalTaxable: { type: Sequelize.DECIMAL(10, 2) },
     vat: { type: Sequelize.DECIMAL(10, 2) },
-    totalCost: { type: Sequelize.DECIMAL(10, 2) },
+    totalCost: { type: Sequelize.DECIMAL(10, 2) }, // total price
     totalTendered: { type: Sequelize.DECIMAL(10, 2) },
     changeDue: { type: Sequelize.DECIMAL(10, 2) },
     creditAmount: { type: Sequelize.DECIMAL(10, 2) },

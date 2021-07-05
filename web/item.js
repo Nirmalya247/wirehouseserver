@@ -23,7 +23,6 @@ async function addItem(req, res) {
         }
         it['vat'] = 0;
         it['discount'] = 0;
-        it['qty'] = 0;
         it['totalsold'] = 0;
         it['totalearned'] = 0;
         if (Number(it['itemtypeid']) == 0) {
@@ -155,51 +154,42 @@ function edit(req, res) {
     }, 2);
 }
 
-// update item
-async function update(req, res) {
+// get item update
+async function getItemUpdate(req, res) {
     try {
         var dataAuth = await user.checkAsync(req, 2);
         if (!dataAuth) {
             res.send({ msg: 'not permitted', err: true });
             return;
         }
-        var dataItem = req.body;
-        var data = await mdb.Item.update({ qty: Sequelize.literal('qty' + (dataItem.type == 'add' ? ' + ' : ' - ') + dataItem.qty) }, { where: { itemcode: dataItem.itemcode } });
-        if (data != null) {
-            var dataItemUpdate = {
-                itemcode: dataItem.itemcode,
-                itemname: dataItem.itemname,
-                rack: dataItem.rack,
-                qty: dataItem.qty,
-                qtystock: (dataItem.type == 'add' ? dataItem.qty : 0),
-                price: dataItem.price,
-                cost: dataItem.cost,
-                expiry: dataItem.expiry,
-                dealername: dataItem.dealername,
-                dealerphone: dataItem.dealerphone,
-                description: dataItem.description
-            }
-            if (dataItem.type == 'add') {
-                dataItemUpdate['dealername'] = dataItem.dealername;
-                dataItemUpdate['dealerphone'] = dataItem.dealerphone;
-            }
-            var data2 = await mdb.ItemUpdate.create(dataItemUpdate);
-            if (dataItem.type == 'add') {
-                var dayData = await saleData.updateAsync(null, dataItem.qty, null, Number(dataItem.cost) * Number(dataItem.qty), Number(dataItem.cost) * Number(dataItem.qty), null, 'products', 'purchase', true);
-                if (dayData != null) {
-                    res.send({ msg: 'item updated', err: false });
-                } else {
-                    res.send({ msg: 'some error', err: true });
-                }
-            } else {
-                if (data2 != null) {
-                    res.send({ msg: 'item updated', err: false });
-                } else {
-                    res.send({ msg: 'some error', err: true });
-                }
-            }
-        } else res.send({ msg: 'some error', err: true });
+        var data = await mdb.ItemUpdate.findOne({ where: { id: req.body.id, itemcode: req.body.itemcode } });
+        if (data) {
+            res.send({ msg: 'found item', data: data, err: false });
+        } else {
+            res.send({ msg: 'wrong stock id', err: true });
+        }
     } catch (e) {
+        res.send({ msg: 'some error', err: true });
+    }
+}
+
+// update item
+async function update(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 1);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var data = req.body.itemupdate;
+        var id = req.body.id;
+        console.log(data);
+        var oldItemUpdate = await mdb.ItemUpdate.findOne({ where: { id: id } });
+        await mdb.ItemUpdate.update(data, { where: { id: id } });
+        await mdb.Item.update({ qty: Sequelize.literal('qty + ' + (Number(data.qtystock) - Number(oldItemUpdate.qtystock))) }, { where: { itemcode: oldItemUpdate.itemcode } });
+        res.send({ msg: 'done update!', err: false });
+    } catch (e) {
+        console.log(e);
         res.send({ msg: 'some error', err: true });
     }
 }
@@ -308,4 +298,15 @@ function getRacks(req, res) {
     })
 }
 
-module.exports = { addItem, getItems, getItemsCount, getItemsScan, edit, update, deleteItem, getItemTypes, getRacks }
+module.exports = {
+    addItem,
+    getItems,
+    getItemsCount,
+    getItemsScan,
+    edit,
+    getItemUpdate,
+    update,
+    deleteItem,
+    getItemTypes,
+    getRacks
+}

@@ -3,6 +3,7 @@ const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 const https = require('https');
 const idgen = require('../db/idgen');
+const messageLib = require('./message');
 
 // get customer data
 function get(req, res) {
@@ -349,8 +350,40 @@ async function fetchCustomerFromHubSpot(req, res) {
             dataHub[i]['amount'] = 0;
             dataHub[i]['count'] = 0;
             console.log(dataHub[i]);
-            await mdb.Customer.create(dataHub[i]);
+            var customerD = await mdb.Customer.create(dataHub[i]);
             nCr++;
+            for (var mi = 0; mi < 2; mi++) {
+                try {
+                    var shopId = req.body.shopId || 1;
+                    var userId = req.body.userId || req.body.SESSION_USERID;
+                    var message = await mdb.Message.findOne({ where: { id: idgen.tableID.message.id + '1' + (mi + 1) } });
+                    var fordata = message.for.split('.');
+                    var type = message.type;
+                    var label = message.label;
+                    message = message.message;
+
+                    var data = {
+                        type: type,
+                        subject: label,
+                        message: message,
+                        shop: {},
+                        customer: customerD,
+                        vendor: {},
+                        user: {},
+                        sales: {},
+                        return: {}
+                    };
+                    if (shopId) data.shop = await mdb.Shop.findOne({ where: { id: shopId } });
+                    if (userId) data.user = await mdb.User.findOne({ where: { id: userId } });
+
+                    data['email'] = data.shop.shopemail;
+                    data['password'] = data.shop.shopemailpassword;
+                    data['to'] = data[fordata[0]][fordata[1]];
+                    await messageLib.send(data);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         }
     }
     res.send({ update: nUp, new: nCr });

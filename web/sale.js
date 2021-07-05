@@ -4,9 +4,14 @@ const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 const idgen = require('../db/idgen');
 
+// add sale
 async function add(req, res) {
     var id = null;
     var itemIDs = null;
+    if (req.body.id != null && req.body.id != '') {
+        update(req, res);
+        return;
+    }
     try {
         var dataAuth = await user.checkAsync(req, 2);
         if (!dataAuth) {
@@ -17,6 +22,7 @@ async function add(req, res) {
         var items = data.items;
         var customerCredit = data.customerCredit;
         var cumulativeAmount = data.totalCost;
+        delete data['customerCredit'];
         delete data.items;
         delete data['SESSION_ID'];
         delete data['SESSION_USERID'];
@@ -45,6 +51,7 @@ async function add(req, res) {
                 }
             }
             dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null, Number(data.totalTaxable) - Number(data.creditAmount), null, 'income', 'sales', true);
+            await saleData.transactionAdd('sold', 'products', 'expense', 'short term', data.totalPurchaseCost, data.totalPurchaseCost, null, 'expense for cost');
             var customerUp = {
                 qty: Sequelize.literal('qty + ' + data.totalQTY),
                 amount: Sequelize.literal('amount + ' + cumulativeAmount),
@@ -62,6 +69,174 @@ async function add(req, res) {
         await mdb.Sale.destroy({ where: { id: id } })
         await mdb.SaleItem.destroy({ where: { saleId: id } })
         res.send({ msg: 'some error and deleted', err: true });
+    }
+}
+
+// get old sale
+async function getOldSale(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 3);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        console.log(req.body.saleId);
+        var sale = await mdb.Sale.findOne({ where: { id: req.body.saleId } });
+        var items = await mdb.SaleItem.findAll({ where: { saleId: req.body.saleId } });
+        for (var i = 0; i < items.length; i++) {
+            var item = await mdb.Item.findOne({ where: { itemcode: items[i].itemcode } });
+            var stock = {};
+            if (item.qty >= 0) {
+                stock = await mdb.ItemUpdate.findOne({ where: { id: items[i].stockid } });
+            }
+            items[i] = { salesitem: items[i], item: item, stock: stock };
+        }
+        res.send({ sale: sale, items: items, msg: 'got bill', err: false });
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: 'some error', err: true });
+    }
+}
+
+// update sale
+async function update(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 3);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var data = req.body;
+        var id = data.id;
+        var items = data.items;
+        var customerCredit = data.customerCredit;
+        var cumulativeAmount = data.totalCost;
+        delete data['customerCredit'];
+        delete data.id;
+        delete data.items;
+        delete data['SESSION_ID'];
+        delete data['SESSION_USERID'];
+        var oldData = await mdb.Sale.findOne({ where: { id: id } });
+        var oldItems = await mdb.SaleItem.findAll({ where: { saleId: id } });
+
+
+
+
+
+
+
+        var sale = await mdb.Sale.update(data, { where: { id: id } });
+
+        console.log(id, sale);
+        if (sale) {
+            // deleted items
+            for (var i = 0; i < oldItems.length; i++) {
+                if (items.findIndex(it => it.id == oldItems[i].id) < 0) {
+                    await mdb.SaleItem.destroy({ where: { id: oldItems[i].id } });
+                    await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock + ' + oldItems[i].qty) }, { where: { id: oldItems[i].stockid } });
+                    if (oldItems[i].itemname != 'credit amount') {
+                        await mdb.Item.update({
+                            qty: Sequelize.literal('qty + ' + oldItems[i].qty),
+                            totalsold: Sequelize.literal('totalsold - ' + oldItems[i].qty),
+                            totalearned: Sequelize.literal('totalearned - ' + oldItems[i].totalPrice)
+                        }, { where: { itemcode: oldItems[i].itemcode } });
+                    }
+                }
+            }
+            console.log('1', id);
+            for (var i = 0; i < items.length; i++) {
+                // update items
+                if (items[i].id) {
+                    var itemid = items[i].id;
+                    var olditem = oldItems.findIndex(it => it.id == itemid);
+                    delete items[i]['id'];
+                    await mdb.SaleItem.update(items[i], { where: { id: itemid } });
+                    await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + (Number(items[i].qty) - Number(oldItems[olditem].qty))) }, { where: { id: items[i].stockid } });
+                    if (items[i].itemname != 'credit amount') {
+                        await mdb.Item.update({
+                            qty: Sequelize.literal('qty - ' + (Number(items[i].qty) - Number(oldItems[olditem].qty))),
+                            totalsold: Sequelize.literal('totalsold + ' + (Number(items[i].qty) - Number(oldItems[olditem].qty))),
+                            totalearned: Sequelize.literal('totalearned + ' + (Number(items[i].totalPrice) - Number(oldItems[olditem].totalPrice)))
+                        }, { where: { itemcode: items[i].itemcode } });
+                    }
+                } else { // new items
+                    items[i]['id'] = await idgen.getIDAsync(idgen.tableID.salesitem, 'num', 1, false);
+                    items[i]['saleId'] = id;
+                    var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].stockid } });
+                    var item = await mdb.SaleItem.create(items[i]);
+
+                    if (item) {
+                        if (items[i].itemname != 'credit amount') {
+                            var itemUp = await mdb.Item.update({
+                                qty: Sequelize.literal('qty - ' + items[i].qty),
+                                totalsold: Sequelize.literal('totalsold + ' + items[i].qty),
+                                totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice)
+                            }, { where: { itemcode: items[i].itemcode } });
+                        }
+                    } else {
+                        throw 'items';
+                    }
+                }
+            }
+            dayData = await saleData.updateAsync(Number(data.totalQTY) - Number(oldData.totalQTY), null, Number(data.totalTaxable) - Number(oldData.totalTaxable), null, (Number(data.totalTaxable) - Number(data.creditAmount)) - (Number(oldData.totalTaxable) - Number(oldData.creditAmount)), null, 'income', 'sales', true);
+            await saleData.transactionAdd('sold', 'products', 'expense', 'short term', Number(data.totalPurchaseCost) - Number(oldData.totalPurchaseCost), Number(data.totalPurchaseCost) - Number(oldData.totalPurchaseCost), null, 'expense for cost');
+            var customerUp = {
+                qty: Sequelize.literal('qty + ' + (Number(data.totalQTY) - Number(oldData.totalQTY))),
+                amount: Sequelize.literal('amount + ' + (Number(data.totalCost) - Number(oldData.totalCost)))
+            };
+            if (data.creditAmount > 0) {
+                customerUp['credit'] = (Number(data.creditAmount) - Number(oldData.creditAmount) + customerCredit);
+            }
+            var uData = await mdb.Customer.update(customerUp, { where: { id: data.customerID } });
+            if (uData) {
+                res.send({ msg: 'done!', err: false, id: id });
+            } else throw 'after up';
+        } else throw 'sale';
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: 'some error', err: true });
+    }
+}
+
+// delete sale
+async function deleteSale(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 3);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var id = req.body.id;
+        var data = await mdb.Sale.findOne({ where: { id: id } });
+        var items = await mdb.SaleItem.findAll({ where: { saleId: id } });
+
+        await mdb.Sale.destroy({ where: { id: id } });
+        await mdb.SaleItem.destroy({ where: { saleId: id } });
+        // deleted items
+        for (var i = 0; i < items.length; i++) {
+            mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock + ' + items[i].qty) }, { where: { id: items[i].stockid } });
+            if (items[i].itemname != 'credit amount') {
+                await mdb.Item.update({
+                    qty: Sequelize.literal('qty + ' + items[i].qty),
+                    totalsold: Sequelize.literal('totalsold - ' + items[i].qty),
+                    totalearned: Sequelize.literal('totalearned - ' + items[i].totalPrice)
+                }, { where: { itemcode: items[i].itemcode } });
+            }
+        }
+        dayData = await saleData.updateAsync(-Number(data.totalQTY), null, -Number(data.totalTaxable), null, -(Number(data.totalTaxable) - Number(data.creditAmount)), null, 'income', 'sales', true);
+        await saleData.transactionAdd('sold', 'products', 'expense', 'short term', -Number(data.totalPurchaseCost), -Number(data.totalPurchaseCost), null, 'expense for cost');
+        var customerUp = {
+            qty: Sequelize.literal('qty - ' + Number(data.totalQTY)),
+            amount: Sequelize.literal('amount - ' + Number(data.totalCost)),
+            credit: Sequelize.literal('credit - ' + (data.creditAmount > 0 ? Number(data.creditAmount) : 0))
+        };
+        var uData = await mdb.Customer.update(customerUp, { where: { id: data.customerID } });
+        if (uData) {
+            res.send({ msg: 'done!', err: false });
+        } else throw 'after up';
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: 'some error', err: true });
     }
 }
 
@@ -493,6 +668,9 @@ async function removeCreditBySale(req, res) {
 
 module.exports = {
     add,
+    getOldSale,
+    update,
+    deleteSale,
     getSales,
     getSalesCount,
     getSaleItem,

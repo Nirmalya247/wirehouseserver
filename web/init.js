@@ -53,12 +53,16 @@ app.all('/item/getitems', item.getItems);
 app.all('/item/getitemscount', item.getItemsCount);
 app.all('/item/getitemsscan', item.getItemsScan);
 app.all('/item/edit', item.edit);
+app.all('/item/getitemupdate', item.getItemUpdate);
 app.all('/item/update', item.update);
 app.all('/item/delete', item.deleteItem);
 app.all('/item/getitemtypes', item.getItemTypes);
 app.all('/item/racks', item.getRacks);
 
 app.all('/sale/add', sale.add);
+app.all('/sale/getoldsale', sale.getOldSale);
+app.all('/sale/update', sale.update);
+app.all('/sale/delete', sale.deleteSale);
 app.all('/sale/getsalescount', sale.getSalesCount);
 app.all('/sale/getsales', sale.getSales);
 app.all('/sale/getsaleitem', sale.getSaleItem);
@@ -67,11 +71,13 @@ app.all('/sale/getlastsaleitem', sale.getLastSaleItem);
 app.all('/sale/removecreditbysale', sale.removeCreditBySale);
 
 app.all('/purchase/add', purchase.add);
+app.all('/purchase/delete', purchase.deletePurchase);
 app.all('/purchase/getpurchasescount', purchase.getPurchasesCount);
 app.all('/purchase/getpurchases', purchase.getPurchases);
 app.all('/purchase/removeduebypurchase', purchase.removeDueByPurchase);
 
 app.all('/return/add', returnItem.add);
+app.all('/return/delete', returnItem.deleteReturn);
 app.all('/return/getbatch', returnItem.getBatch);
 app.all('/return/getreturns', returnItem.getReturns);
 app.all('/return/getreturnscount', returnItem.getReturnsCount);

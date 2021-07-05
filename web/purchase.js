@@ -4,6 +4,7 @@ const user = require('./user');
 const { Op, Sequelize } = require('sequelize');
 const idgen = require('../db/idgen');
 
+// add purchase
 async function add(req, res) {
     var id = null;
     var itemIDs = null;
@@ -27,7 +28,7 @@ async function add(req, res) {
         var purchase = await mdb.Purchase.create(data);
         if (purchase) {
             for (var i = 0; i < items.length; i++) {
-                items[i]['id'] = itemIDs[i];
+                items[i]['id'] = (items[i].id == null || items[i].id == '') ? itemIDs[i] : items[i].id;
                 items[i]['purchaseId'] = id;
                 var item = await mdb.ItemUpdate.create(items[i]);
                 if (item) {
@@ -46,11 +47,44 @@ async function add(req, res) {
                 if (!uData) throw 'after up';
             }
             res.send({ msg: 'done!', err: false, id: id });
-        } else throw 'sale';
+        } else throw 'purchase';
     } catch (e) {
         console.log(e);
         await mdb.Purchase.destroy({ where: { id: id } })
         await mdb.ItemUpdate.destroy({ where: { purchaseId: id } })
+        res.send({ msg: 'some error and deleted', err: true });
+    }
+}
+
+// delete purchase
+async function deletePurchase(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 3);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true });
+            return;
+        }
+        var id = req.body.id;
+        var data = await mdb.Purchase.findOne({ where: { id: id } });
+        var items = await mdb.ItemUpdate.findAll({ where: { purchaseId: id } });
+
+        await mdb.Purchase.destroy({ where: { id: id } });
+        await mdb.ItemUpdate.destroy({ where: { purchaseId: id } });
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].itemname != 'due amount') {
+                await mdb.Item.update({ qty: Sequelize.literal('qty - ' + items[i].qty) }, { where: { itemcode: items[i].itemcode } });
+            }
+        }
+
+        dayData = await saleData.updateAsync(null, -Number(data.totalQTY), null, -Number(data.totalCost), -(Number(data.totalCost) - Number(data.dueAmount)), null, 'products', 'purchase', true);
+        var vendorUp = {
+            due: Sequelize.literal('due - ' + (data.dueAmount > 0 ? Number(data.dueAmount) : 0))
+        };
+        var uData = await mdb.Vendor.update(vendorUp, { where: { id: data.vendorID } });
+        if (!uData) throw 'after up';
+        res.send({ msg: 'done!', err: false, id: id });
+    } catch (e) {
+        console.log(e)
         res.send({ msg: 'some error and deleted', err: true });
     }
 }
@@ -377,4 +411,10 @@ async function removeDueByVendor(req, res) {
 }
 
 
-module.exports = { add, getPurchases, getPurchasesCount, removeDueByPurchase }
+module.exports = {
+    add,
+    deletePurchase,
+    getPurchases,
+    getPurchasesCount,
+    removeDueByPurchase
+}
