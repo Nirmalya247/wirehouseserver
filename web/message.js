@@ -150,6 +150,10 @@ async function send(data) {
         var tAttr = x.substr(2, x.length - 4).split('.');
         return data[tAttr[0]][tAttr[1]];
     });
+    var subject = data.subject.replace(/{{[\w.]*}}/g, x => {
+        var tAttr = x.substr(2, x.length - 4).split('.');
+        return data[tAttr[0]][tAttr[1]];
+    });
 
     if (data.type == 'email') {
         var email = data.email || shop.shopemail;
@@ -166,9 +170,9 @@ async function send(data) {
         });
         console.log(1, message, email, password);
         var mailOptions = {
-            from: `"Medical Shop" <${email}>`,
+            from: `"Kalyani Medical" <${email}>`,
             to: data.to,
-            subject: data.subject,
+            subject: subject,
             text: message
         };
         return new Promise((resolve, reject) => {
@@ -326,7 +330,7 @@ async function sendMessageMultiple(req, res) {
 
         data['email'] = data.shop.shopemail;
         data['password'] = data.shop.shopemailpassword;
-        if (messagetype == 1 || messagetype == 2) { // customer due
+        if (messagetype == 1 || messagetype == 2) { // customer due by customer
             var customers = await mdb.Customer.findAll({
                 where: {
                     credit: {
@@ -359,7 +363,7 @@ async function sendMessageMultiple(req, res) {
                 var tRet = await send(data);
                 // console.log(`########### email sent ${data.to} ###########`);
             }
-            res.send({ msg: `sent to ${ purchases.length } customers` });
+            res.send({ msg: `sent to ${ purchases.length } vendors` });
         } else if (messagetype == 5 || messagetype == 6) { // return due
             var returns = await mdb.Return.findAll({
                 where: {
@@ -377,7 +381,24 @@ async function sendMessageMultiple(req, res) {
                 var tRet = await send(data);
                 // console.log(`########### email sent ${data.to} ###########`);
             }
-            res.send({ msg: `sent to ${ returns.length } customers` });
+            res.send({ msg: `sent to ${ returns.length } vendors` });
+        } else if (messagetype == 13 || messagetype == 14) { // customer due by bill
+            var bills = await mdb.Sale.findAll({
+                where: {
+                    creditAmount: {
+                        [Op.gt]: 0
+                    }
+                }
+            });
+            // console.log('@@@@@@@@@@@ sending ' + messagetype + ' @@@@@@@@@@@', bills.length);
+            for (var i = 0; i < bills.length; i++) {
+                data.sales = bills[i];
+                data.customer = await mdb.Customer.findOne({ where: { id: bills[i].customerID } });
+                data['to'] = data[fordata[0]][fordata[1]];
+                var tRet = await send(data);
+                // console.log(`########### email sent ${data.to} ###########`);
+            }
+            res.send({ msg: `sent for ${ bills.length } bills` });
         }
         // console.log(message);
         // res.send({ msg: 'done!', err: false });

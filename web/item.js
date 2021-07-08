@@ -110,24 +110,31 @@ function getItemsCount(req, res) {
 }
 
 // get items for barcode scan
-function getItemsScan(req, res) {
-    user.check(req, function(authData) {
-        if (authData && req.body.code && req.body.code.length >= 2) {
-            var wh = {
-                where: {
-                    [Op.or]: [{ itemcode: req.body.code }, { id: req.body.code }]
-                }
-            };
-            mdb.ItemUpdate.findOne(wh).then(function(data) {
-                if (data) {
-                    res.send({ err: false, msg: 'item found', itemcode: data.itemcode, item: data });
-                } else res.send({ err: true, msg: 'not found', itemcode: 0 });
-            }).catch((err) => {
-                console.log(err);
-                res.send({ err: true, msg: 'not found', itemcode: 0 });
-            });
+async function getItemsScan(req, res) {
+    try {
+        var dataAuth = await user.checkAsync(req, 1);
+        if (!dataAuth) {
+            res.send({ msg: 'not permitted', err: true, itemcode: 0 });
+            return;
+        }
+        var itemUpdate = await mdb.ItemUpdate.findOne({
+            where: {
+                [Op.or]: [{ itemcode: req.body.code }, { id: req.body.code }]
+            }
+        });
+        var item = null;
+        if (itemUpdate) {
+            item = await mdb.Item.findOne({ where: { itemcode: itemUpdate.itemcode } });
+        } else {
+            item = await mdb.Item.findOne({ where: { itemcode: req.body.code } });
+        }
+        if (item) {
+            res.send({ err: false, msg: 'item found', itemcode: item.itemcode, item: item });
         } else res.send({ err: true, msg: 'not found', itemcode: 0 });
-    }, 1);
+    } catch (e) {
+        console.log(e);
+        res.send({ err: true, msg: 'not found', itemcode: 0 });
+    }
 }
 
 // edit item
