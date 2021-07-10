@@ -31,12 +31,11 @@ async function add(req, res) {
                 items[i]['id'] = (items[i].id == null || items[i].id == '') ? itemIDs[i] : items[i].id;
                 items[i]['purchaseId'] = id;
                 var item = await mdb.ItemUpdate.create(items[i]);
-                if (item) {
-                    if (items[i].itemname != 'due amount') {
-                        var itemUp = await mdb.Item.update({ qty: Sequelize.literal('qty + ' + items[i].qty) }, { where: { itemcode: items[i].itemcode } });
-                    }
-                } else {
-                    throw 'items';
+                if (!item) throw 'items';
+            }
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].itemname != 'due amount') {
+                    var itemUp = await mdb.Item.update({ qty: Sequelize.literal('qty + ' + items[i].qty) }, { where: { itemcode: items[i].itemcode } });
                 }
             }
 

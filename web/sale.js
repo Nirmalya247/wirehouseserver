@@ -35,19 +35,17 @@ async function add(req, res) {
             for (var i = 0; i < items.length; i++) {
                 items[i]['id'] = itemIDs[i];
                 items[i]['saleId'] = id;
-                var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].stockid } });
                 var item = await mdb.SaleItem.create(items[i]);
-
-                if (item) {
-                    if (items[i].itemname != 'credit amount') {
-                        var itemUp = await mdb.Item.update({
-                            qty: Sequelize.literal('qty - ' + items[i].qty),
-                            totalsold: Sequelize.literal('totalsold + ' + items[i].qty),
-                            totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice)
-                        }, { where: { itemcode: items[i].itemcode } });
-                    }
-                } else {
-                    throw 'items';
+                if (!item) throw 'items';
+            }
+            for (var i = 0; i < items.length; i++) {
+                var itemUpExpiry = await mdb.ItemUpdate.update({ qtystock: Sequelize.literal('qtystock - ' + items[i].qty) }, { where: { id: items[i].stockid } });
+                if (items[i].itemname != 'credit amount') {
+                    var itemUp = await mdb.Item.update({
+                        qty: Sequelize.literal('qty - ' + items[i].qty),
+                        totalsold: Sequelize.literal('totalsold + ' + items[i].qty),
+                        totalearned: Sequelize.literal('totalearned + ' + items[i].totalPrice)
+                    }, { where: { itemcode: items[i].itemcode } });
                 }
             }
             dayData = await saleData.updateAsync(data.totalQTY, null, data.totalTaxable, null, Number(data.totalTaxable) - Number(data.creditAmount), null, 'income', 'sales', true);
