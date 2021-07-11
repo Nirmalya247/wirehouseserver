@@ -29,6 +29,7 @@ async function add(req, res) {
         id = await idgen.getIDAsync(idgen.tableID.sales, 'num', 1, false);
         itemIDs = await idgen.getIDAsync(idgen.tableID.salesitem, 'num', items.length, true);
         data['id'] = id;
+        data['key'] = user.makeid(6);
 
         var sale = await mdb.Sale.create(data);
         if (sale) {
@@ -60,7 +61,7 @@ async function add(req, res) {
             }
             var uData = await mdb.Customer.update(customerUp, { where: { id: data.customerID } });
             if (uData) {
-                res.send({ msg: 'done!', err: false, id: id });
+                res.send({ msg: 'done!', err: false, id: id, key: data['key'] });
             } else throw 'after up';
         } else throw 'sale';
     } catch (e) {

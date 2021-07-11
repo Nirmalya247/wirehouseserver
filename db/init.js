@@ -104,6 +104,7 @@ var Sale = sequelize.define('sales', {
         type: Sequelize.STRING(20),
         primaryKey: true
     },
+    key: { type: Sequelize.STRING.BINARY },
     totalItem: { type: Sequelize.INTEGER },
     totalQTY: { type: Sequelize.INTEGER },
     totalPurchaseCost: { type: Sequelize.DECIMAL(10, 2) }, // total cost

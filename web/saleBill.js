@@ -740,14 +740,14 @@ function getSaleBill(req, res) {
                 //         stream.pipe(res);
                 //     });
                 // }
-                if (req.query.paper == 'A4V2') {
+                if (req.query.paper == 'A4V2' && resSale.key == req.query.key) {
                     var data = getBillHtmlA4V2(resShop, resSale, resSaleItem);
                     res.setHeader('Content-Type', 'application/pdf');
                     pdf.create(data.html, data.options).toStream(function(err, stream) {
                         stream.pipe(res);
                     });
                     // res.send(resSaleItem);
-                } else if (req.query.paper == 'HTML') {
+                } else if (req.query.paper == 'HTML' && resSale.key == req.query.key) {
                     res.send(getBillHtmlA4(resShop, resSale, resSaleItem));
                 } else {
                     res.send('some error');
