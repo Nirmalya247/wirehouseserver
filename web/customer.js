@@ -270,8 +270,14 @@ function getCustomerCount(req, res) {
 
 // fetch all customer
 async function fetchCustomerFromHubSpot(req, res) {
+    var data = await fetchCustomerFromHubSpotAsync(req.body.recent, req.body.shopId || 1, req.body.userId || req.body.SESSION_USERID);
+    res.send(data);
+}
+
+// fetch all customer
+async function fetchCustomerFromHubSpotAsync(isRecent, shopId, userId) {
     var apilink = 'https://api.hubapi.com/contacts/v1/lists/all/contacts/all';
-    if (req.body.recent) apilink = 'https://api.hubapi.com/contacts/v1/lists/recently_updated/contacts/recent';
+    if (isRecent) apilink = 'https://api.hubapi.com/contacts/v1/lists/recently_updated/contacts/recent';
     var hubkey = await mdb.Shop.findOne({ where: { id: 1 } });
     var dataHub = [];
     // var datares = await getHub();
@@ -354,8 +360,6 @@ async function fetchCustomerFromHubSpot(req, res) {
             nCr++;
             for (var mi = 0; mi < 2; mi++) {
                 try {
-                    var shopId = req.body.shopId || 1;
-                    var userId = req.body.userId || req.body.SESSION_USERID;
                     var message = await mdb.Message.findOne({ where: { id: idgen.tableID.message.id + '1' + (mi + 1) } });
                     var fordata = message.for.split('.');
                     var type = message.type;
@@ -386,7 +390,9 @@ async function fetchCustomerFromHubSpot(req, res) {
             }
         }
     }
-    res.send({ update: nUp, new: nCr });
+    return { update: nUp, new: nCr };
 }
 
-module.exports = {get, add, update, deleteCustomer, customerInfo, getCustomer, getCustomerCount, fetchCustomerFromHubSpot }
+
+
+module.exports = {get, add, update, deleteCustomer, customerInfo, getCustomer, getCustomerCount, fetchCustomerFromHubSpot, fetchCustomerFromHubSpotAsync }

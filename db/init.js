@@ -13,9 +13,6 @@ var sequelize = new Sequelize('wirehouse', process.env.DB_USER || 'remote', proc
         min: 0,
         idle: 10000
     },
-    dialectOptions: {
-        useUTC: false, // for reading from database
-    },
     timezone: '+05:45'
 });
 
@@ -137,6 +134,7 @@ var SaleItem = sequelize.define('salesitem', {
     },
     saleId: { type: Sequelize.STRING(20) },
     stockid: { type: Sequelize.STRING(20) },
+    stockcode: { type: Sequelize.STRING(255) },
     itemcode: { type: Sequelize.STRING(512) },
     itemname: { type: Sequelize.STRING(255) },
     hsn: { type: Sequelize.STRING(45) },
@@ -203,6 +201,7 @@ var ItemUpdate = sequelize.define('itemupdate', {
         type: Sequelize.STRING(20),
         primaryKey: true
     },
+    stockid: { type: Sequelize.STRING(255) },
     purchaseId: { type: Sequelize.STRING(20) },
     itemcode: { type: Sequelize.STRING(512) },
     itemname: { type: Sequelize.STRING(255) },
@@ -257,6 +256,7 @@ var ReturnItem = sequelize.define('returnitem', {
     itemcode: { type: Sequelize.STRING(512) },
     itemname: { type: Sequelize.STRING(255) },
     batchno: { type: Sequelize.STRING(20) },
+    batchcode: { type: Sequelize.STRING(255) },
     qty: { type: Sequelize.BIGINT },
     price: { type: Sequelize.DECIMAL(10, 2) },
     discount: { type: Sequelize.DECIMAL(10, 2) },
@@ -371,6 +371,7 @@ var Message = sequelize.define('messages', {
     for: { type: Sequelize.STRING(40) },
     type: { type: Sequelize.STRING(40) },
     label: { type: Sequelize.STRING(40) },
+    subject: { type: Sequelize.STRING(512) },
     message: { type: Sequelize.TEXT }
 }, {
     freezeTableName: true

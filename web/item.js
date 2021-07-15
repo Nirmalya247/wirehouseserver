@@ -119,7 +119,7 @@ async function getItemsScan(req, res) {
         }
         var itemUpdate = await mdb.ItemUpdate.findOne({
             where: {
-                [Op.or]: [{ itemcode: req.body.code }, { id: req.body.code }]
+                [Op.or]: [{ itemcode: req.body.code }, { id: req.body.code }, { stockid: req.body.code }]
             }
         });
         var item = null;

@@ -21,8 +21,8 @@ const tableID = {
 function getID(table, idType, n, isMultiple, callback) {
     mdb.Counter.findOne({ where: { id: table.name } }).then(data => {
         if (data) {
-            var t = data.val + 1;
-            data.val += n;
+            var t = Number(data.val) + 1;
+            data.val = Number(data.val) + n;
             data.save();
             callback(getData(t, n, table.id, isMultiple));
         } else {
@@ -38,8 +38,8 @@ function getID(table, idType, n, isMultiple, callback) {
 async function getIDAsync(table, idType, n, isMultiple) {
     var data = await mdb.Counter.findOne({ where: { id: table.name } });
     if (data) {
-        var t = data.val + 1;
-        data.val += n;
+        var t = Number(data.val) + 1;
+        data.val = Number(data.val) + n;
         await data.save();
         return getData(t, n, table.id, isMultiple);
     } else {

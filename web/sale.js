@@ -616,7 +616,7 @@ function getSaleItemByStock(req, res) {
     user.check(req, function(authData) {
         if (authData) {
             var stockid = req.body.stockid;
-            mdb.ItemUpdate.findOne({ where: { id: stockid } }).then(resItemUpdate => {
+            mdb.ItemUpdate.findOne({ where: { stockid: stockid } }).then(resItemUpdate => {
                 if (resItemUpdate) {
                     mdb.Item.findOne({ where: { itemcode: resItemUpdate.itemcode } }).then(resItem => {
                         if (resItem) {

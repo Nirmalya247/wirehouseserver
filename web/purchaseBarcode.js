@@ -54,7 +54,7 @@ async function purchaseBarcode(req, res) {
         const documentStock = new DOMImplementation().createDocument('http://www.w3.org/1999/xhtml', 'html', null);
         const svgNodeStock = documentStock.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
-        JsBarcode(svgNodeStock, data[i].id, {
+        JsBarcode(svgNodeStock, data[i].stockid, {
             xmlDocument: documentStock,
             height: 40,
         });

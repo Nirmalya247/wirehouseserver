@@ -28,7 +28,8 @@ async function add(req, res) {
         var purchase = await mdb.Purchase.create(data);
         if (purchase) {
             for (var i = 0; i < items.length; i++) {
-                items[i]['id'] = (items[i].id == null || items[i].id == '') ? itemIDs[i] : items[i].id;
+                items[i]['id'] = itemIDs[i];
+                items[i]['stockid'] = (items[i].stockid == null || items[i].stockid == '') ? itemIDs[i] : items[i].stockid;
                 items[i]['purchaseId'] = id;
                 var item = await mdb.ItemUpdate.create(items[i]);
                 if (!item) throw 'items';

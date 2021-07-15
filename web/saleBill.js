@@ -654,7 +654,7 @@ function getBillHtmlA4V2(shop, sale, items) {
                 <td class="item-td item-td-items">
                     <div class="item-name">${items[i].itemname}</div>
                     <div class="item-description">${items[i].item.description}</div>
-                    <div class="item-batch">${ (items[i].stockid ? `Batch No: ${items[i].stockid}, ` : ``) }Sale No: ${items[i].id}</div>
+                    <div class="item-batch">${ (items[i].stockid ? `Batch No: ${items[i].stockcode}, ` : ``) }Sale No: ${items[i].id}</div>
                     ${ (items[i].mfg ? `<div class="item-batch">Mfg. Date: ${mfg} (${ dateFormat(new Date(items[i].mfg), 'mmmm yyyy') })</div>` : ``) }
                     ${ (items[i].expiry ? `<div class="item-batch">Exp. Date: ${expiry} (${ dateFormat(new Date(items[i].expiry), 'mmmm yyyy') })</div>` : ``) }
                 </td>

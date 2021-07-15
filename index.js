@@ -3,17 +3,21 @@ const cors = require('cors');
 const http = require('http');
 const mdb = require('./db/init');
 const web = require('./web/init');
+const customer = require('./web/customer');
 
 
 // session table
 
 
-mdb.sequelize.sync({ force: false }).then(function () {
+mdb.sequelize.sync({ force: false }).then(function() {
     console.log('database connected');
 
 
     http.createServer(web.app).listen(process.env.PORT || 4210);
-    console.log('*******web*******');
+    console.log('*******web*******')
+    setInterval(() => {
+        customer.fetchCustomerFromHubSpotAsync(true, 1, null);
+    }, 1000 * 60 * 10);
     /*
     mdb.User.create({
         //id: 5,
