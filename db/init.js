@@ -116,6 +116,7 @@ var Sale = sequelize.define('sales', {
     creditAmount: { type: Sequelize.DECIMAL(10, 2) },
     paymentMode: { type: Sequelize.STRING(40) },
     addCredit: { type: Sequelize.INTEGER },
+    description: { type: Sequelize.STRING(1024) },
     customerID: { type: Sequelize.STRING(8) },
     customerName: { type: Sequelize.STRING(255) },
     customerPhone: { type: Sequelize.STRING(20) },
@@ -145,7 +146,8 @@ var SaleItem = sequelize.define('salesitem', {
     vat: { type: Sequelize.DECIMAL(10, 2) },
     totalPrice: { type: Sequelize.DECIMAL(10, 2) },
     mfg: { type: Sequelize.DATEONLY },
-    expiry: { type: Sequelize.DATEONLY }
+    expiry: { type: Sequelize.DATEONLY },
+    description: { type: Sequelize.STRING(1024) }
 }, {
     freezeTableName: true
 });

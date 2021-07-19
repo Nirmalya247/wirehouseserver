@@ -653,7 +653,7 @@ function getBillHtmlA4V2(shop, sale, items) {
             <tr class="item-tr item-tr-data">
                 <td class="item-td item-td-items">
                     <div class="item-name">${items[i].itemname}</div>
-                    <div class="item-description">${items[i].item.description}</div>
+                    ${ ((items[i].description && items[i].description.toString().trim() != '') ? `<div class="item-description">${items[i].description}</div>` : `` ) }
                     <div class="item-batch">${ (items[i].stockid ? `Batch No: ${items[i].stockcode}, ` : ``) }Sale No: ${items[i].id}</div>
                     ${ (items[i].mfg ? `<div class="item-batch">Mfg. Date: ${mfg} (${ dateFormat(new Date(items[i].mfg), 'mmmm yyyy') })</div>` : ``) }
                     ${ (items[i].expiry ? `<div class="item-batch">Exp. Date: ${expiry} (${ dateFormat(new Date(items[i].expiry), 'mmmm yyyy') })</div>` : ``) }
@@ -675,18 +675,20 @@ function getBillHtmlA4V2(shop, sale, items) {
                         <div class="label">Total Amount:</div>
                         <div class="value">  Rs. ${ sale.totalAmount }</div>
                     </div>
-                    <div class="total">
+                    ${ Number(sale.discountamount) > 0 ? 
+                    `<div class="total">
                         <div class="label">Discount ${ sale.discount } % + Rs. ${ sale.discountamount }:</div>
                         <div class="value">- Rs. ${ (Number(sale.totalAmount) * Number(sale.discount) / 100 + Number(sale.discountamount)).toFixed(2) }</div>
-                    </div>
+                    </div>` : `` }
                     <div class="tendered">
                         <div class="label">Taxable:</div>
                         <div class="value">Rs. ${ sale.totalTaxable }</div>
                     </div>
-                    <div class="total">
+                    ${ Number(sale.vat) > 0 ? 
+                    `<div class="total">
                         <div class="label">Vat (${ Number(sale.vat).toFixed(0) } %):</div>
                         <div class="value">+ Rs. ${ (Number(sale.totalTaxable) * Number(sale.vat) / 100).toFixed(2) }</div>
-                    </div>
+                    </div>` : `` }
                     <div class="tendered">
                         <div class="label">Payable:</div>
                         <div class="value">Rs. ${ sale.totalCost }</div>
@@ -702,6 +704,7 @@ function getBillHtmlA4V2(shop, sale, items) {
                 </div>
             </div>
             <div class="note">${ shop.billnote }</div>
+            ${ (sale.description ? `<div class="note">${ sale.description }</div>` : `` ) }
         </body>
         </html>
     `;
