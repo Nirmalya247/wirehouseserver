@@ -202,7 +202,7 @@ function getCustomer(req, res) {
                 res.send(data);
             });
         } else res.send([]);
-    }, 2);
+    }, 1);
 }
 
 // get customer count
@@ -265,7 +265,7 @@ function getCustomerCount(req, res) {
                 res.send('0');
             });
         } else res.send('0');
-    }, 2);
+    }, 1);
 }
 
 // fetch all customer
