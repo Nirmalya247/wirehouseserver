@@ -352,6 +352,11 @@ function getStock(req, res) {
     user.check(req, function(dataAuth) {
         if (dataAuth) {
             var wh = {
+                where: {
+                    qty: {
+                        [Op.gt]: 0
+                    }
+                },
                 offset: (parseInt(req.body.page) - 1) * parseInt(req.body.limit),
                 limit: parseInt(req.body.limit),
                 order: [
@@ -370,7 +375,13 @@ function getStock(req, res) {
 function getStockCount(req, res) {
     user.check(req, function(dataAuth) {
         if (dataAuth) {
-            var wh = {};
+            var wh = {
+                where: {
+                    qty: {
+                        [Op.gt]: 0
+                    }
+                }
+            };
             mdb.Item.count(wh).then(data => {
                 console.log('***********', data);
                 if (data) res.send(data.toString());
