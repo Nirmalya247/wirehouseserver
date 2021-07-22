@@ -517,7 +517,8 @@ function getSaleItem(req, res) {
                     [Op.or]: [{
                         expiry: {
                             [Op.gt]: today
-                        },
+                        }
+                    }, {
                         expiry: {
                             [Op.is]: null
                         }
