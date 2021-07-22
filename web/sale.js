@@ -514,9 +514,14 @@ function getSaleItem(req, res) {
                     qtystock: {
                         [Op.gt]: 0
                     },
-                    expiry: {
-                        [Op.gt]: today
-                    }
+                    [Op.or]: [{
+                        expiry: {
+                            [Op.gt]: today
+                        },
+                        expiry: {
+                            [Op.is]: null
+                        }
+                    }]
                 }
             }
             mdb.ItemUpdate.findAll({
