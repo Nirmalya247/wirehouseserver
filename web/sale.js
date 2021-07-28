@@ -13,7 +13,7 @@ async function add(req, res) {
         return;
     }
     try {
-        var dataAuth = await user.checkAsync(req, 2);
+        var dataAuth = await user.checkAsync(req, 1);
         if (!dataAuth) {
             res.send({ msg: 'not permitted', err: true });
             return;
